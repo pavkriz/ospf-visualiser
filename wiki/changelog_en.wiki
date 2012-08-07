@@ -1,16 +1,3 @@
-= Visualiser of OSPF network routers =
-
-== Describe ==
-Java desktop application for visualize network of OSPF routers and more functions with network.
-You can find more info in wiki pages ([http://code.google.com/p/ospf-visualiser/wiki/changelog_cs cs], [http://code.google.com/p/ospf-visualiser/wiki/changelog_en en]).
-
-== Screenshots ==
-<img src="http://ospf-visualiser.googlecode.com/files/scn01.png" />
-
-<img src="http://ospf-visualiser.googlecode.com/files/scn02.png" />
-
-
-
 #summary Overview of versions and application requirements
 
 = Installation and running =
