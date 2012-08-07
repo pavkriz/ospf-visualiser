@@ -1,0 +1,3 @@
+#summary Summary of tips for using of the app.
+
+= Tips=
