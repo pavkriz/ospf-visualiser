@@ -1,0 +1,48 @@
+#summary Přehled o verzích a požadavcích aplikace
+
+= Instalace a spuštění =
+Spuštění vyžaduje Javu JRE >= 1.6.
+Postup:
+  * stáhnout soubor ospfVERZE.jar a spustit jej
+  * spuštění z příkazové řadky: <code>java -jar ospfVERZE.jar</code>
+
+= Verze =
+
+== ospf3.0.1 ==
+  * opravy layoutů (výpadky spojů, následky výpadku spojů/routerů)
+  * opravy popisků
+  * oprava stahování dat přes telnet
+  * oprava dialogů pro otevření/uložení NML souboru
+  * opraven postranní panel v okně sledování stavů v čase
+  * možnost zaškrtnout/odškrtnout vše při výběru logů
+  * použití FR layoutu pro rozvhrhování mapy
+    * rychlejší, nevytěžuje stále CPU
+  * zjištění suffixu a jeho odmazání (vyhledá se nejvyskytovanější suffix názvu) - pouze u načítání dat přes telnet
+
+== ospf3.0.0 ==
+  * cs/en dokončen překlad
+  * možnost vyhledávat v mapě routerů
+    * CTRL+f předá focus poli pro zadání hledaného řetězce
+    * pro vyhledání více řetězců lze řetězce oddělit symbolem |
+    * hledá se název routeru obsahující hledaný řetězec
+    * nalezené routery jsou vyznačeny zelenou barvou a popisek modrou
+
+== ospf3.0.0rc ==
+  * nastavení jazyku
+  * cs/en částečný překlad
+  * připojení k routeru přes telnet, možnosti nastavení:
+    * adresa routeru, port, heslo
+    * timeout (čas po který se bude aplikace pokoušet navázat spojení)
+    * rDNS server - adresa serveru pro reverzní DNS překlad z IP na název routeru
+  * export do souboru xgmml, který lze importovat do programu Cytoscape a pracovat s ním
+  * oprava na dynamický layout GUI - správné zobrazení na Linux/Windows
+  * ukládání souboru s nastavením aplikace do domovského adresáře
+    * při prvním spuštění se v domovském adresáři vytvoří složka .ospf-visualiser a v ní soubor settings.properties s nastavením aplikace (jazyk se nastaví dle systémového)
+    * při potvrzení načítání logů/dat modelu se uloží vyplněné hodnoty
+    * při potvrzení načítání dat modelu se uloží také způsob načítání dat
+
+Snímek z programu Cytoscape s načteným modelem:
+<img src="http://ospf-visualiser.googlecode.com/files/scn_cytoscape.png" />
+
+== starší verze ==
+Starší verze byly popisovány na adrese http://lab.hkfree.org/ospfmap/
