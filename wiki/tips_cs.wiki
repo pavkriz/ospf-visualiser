@@ -1,0 +1,3 @@
+#summary Přehled tipů jak používat aplikaci
+
+= Tipy =
