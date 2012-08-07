@@ -1,0 +1,124 @@
+*7.8.2012*
+  * opetovne nahrani zdrojovych kodu (svn neustalo hromadu zmen)
+
+*6.8.2012*
+  * export do SVG (tvary, barvy)
+
+*5.8.2012*
+  * export do SVG (zakladni - vrcholy, hrany)
+
+*2.8.2012*
+  * nacitani seznamu zip souboru z jednoho files.txt.gz
+
+*1.8.2012*
+  * vyber zdroje dat z casoveho rozmezi po intervalech
+  * ukladani a nacitani do properties (pocet dni je pocitan a nastavovan aktualne)
+  * upraveno vyhledavani (non-case-sensitive, vyhledava v nazvu i popisu soucasne)
+  * nacitani seznamu zip souboru z jednoho files.txt.gz
+
+*31.7.2012*
+  * vyber zdroje dat z casoveho rozmezi po intervalech
+
+*25.7.2012*
+  * properties okno obsahujici strom routeru a info o vybranem routeru
+
+*24.7.2012*
+  * zvyrazneni hrany pod kurzorem
+
+*22.7.2012*
+  * uprava GUI
+
+*20.7.2012*
+  * oprava dialogu pro export do xgmml
+  * oprava prehledu s daty ospf modelu
+  * uprava GUI
+
+*19.7.2012*
+  * uprava GUI
+
+*18.7.2012*
+  * uprava GUI
+
+*17.7.2012*
+  * uprava GUI
+
+*14.7.2012*
+  * upraveno vyhledavani, pridano tlacitko
+
+*26.6.2012*
+  * layout dialogu s vypadky spoju
+  * layout importance link
+  * layout importance router
+  * *nova verze 3.0.1*
+
+*25.6.2012*
+  * oprava stahovani dat pres telnet
+  * nalezeni suffixu pro data prijata telnetem (nejcastejsi vyskyt)
+  * map design predelan na FR layout
+  * vyber logu - zaskrtnout/odskrtnout vse
+  * oprava dialogu pro otevreni nml souboru
+  * oprava dialogu pro ulozeni nml souboru
+  * oprava okna pro sledovani stavu v case
+    * predelani na FR layout
+    * opraven postranni panel
+
+*20.6.2012*
+  * preklady
+  * uprava wiki, zkouska FR layoutu
+  * *nova verze 3.0.0*
+
+*19.6.2012*
+  * preklady
+  * oprava vyhledavani, mozne vyhledavat vice nazvu - oddeleni svislitkem
+
+*18.6.2012*
+  * preklady
+
+*11.6.2012*
+  * vyhledavani routeru a jeho zvyrazneni
+
+*9.6.2012*
+  * preklady
+  * opravy layoutu
+  * sjednoceni usporadani tlacitek
+  * ukladani info, jakym zpusobem byla data naposledy ziskana
+  * oprava nacitani obr pro about
+
+*7.6.2012*
+  * predelani na dynamicky layout (popisky jsou viditelne i v en)
+  * eport modelu do xgmml souboru vhodeho pro import do Cytoscape
+  * nacitani nastaveni z properties souboru, pokud neexistuje, tak vytvori defaultni v domovskem adresri uzivatele (jazyk nastavi dle OS)
+  * moznost nastavit timeout u telnetu
+
+*1.6.2012*
+  * kompletni predelani na nacitani textu z lng
+
+*28.4.2012*
+  * pri 1. spusteni zjisteni lokalizace, nasledne nacteni popisku dle toho a ulozeni do nastaveni
+  * preklady do en
+
+*27.4.2012*
+  * soubor properties s nastavenim aplikace a stahovanim dat 
+  * nacitani a ukladani nastaveni
+  * preklady do en
+
+*26.4.2012*
+  * novy dialog pro nastaveni
+  * zacatek lokalizace
+
+*24.4.2012*
+  * nacitani nazvu routeru pres knihovnu fastreversedns.jar
+
+*22.4.2012*
+  * nacitani pres telnet
+
+*7.3.2012*
+  * reset zdrojovych kodu
+  * nahrani novych kodu s kodovanim UTF-8
+  * baliky doplneny o org.hkfree.ospf
+
+
+*22.2.2012*
+  * zalozen ucet na code.google.com
+  * nahrany zdrojove kody
+  * vytvorena wiki stranka
