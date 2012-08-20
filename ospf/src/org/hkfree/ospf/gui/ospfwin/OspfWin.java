@@ -2,7 +2,9 @@ package org.hkfree.ospf.gui.ospfwin;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -17,6 +19,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 import org.hkfree.ospf.gui.mappanel.MapManager;
 import org.hkfree.ospf.gui.mappanel.MapPanel;
@@ -80,6 +83,18 @@ public class OspfWin extends JFrame {
 	// pridani klavesovych zkratek
 	addKeyShorts();
 	try {
+	    //nastavení jednotného fontu pro celou aplikaci
+	    FontUIResource f = new javax.swing.plaf.FontUIResource(new Font("Arial",Font.PLAIN, 12));
+	    Enumeration<Object> keys = UIManager.getDefaults().keys();
+	    while (keys.hasMoreElements())
+	    {
+	        Object key = keys.nextElement();
+	        Object value = UIManager.get(key);
+	        if (value instanceof FontUIResource)
+	        {
+	            UIManager.put(key, f);
+	        }
+	    }
 	    // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Exception e) {

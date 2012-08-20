@@ -2,9 +2,13 @@ package org.hkfree.ospf.gui.mappanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ResourceBundle;
 
-import javax.swing.BorderFactory;
+import javax.management.InstanceAlreadyExistsException;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +35,7 @@ public class PropertiesPanel extends JPanel {
     private ResourceBundle rb = Factory.getRb();
     private OspfModel model;
     private JPanel pInfo;
+    private JTree tree;
 
 
     /**
@@ -49,13 +54,13 @@ public class PropertiesPanel extends JPanel {
     private void createComponents() {
 	DefaultMutableTreeNode root = new DefaultMutableTreeNode(model.getModelName());
 	for (Router r : model.getRouters()) {
-	    root.add(new DefaultMutableTreeNode(r.getRouterID()));
+	    root.add(new DefaultMutableTreeNode(r.getRouterID() + " - " + r.getRouterName()));
 	}
-	JTree tree = new JTree(root);
+	tree = new JTree(root);
+	tree.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
 	tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	JScrollPane scrollPane = new JScrollPane(tree);
 	pInfo = new JPanel();
-	pInfo.setBorder(BorderFactory.createTitledBorder(rb.getString("orp.6")));
 	JSplitPane splitInfo = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPane, pInfo);
 	splitInfo.setDividerLocation(180);
 	this.setLayout(new BorderLayout());
@@ -68,19 +73,48 @@ public class PropertiesPanel extends JPanel {
      * @param rv router
      */
     public void actualizeValues(RouterVertex rv) {
+	DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+	for (int i = 0; i < tree.getModel().getChildCount(root); i++) {
+	    if (((DefaultMutableTreeNode) tree.getModel().getChild(root, i)).toString().startsWith(rv.getDescription())) {
+		tree.setSelectionRow(i + 1);
+		tree.scrollRowToVisible(i + 1);
+	    }
+	}
 	pInfo.removeAll();
 	Router r = model.getRouterByIp(rv.getDescription());
-	Box box = Box.createVerticalBox();
-	box.setAlignmentX(Box.LEFT_ALIGNMENT);
-	box.add(new JLabel(rb.getString("orp.7") + ":"));
-	box.add(new JLabel(r.getRouterID()));
-	box.add(new JLabel(rb.getString("orp.8") + ":"));
-	box.add(new JLabel(r.getRouterName()));
-	box.add(new JLabel(rb.getString("orp.10") + ":"));
-	box.add(new JLabel(r.getNameSuffix()));
-	box.add(new JLabel(rb.getString("orp.9") + ":"));
-	box.add(new JLabel(String.valueOf(model.getRouterLinksCount(r))));
-	pInfo.add(box);
+	pInfo.setLayout(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
+	c.anchor = GridBagConstraints.NORTHWEST;
+	c.fill = GridBagConstraints.HORIZONTAL;
+	c.ipadx = 2;
+	c.ipady = 2;
+	c.weightx = 1;
+	c.gridx = 0;
+	c.gridy = 0;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.0") + ":"), c);
+	c.gridy = 1;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(r.getRouterID()), c);
+	c.gridy = 2;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.2") + ":"), c);
+	c.gridy = 3;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(r.getRouterName()), c);
+	c.gridy = 4;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.3") + ":"), c);
+	c.gridy = 5;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(r.getNameSuffix()), c);
+	c.gridy = 6;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.4") + ":"), c);
+	c.gridy = 7;
+	c.weighty = 1;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(String.valueOf(model.getRouterLinksCount(r))), c);
 	pInfo.updateUI();
     }
 
@@ -93,18 +127,46 @@ public class PropertiesPanel extends JPanel {
 	pInfo.removeAll();
 	Router r = model.getRouterByIp(le.getRVertex1().getDescription());
 	Router r2 = model.getRouterByIp(le.getRVertex2().getDescription());
-	Box box = Box.createVerticalBox();
-	box.setAlignmentX(Box.LEFT_ALIGNMENT);
-	JLabel l = new JLabel(le.getLinkID());
-	l.setBackground(Color.yellow);
-	box.add(l);
-	//box.add(new JLabel(le.getLinkDescription()));
-	//box.add(new JLabel(le.getLinkFaultDescription()));
-	box.add(new JLabel(String.valueOf(le.getCost1())));
-	box.add(new JLabel(String.valueOf(le.getCost2())));
-	box.add(new JLabel(String.valueOf(le.getFaultCount())));
-	box.add(new JLabel(String.valueOf(le.getFaultIntensity())));
-	pInfo.add(box);
+	pInfo.setLayout(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
+	c.anchor = GridBagConstraints.NORTHWEST;
+	c.fill = GridBagConstraints.HORIZONTAL;
+	int y=0;
+	c.ipadx = 2;
+	c.ipady = 2;
+	c.weightx = 1;
+	c.gridx = 0;
+	c.gridy = y++;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.10") + ":"), c);
+	c.gridy = y++;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(le.getLinkID()), c);
+	c.gridy = y++;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.11") + " 1:"), c);
+	c.gridy = y++;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(String.valueOf(le.getCost1())), c);
+	c.gridy = y++;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.11") + " 2:"), c);
+	c.gridy = y++;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(String.valueOf(le.getCost2())), c);
+	c.gridy = y++;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.12") + ":"), c);
+	c.gridy = y++;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(String.valueOf(le.getFaultCount())), c);
+	c.gridy = y++;
+	c.insets = new Insets(2, 6, 0, 0);
+	pInfo.add(new JLabel(rb.getString("pw.13") + ":"), c);
+	c.gridy = y++;
+	c.weighty = 1;
+	c.insets = new Insets(0, 30, 0, 0);
+	pInfo.add(new JLabel(String.valueOf(le.getFaultIntensity())), c);
 	pInfo.updateUI();
     }
 }
