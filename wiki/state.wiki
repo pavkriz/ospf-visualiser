@@ -1,5 +1,6 @@
 *22.8.2012*
   * zrychleni a osetreni telnet - preklad hostname
+  * telnet IPv6
 
 *21.8.2012*
   * stub, properties okno
