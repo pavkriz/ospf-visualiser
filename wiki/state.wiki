@@ -2,6 +2,7 @@
   * pouziti defaultniho DNS serveru pokud neni zadan jiny
   * telnet IPv6
   * uprava status bar
+  * nacitani od-do uprava na moznost nacteni do zalozek/otevreni v net state okne
 
 *22.8.2012*
   * zrychleni a osetreni telnet - preklad hostname
