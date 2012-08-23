@@ -1,6 +1,7 @@
 *23.8.2012*
   * pouziti defaultniho DNS serveru pokud neni zadan jiny
   * telnet IPv6
+  * uprava status bar
 
 *22.8.2012*
   * zrychleni a osetreni telnet - preklad hostname
