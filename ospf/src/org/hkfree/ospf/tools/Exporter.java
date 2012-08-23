@@ -66,7 +66,7 @@ public class Exporter {
     
     
     /**
-     * Export 
+     * Export modelu do SVG formatu
      * @param file
      * @param model
      * @param graph
@@ -85,8 +85,6 @@ public class Exporter {
 		    "y2=\"" + routers.get(le.getRVertex2()).getY() + "\" " + 
 		    "stroke=\"#"+Integer.toHexString(((Color)le.getLineColor(1)).getRGB()).substring(2)+"\" " +
 		    "stroke-width=\"1\"/>\n");
-		    //"stroke-width=\""+ le.getStroker() + "\"/>\n");
-		    //"style=\"stroke:#"+Integer.toHexString(((Color)le.getLineColor(1)).getRGB()).substring(2)+";\" />\n");
 	}
 	for (RouterVertex rv : routers.keySet()) {
 	    if (rv.isMultilink()) {
@@ -98,17 +96,22 @@ public class Exporter {
 	    		"x=\"" + (routers.get(rv).getX()-5) + "\" " +
 	    		"y=\"" + (routers.get(rv).getY()-5) + "\"/>\n");
 	    } else {
-		//router
+		//router symbol
 		out.write("<circle r=\"10\" " +
 	    		"fill=\"#" + Integer.toHexString(rv.getColorFill().getRGB()).substring(2) + "\" " +
 	    		"stroke=\"#"+ Integer.toHexString(rv.getColorStroke().getRGB()).substring(2) + "\" " +
 	    		"stroke-width=\"1\" " +
 	    		"cx=\"" + routers.get(rv).getX() + "\" " +
 	    		"cy=\"" + routers.get(rv).getY() + "\"/>\n");
+		//router text
+		out.write("<text " +
+			"x=\""+ routers.get(rv).getX() + "\" " +
+			"y=\""+ routers.get(rv).getY() + "\" " +
+			"fill=\"black\">"+rv.getName()+"</text>\n");
+		
 	    }
 	}
 	
-	//TODO nasetovat popisky
 	out.write("</svg>");
 	out.close();
     }

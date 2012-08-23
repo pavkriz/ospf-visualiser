@@ -108,14 +108,8 @@ public class OspfLink {
 	String vzor = "%5$10s %1$-20s %2$-20s %5$10s %3$s: %4$d\n";
 	String text = "";
 	for (OspfLinkData old : routersOfLink) {
-	    text += String.format(
-		    vzor,  
-		    old.getRouter().getRouterID(), 
-		    "("+old.getInterfaceIp()+")",
-		    rb.getString("ol.0"), 
-		    old.getCost(),
-		    ""
-		 );
+	    text += String.format(vzor, old.getRouter().getRouterID(), "(" + old.getInterfaceIp() + ")",
+		    rb.getString("ol.0"), old.getCost(), "");
 	}
 	return text;
     }

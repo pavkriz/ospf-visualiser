@@ -8,8 +8,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.InetAddress;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +25,10 @@ import org.hkfree.ospf.model.linkfault.LinkFaultModel;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
 import org.hkfree.ospf.setting.AppSettings;
+import org.hkfree.ospf.tools.rdns.FastReverseDNS;
+import org.hkfree.ospf.tools.rdns.IPEnumeration;
+import org.hkfree.ospf.tools.rdns.ReverseDNS;
 import org.hkfree.ospf.tools.telnet.TelnetClient;
-
-import ca.swank.fastreversedns.ReverseDNS;
 
 /**
  * Třída sloužící k poskytnutí vstupů na základě nastavení pro parsování vstupních dat
@@ -34,7 +37,7 @@ import ca.swank.fastreversedns.ReverseDNS;
  */
 public class OspfDataLoadInitiator {
 
-    private AppSettings dataLoadSettings;
+    private AppSettings settings;
 
 
     /**
@@ -42,7 +45,7 @@ public class OspfDataLoadInitiator {
      * @param settings
      */
     public OspfDataLoadInitiator(AppSettings settings) {
-	this.dataLoadSettings = settings;
+	this.settings = settings;
     }
 
 
@@ -53,7 +56,7 @@ public class OspfDataLoadInitiator {
      * @throws Exception
      */
     public void loadData(OspfModel ospfModel, String sourcePath) throws Exception {
-	switch (dataLoadSettings.getDataSourceType()) {
+	switch (settings.getDataSourceType()) {
 	    case Constants.LOCAL:
 		loadDataFromLocalFiles(ospfModel, sourcePath);
 		break;
@@ -75,7 +78,7 @@ public class OspfDataLoadInitiator {
      * @throws Exception
      */
     private void loadDataFromLocalFiles(OspfModel model, String sourcePath) throws Exception {
-	switch (dataLoadSettings.getDataType()) {
+	switch (settings.getDataType()) {
 	    case Constants.FOLDER:
 		if (!sourcePath.substring(sourcePath.length()).equals("/")
 			&& !sourcePath.substring(sourcePath.length()).equals("\\")) {
@@ -113,7 +116,7 @@ public class OspfDataLoadInitiator {
      * @throws Exception
      */
     private void loadDataFromRemoteServerFiles(OspfModel model, String sourcePath) throws Exception {
-	if (dataLoadSettings.getDataType() == Constants.ZIP) {
+	if (settings.getDataType() == Constants.ZIP) {
 	    model.setModelName(sourcePath.substring(sourcePath.lastIndexOf("/") + 1));
 	    URL adresa = null;
 	    ZipInputStream zipInStream = null;
@@ -153,7 +156,7 @@ public class OspfDataLoadInitiator {
 	    inBfrdRdr = new BufferedReader(isr);
 	    ZipEntry entry;
 	    while ((entry = zipInputStream.getNextEntry()) != null) {
-		if (entry.getName().equals(dataLoadSettings.fileNameTopology)) {
+		if (entry.getName().equals(settings.fileNameTopology)) {
 		    dataLoader.loadTopology(model, inBfrdRdr);
 		}
 	    }
@@ -181,10 +184,10 @@ public class OspfDataLoadInitiator {
 	    inBfrdRdr = new BufferedReader(isr);
 	    ZipEntry entry;
 	    while ((entry = zipInputStream.getNextEntry()) != null) {
-		if (!entry.getName().equals(dataLoadSettings.fileNameTopology)) {
-		    if (entry.getName().equals(dataLoadSettings.fileNameRouterNames)) {
+		if (!entry.getName().equals(settings.fileNameTopology)) {
+		    if (entry.getName().equals(settings.fileNameRouterNames)) {
 			dataLoader.loadRouterNames(model, inBfrdRdr);
-		    } else if (entry.getName().equals(dataLoadSettings.fileNameGeoPositions)) {
+		    } else if (entry.getName().equals(settings.fileNameGeoPositions)) {
 			dataLoader.loadRouterGeoPositions(model, inBfrdRdr);
 		    } else {
 			dataLoader.loadCosts(model, entry.getName(), inBfrdRdr);
@@ -212,7 +215,7 @@ public class OspfDataLoadInitiator {
 	model.setModelName(formatter.format(date) + "_single");
 	System.currentTimeMillis();
 	try {
-	    frdr = new FileReader(new File(sourcePath + dataLoadSettings.fileNameTopology));
+	    frdr = new FileReader(new File(sourcePath + settings.fileNameTopology));
 	    inBfrdRdr = new BufferedReader(frdr);
 	    dataLoader.loadTopology(model, inBfrdRdr);
 	} finally {
@@ -248,7 +251,7 @@ public class OspfDataLoadInitiator {
 	    }
 	}
 	try {
-	    frdr = new FileReader(new File(sourcePath + dataLoadSettings.fileNameRouterNames));
+	    frdr = new FileReader(new File(sourcePath + settings.fileNameRouterNames));
 	    inBfrdRdr = new BufferedReader(frdr);
 	    dataLoader.loadRouterNames(model, inBfrdRdr);
 	} finally {
@@ -258,7 +261,7 @@ public class OspfDataLoadInitiator {
 		frdr.close();
 	}
 	try {
-	    frdr = new FileReader(new File(sourcePath + dataLoadSettings.fileNameGeoPositions));
+	    frdr = new FileReader(new File(sourcePath + settings.fileNameGeoPositions));
 	    inBfrdRdr = new BufferedReader(frdr);
 	    dataLoader.loadRouterGeoPositions(model, inBfrdRdr);
 	} finally {
@@ -277,7 +280,7 @@ public class OspfDataLoadInitiator {
      * @throws Exception
      */
     public void loadLogsFromRemoteServerFiles(LinkFaultModel model, String sourcePath) throws Exception {
-	if (dataLoadSettings.getDataType() == Constants.ZIP) {
+	if (settings.getDataType() == Constants.ZIP) {
 	    URL adresa = null;
 	    GZIPInputStream gzipInStream = null;
 	    try {
@@ -324,17 +327,12 @@ public class OspfDataLoadInitiator {
      * @throws Exception
      */
     private void loadDataViaTelnet(OspfModel ospfModel, String sourcePath) throws Exception {
-	TelnetClient tc = new TelnetClient(dataLoadSettings.telnetUrl, dataLoadSettings.telnetPort,
-		dataLoadSettings.telnetPassword, dataLoadSettings.telnetTimeout);
+	TelnetClient tc = new TelnetClient(settings.telnetUrl, settings.telnetPort,
+		settings.telnetPassword, settings.telnetTimeout);
+	
 	tc.initConnection();
-	
-	// načtení topologie
 	loadTopologyDataFromTelnet(ospfModel, tc);
-	
-	// načtení netopologických dat
 	loadNonTopologyDataFromTelnet(ospfModel, tc);
-	
-	// odpojit
 	tc.close();
 	
 	// nazev noveho tabbu
@@ -352,7 +350,12 @@ public class OspfDataLoadInitiator {
      * @throws InterruptedException
      */
     private void loadTopologyDataFromTelnet(OspfModel ospfModel, TelnetClient tc) throws IOException, InterruptedException {
-	StringBuilder data = tc.getTopologyData();
+	StringBuilder data = null;
+	if (settings.isIPv4()) {
+	    data = tc.getTopologyData();
+	} else {
+	    data = tc.getTopologyDataIPv6();
+	}
 	OspfLoader dataLoader = new OspfLoader();
 	dataLoader.loadTopology(ospfModel, new BufferedReader(new StringReader(data.toString())));
     }
@@ -367,20 +370,45 @@ public class OspfDataLoadInitiator {
      */
     private void loadNonTopologyDataFromTelnet(OspfModel ospfModel, TelnetClient tc) throws IOException,
 	    InterruptedException {
-	String nazev = null; // nazev routeru
-	Router r = null;
-	List<StringBuilder> nonTopData = tc.getNonTopologyData(ospfModel.getRouters());
-	ReverseDNS rdns = new ReverseDNS(dataLoadSettings.rdnsServer);
+	List<StringBuilder> nonTopData = null;
+	if (settings.isIPv4()) {
+	    nonTopData = tc.getNonTopologyData(ospfModel.getRouters());
+	} else {
+	    nonTopData = tc.getNonTopologyDataIPv6(ospfModel.getRouters());
+	}
+	List<String> ips = new ArrayList<String>();
 	OspfLoader dataLoader = new OspfLoader();
 	for (int i = 0; i < ospfModel.getRouters().size(); i++) {
-	    r = ospfModel.getRouters().get(i);
-	  
+	    Router r = ospfModel.getRouters().get(i);
 	    // cena
-	    dataLoader.loadCosts(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i).toString())));
-	
-	    // nazev
-	    nazev = rdns.doReverseLookup(r.getRouterID());
-	    r.setRouterName(nazev == null ? "" : nazev);
+	    dataLoader.loadCosts(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
+		    .toString())));
+	    // pridani IP routeru do seznamu pro dohledani nazvu
+	    ips.add(r.getRouterID());
+	}
+
+	// nazev
+	if (settings.rdnsServer != null && !settings.rdnsServer.isEmpty()) {
+	    //pouziti zadaneho DNS serveru pro preklad ip na nazev
+	    ReverseDNS rdns = new ReverseDNS(settings.rdnsServer);
+	    IPEnumeration ipe = new IPEnumeration(ips);
+	    Map<String, String> names = new HashMap<String, String>();
+	    Thread threads[] = new Thread[60];
+	    for (int i = 0; i < FastReverseDNS.DEFAULT_NUM_THREADS; i++) {
+		threads[i] = new Thread(new FastReverseDNS(rdns, ipe, names));
+		threads[i].start();
+	    }
+	    for (int i = 0; i < FastReverseDNS.DEFAULT_NUM_THREADS; i++) {
+		threads[i].join();
+	    }
+	    for (Router r : ospfModel.getRouters()) {
+		r.setRouterName(names.get(r.getRouterID()));
+	    }
+	} else {
+	    //pouziti defaultniho DNS serveru pro preklad ip na nazev
+	    for (Router r : ospfModel.getRouters()) {
+		r.setRouterName(InetAddress.getByName(r.getRouterID()).getHostName());
+	    }
 	}
     }
 
@@ -392,11 +420,10 @@ public class OspfDataLoadInitiator {
     private void findAndSetSuffix(OspfModel ospfModel) {
 	// nalezeni suffixu
 	String suffix = findSuffix(ospfModel);
-	
 	// odebrani suffixu z nazvu routeru a nastaveni atributu pro suffix
 	List<Router> routers = ospfModel.getRouters();
 	for (Router r : routers) {
-	    if (r.getRouterName().endsWith(suffix)) {
+	    if (r.getRouterName() != null && r.getRouterName().endsWith(suffix)) {
 		r.setRouterName(r.getRouterName().replace(suffix, ""));
 		r.setNameSuffix(suffix);
 	    }
@@ -414,7 +441,6 @@ public class OspfDataLoadInitiator {
 	Map<String, Integer> map = new HashMap<String, Integer>();
 	String s;
 	int i;
-	
 	// spocitani vyskytu vsech suffixu
 	for (Router r : routers) {
 	    i = 0;
@@ -429,9 +455,8 @@ public class OspfDataLoadInitiator {
 		}
 	    } while ((i = r.getRouterName().indexOf('.', i + 1)) > 0);
 	}
-	
 	// nalezeni nejcastejsiho suffixu
-	String suffix = null;
+	String suffix = "";
 	int count = 0;
 	for (String suf : map.keySet()) {
 	    if (map.get(suf).intValue() > count) {

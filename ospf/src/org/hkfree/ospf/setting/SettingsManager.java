@@ -95,6 +95,8 @@ public class SettingsManager {
 	settings.modelZipRemotePathBetween = prop.getProperty("modelZipRemotePathBetween");
 	settings.modelTimeBetween = prop.getProperty("modelTimeBetween");
 	settings.countDaysBack = Integer.valueOf(prop.getProperty("countDaysBack"));
+	settings.ipv = prop.getProperty("ipv");
+	settings.fromDateToDateLoadTo = prop.getProperty("fromDateToDateLoadTo");
     }
 
 
@@ -127,6 +129,8 @@ public class SettingsManager {
 	prop.setProperty("modelZipRemotePathBetween", settings.modelZipRemotePathBetween);
 	prop.setProperty("modelTimeBetween", settings.modelTimeBetween);
 	prop.setProperty("countDaysBack", String.valueOf(settings.countDaysBack));
+	prop.setProperty("ipv", settings.ipv);
+	prop.setProperty("fromDateToDateLoadTo", settings.fromDateToDateLoadTo);
 	prop.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }
 }

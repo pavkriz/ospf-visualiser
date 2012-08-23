@@ -61,7 +61,7 @@ public class OspfWin extends JFrame {
      */
     public void createGUI() {
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	this.setSize(750, 600);
+	this.setSize(900, 600);
 	this.setLocationRelativeTo(null);
 	this.setTitle(rb.getString("ow.title"));
 	this.setIconImage(this.getToolkit().getImage(getClass().getResource(Constants.URL_IMG_GUI + "ico.gif")));

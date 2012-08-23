@@ -1,7 +1,7 @@
 package org.hkfree.ospf.model.ospf;
 
 /**
- * Třída představující účastnění routeru ve spoji a parametry této účasti
+ * Třída představující účastněný router ve spoji a parametry této účasti
  * @author Jakub Menzel
  */
 public class OspfLinkData {

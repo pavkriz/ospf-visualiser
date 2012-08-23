@@ -12,6 +12,7 @@ import org.hkfree.ospf.model.linkfault.LinkFaultModel;
 import org.hkfree.ospf.model.ospf.OspfLink;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
+import org.hkfree.ospf.model.ospf.StubLink;
 import org.hkfree.ospf.tools.geo.GeoCoordinatesTransformator;
 
 /**
@@ -81,6 +82,8 @@ public class OspfLoader {
 	String radek;
 	Pattern costPattern = Pattern.compile("^.*:\\s([0-9]{1,})");
 	Matcher costMatcher = null;
+	Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+	Matcher ipMatcher = null;
 	int cena;
 	List<OspfLink> act_spoje = new ArrayList<OspfLink>();
 	router = model.getRouterByIp(routerIP);
@@ -95,8 +98,6 @@ public class OspfLoader {
 		for (OspfLink s : act_spoje) {
 		    if (radek.contains("Link ID") && radek.endsWith(s.getLinkID())) {
 			String interfaceIp = "";
-			Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
-			Matcher ipMatcher = null;
 			while (!(radek = infoUzlu.readLine()).contains("Interface")) {}
 			ipMatcher = ipPattern.matcher(radek);
 			ipMatcher.find();
@@ -106,6 +107,22 @@ public class OspfLoader {
 			costMatcher.find();
 			cena = Integer.valueOf(costMatcher.group(1));
 			model.updateCost(s.getLinkID(), router, interfaceIp, cena);
+		    } else if (radek.contains("Stub Network")) {
+			// nacitani stub spoje
+			StubLink stub = new StubLink();
+			while (!(radek = infoUzlu.readLine()).contains("(Link ID) Net")) {}
+			ipMatcher = ipPattern.matcher(radek);
+			ipMatcher.find();
+			stub.setLinkID(ipMatcher.group(0));
+			while (!(radek = infoUzlu.readLine()).contains("(Link Data) Network Mask")) {}
+			ipMatcher = ipPattern.matcher(radek);
+			ipMatcher.find();
+			stub.setMask(ipMatcher.group(0));
+			while (!(radek = infoUzlu.readLine()).contains("TOS 0 Metric")) {}
+			costMatcher = costPattern.matcher(radek);
+			costMatcher.find();
+			stub.setCost(Integer.valueOf(costMatcher.group(1)));
+			router.getStubs().add(stub);
 		    }
 		}
 	    }

@@ -1,5 +1,8 @@
 package org.hkfree.ospf.model.ospf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hkfree.ospf.tools.geo.GPSPoint;
 
 /**
@@ -13,6 +16,7 @@ public class Router {
     private String routerName = "";
     private String nameSuffix = "";
     private GPSPoint gpsPosition = null;
+    private List<StubLink> stubs = new ArrayList<StubLink>();
 
 
     /**
@@ -20,6 +24,16 @@ public class Router {
      */
     public Router(String routerID) {
 	this.routerID = routerID;
+    }
+
+
+    public List<StubLink> getStubs() {
+	return stubs;
+    }
+
+
+    public void setStubs(List<StubLink> stubs) {
+	this.stubs = stubs;
     }
 
 
@@ -67,7 +81,9 @@ public class Router {
      * Metoda, která nastaví uzlu nějaký název (jméno routeru)
      */
     public void setRouterName(String routerName) {
-	this.routerName = routerName;
+	if (routerName != null) {
+	    this.routerName = routerName;
+	}
     }
 
 
