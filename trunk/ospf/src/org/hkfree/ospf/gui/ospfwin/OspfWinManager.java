@@ -195,6 +195,7 @@ public class OspfWinManager {
      * Načte vstupní data dle nastavení
      */
     private void loadData() {
+	//metodu upravit tak aby mohla pridavat modely do zalozek nebo otevirat v netstatewindow
 	OspfDataLoadInitiator loadInitiator = new OspfDataLoadInitiator(settings);
 	for (String sourcePath : settings.getFilePaths()) {
 	    ospfModely.add(new OspfModel());

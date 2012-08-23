@@ -38,6 +38,8 @@ public class AppSettings {
     public String fileNameGeoPositions;// =geo
     public String modelTimeBetween;// =20-00
     public int countDaysBack; //=7
+    public String ipv;//=IPV4
+    public String fromDateToDateLoadTo; //=MAP_PANEL
    
 
 
@@ -116,6 +118,14 @@ public class AppSettings {
      */
     public void addFilePath(String path) {
 	filePaths.add(path);
+    }
+
+
+    /**
+     * Vrací příznak zda je nastaven protokol IPv4 nebo IPv6
+     */
+    public boolean isIPv4() {
+	return this.ipv.equalsIgnoreCase("IPV4");
     }
 
 }

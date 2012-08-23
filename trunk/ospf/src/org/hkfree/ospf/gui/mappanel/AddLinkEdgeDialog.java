@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -15,7 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
-import javax.swing.GroupLayout.Alignment;
 
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.RouterVertex;

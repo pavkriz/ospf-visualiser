@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -22,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -29,7 +31,6 @@ import javax.swing.JTree;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -47,6 +48,12 @@ import org.hkfree.ospf.tools.Factory;
 public class ModelSourceDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
+    
+    private static String MAP_PANEL = "MAP_PANEL";
+    private static String NET_STATE_WINDOW = "NET_STATE_WINDOW";
+    private static String IPV4 = "IPV4";
+    private static String IPV6 = "IPV6";
+    
     private ResourceBundle rb = Factory.getRb();
     private JFrame owner = null;
     private JTree remoteSourceTree = null;
@@ -77,6 +84,8 @@ public class ModelSourceDialog extends JDialog {
     private JTextField tfTelnetPassword = new JTextField();
     private JTextField tfTelnetRDNSServer = new JTextField();
     private JTextField tfTelnetTimeout = new JTextField();
+    private ButtonGroup groupWhereAdd = new ButtonGroup();
+    private ButtonGroup groupIP = new ButtonGroup();
     private boolean loadDialogConfirmed = false;
     private int countDays = 0;
     private AppSettings settings = null;
@@ -258,20 +267,30 @@ public class ModelSourceDialog extends JDialog {
 		model.removeAllElements();
 	    }
 	});
+	JRadioButton rbMapPanel = new JRadioButton(rb.getString("ssd.24"));
+	rbMapPanel.setActionCommand(MAP_PANEL);
+	rbMapPanel.setSelected(settings.fromDateToDateLoadTo.equals(MAP_PANEL));
+	JRadioButton rbNetStateWindow = new JRadioButton(rb.getString("ssd.25"));
+	rbNetStateWindow.setActionCommand(NET_STATE_WINDOW);
+	rbNetStateWindow.setSelected(settings.fromDateToDateLoadTo.equals(NET_STATE_WINDOW));
 	GroupLayout l = new GroupLayout(remoteDateToDatePanel);
 	remoteDateToDatePanel.setLayout(l);
+	groupWhereAdd.add(rbMapPanel);
+	groupWhereAdd.add(rbNetStateWindow);
 	l.setAutoCreateContainerGaps(true);
 	l.setAutoCreateGaps(true);
 	l.setHorizontalGroup(l.createSequentialGroup()
 		.addGroup(l.createParallelGroup()
 			.addComponent(lPath)
 			.addComponent(tfZIPRemoteAddressFieldPath,  320, 320, 320)
-				.addComponent(lDFrom)
-				.addComponent(tfDateFrom, 100, 100, 100)
-				.addComponent(lDTo)
-				.addComponent(tfDateTo, 100, 100, 100)
-				.addComponent(lTime)
-				.addComponent(tfTime, 100, 100, 100)
+			.addComponent(lDFrom)
+			.addComponent(tfDateFrom, 100, 100, 100)
+			.addComponent(lDTo)
+			.addComponent(tfDateTo, 100, 100, 100)
+			.addComponent(lTime)
+			.addComponent(tfTime, 100, 100, 100)
+			.addComponent(rbMapPanel)
+			.addComponent(rbNetStateWindow)
 			.addGroup(l.createSequentialGroup()
 				.addComponent(btnAdd, 100, 100, 100)
 				.addComponent(btnRemove, 100, 100, 100))
@@ -286,12 +305,14 @@ public class ModelSourceDialog extends JDialog {
 		.addGroup(l.createSequentialGroup()
 			.addComponent(lPath)
 			.addComponent(tfZIPRemoteAddressFieldPath, 25,25,25)
-				.addComponent(lDFrom)
-				.addComponent(tfDateFrom, 25, 25, 25)
-				.addComponent(lDTo)
-				.addComponent(tfDateTo, 25, 25, 25)
-				.addComponent(lTime)
-				.addComponent(tfTime, 25, 25, 25)
+			.addComponent(lDFrom)
+			.addComponent(tfDateFrom, 25, 25, 25)
+			.addComponent(lDTo)
+			.addComponent(tfDateTo, 25, 25, 25)
+			.addComponent(lTime)
+			.addComponent(tfTime, 25, 25, 25)
+			.addComponent(rbMapPanel)
+			.addComponent(rbNetStateWindow)
 			.addGap(30)
 			.addGroup(l.createParallelGroup()
 				.addComponent(btnAdd)
@@ -315,24 +336,40 @@ public class ModelSourceDialog extends JDialog {
 	tfTelnetPassword.setMaximumSize(new Dimension(350,25));
 	tfTelnetTimeout.setMaximumSize(new Dimension(100,25));
 	tfTelnetRDNSServer.setMaximumSize(new Dimension(350,25));
+	JRadioButton rbIPv4 = new JRadioButton();
+	JRadioButton rbIPv6 = new JRadioButton();
+	rbIPv4.setActionCommand(IPV4);
+	rbIPv6.setActionCommand(IPV6);
+	rbIPv4.setText(rb.getString("ssd.22"));
+	rbIPv6.setText(rb.getString("ssd.23"));
+	rbIPv4.setSelected(settings.ipv.equals(IPV4));
+	rbIPv6.setSelected(settings.ipv.equals(IPV6));
+	groupIP.add(rbIPv4);
+	groupIP.add(rbIPv6);
+
 	GroupLayout l3 = new GroupLayout(telnetSourcePanel);
 	telnetSourcePanel.setLayout(l3);
 	l3.setAutoCreateContainerGaps(true);
 	l3.setAutoCreateGaps(true);
 	l3.setHorizontalGroup(l3.createSequentialGroup()
 		.addGroup(l3.createParallelGroup(Alignment.TRAILING)
+			.addComponent(rbIPv4)
 			.addComponent(lTelnetUrl)
 			.addComponent(lTelnetPort)
 			.addComponent(lTelnetPassword)
 			.addComponent(lTelnetTimeout)
 			.addComponent(lTelnetRDNS))
 		.addGroup(l3.createParallelGroup()
+			.addComponent(rbIPv6)
 			.addComponent(tfTelnetUrl)
 			.addComponent(tfTelnetPort)
 			.addComponent(tfTelnetPassword)
 			.addComponent(tfTelnetTimeout)
 			.addComponent(tfTelnetRDNSServer)));
 	l3.setVerticalGroup(l3.createSequentialGroup()
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(rbIPv4)
+			.addComponent(rbIPv6))
 		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
 			.addComponent(lTelnetUrl)
 			.addComponent(tfTelnetUrl))
@@ -648,6 +685,7 @@ public class ModelSourceDialog extends JDialog {
 	settings.clearFilePaths();
 	settings.addFilePath("ospf_data_network");
 	settings.telnetUrl = tfTelnetUrl.getText();
+	settings.ipv = groupIP.getSelection().getActionCommand();
 	try {
 	    settings.telnetPort = Integer.valueOf(tfTelnetPort.getText());
 	    settings.telnetTimeout = Integer.valueOf(tfTelnetTimeout.getText());
@@ -673,6 +711,7 @@ public class ModelSourceDialog extends JDialog {
 	settings.countDaysBack = countDays;
 	settings.modelZipRemotePathBetween = tfZIPRemoteAddressFieldPath.getText();
 	settings.modelTimeBetween = tfTime.getText();
+	settings.fromDateToDateLoadTo = groupWhereAdd.getSelection().getActionCommand();
 	settings.setDataSourceType(Constants.REMOTE_SERVER);
 	settings.setDataType(Constants.ZIP);
 	loadDialogConfirmed = true;

@@ -12,7 +12,7 @@ import java.util.List;
 import org.hkfree.ospf.model.ospf.Router;
 
 /**
- * Třída představující telnet klienta pro připojení na routeru a práci s ním.
+ * Třída představující telnet klienta pro připojení na router a práci s ním.
  * @author Jan Schovánek
  */
 public class TelnetClient {
@@ -68,18 +68,16 @@ public class TelnetClient {
 	}
 	setSb(new StringBuilder());
 	SocketAddress sockAddr = new InetSocketAddress(host, port);
-	
 	_socket = new Socket();
 	_socket.connect(sockAddr, timeout);
 	_os = _socket.getOutputStream();
 	_is = _socket.getInputStream();
 	readThread = new ReadThread();
-	send("");//odeslu enter, kvuli srovnani prijatych/odeslanych dat
+	send("");// odeslu enter, kvuli srovnani prijatych/odeslanych dat
 	if (password != null) {
 	    send(this.password);
 	}
 	send("terminal length 0");
-	
 	// podruhe jiz prijata data nesmi koncit zadosti o heslo
 	if (getSb().toString().endsWith("Password: ")) {
 	    throw new Exception("Telnet connection error.");
@@ -102,7 +100,7 @@ public class TelnetClient {
 
 
     /**
-     * Vrací tologickou mapu routerů
+     * Vrací tologickou mapu routerů pro IPv4
      * @return
      * @throws IOException
      * @throws InterruptedException
@@ -126,6 +124,39 @@ public class TelnetClient {
 	String prikaz = null;
 	for (Router r : routers) {
 	    prikaz = "sh ip os da ro " + r.getRouterID();
+	    setSb(new StringBuilder());
+	    send(prikaz);
+	    result.add(getSb());
+	}
+	return result;
+    }
+
+
+    /**
+     * Vrací tologickou mapu routerů pro IPv6
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public StringBuilder getTopologyDataIPv6() {
+	setSb(new StringBuilder());
+	send("show ipv6 ospf6 database network detail");
+	return getSb();
+    }
+
+
+    /**
+     * Vrací data o jednotlivých routerech pro IPv6
+     * @param nonTopData
+     * @param ospfModel
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    public List<StringBuilder> getNonTopologyDataIPv6(List<Router> routers) {
+	List<StringBuilder> result = new ArrayList<StringBuilder>();
+	String prikaz = null;
+	for (Router r : routers) {
+	    prikaz = "show ipv6 ospf6 database router adv-router " + r.getRouterID() + " detail";
 	    setSb(new StringBuilder());
 	    send(prikaz);
 	    result.add(getSb());
@@ -210,7 +241,7 @@ public class TelnetClient {
 	    while (true) {
 		try {
 		    receiveLength = _is.read(buff);
-		    if (receiveLength != -1){
+		    if (receiveLength != -1) {
 			if (getSb() != null) {
 			    getSb().append(new String(buff, 0, receiveLength));
 			}
@@ -221,17 +252,17 @@ public class TelnetClient {
 		if (getSb() == null 
 			|| getSb().toString().endsWith("> ") 
 			|| receiveLength == -1
-			|| getSb().toString().endsWith("Password: ")
-			) {
+			|| getSb().toString().endsWith("Password: ")) {
 		    break;
 		}
 	    }// while(true)
-	   
 	    try {
 		ctu = false;
 		Thread.sleep(5);
 		notify();
-	    } catch (InterruptedException e) { e.printStackTrace(); }
+	    } catch (InterruptedException e) {
+		e.printStackTrace();
+	    }
 	}// run
     }// ReadThread
 }// TelnetClient

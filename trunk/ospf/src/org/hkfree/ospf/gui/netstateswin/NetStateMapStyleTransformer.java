@@ -8,13 +8,13 @@ import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-//import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 
 import edu.uci.ics.jung.visualization.RenderContext;
+//import org.apache.commons.collections15.Predicate;
 
 /**
  * Třída představující objekt transformeru, který určuje podobu vrcholů a hran grafu
