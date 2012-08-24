@@ -1,3 +1,6 @@
+*24.8.2012*
+  * nacitani od-do - nacitani do tabu nebo net state okne
+
 *23.8.2012*
   * pouziti defaultniho DNS serveru pokud neni zadan jiny
   * telnet IPv6
