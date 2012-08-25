@@ -1,3 +1,6 @@
+*25.8.2012*
+  * opraveny popisky pro zobrazeni nejkratsi cesty (jsou dve varianty)
+
 *24.8.2012*
   * nacitani od-do - nacitani do tabu nebo net state okne
 
