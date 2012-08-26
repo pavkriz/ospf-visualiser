@@ -1,3 +1,6 @@
+*26.8.2012*
+  * log okno pro prave probihajici operace
+
 *25.8.2012*
   * opraveny popisky pro zobrazeni nejkratsi cesty (jsou dve varianty)
   * dialog pro informace o prave provadene operaci
