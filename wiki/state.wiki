@@ -1,6 +1,7 @@
 *26.8.2012*
   * log okno pro prave probihajici operace
   * opraveno nastaveni modu zobrazovani sousedu
+  * zobrazeni info v property okne po kliku na router v seznamu
 
 *25.8.2012*
   * opraveny popisky pro zobrazeni nejkratsi cesty (jsou dve varianty)
