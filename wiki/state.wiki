@@ -1,5 +1,6 @@
 *26.8.2012*
   * log okno pro prave probihajici operace
+  * opraveno nastaveni modu zobrazovani sousedu
 
 *25.8.2012*
   * opraveny popisky pro zobrazeni nejkratsi cesty (jsou dve varianty)
