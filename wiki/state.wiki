@@ -1,3 +1,6 @@
+*27.8.2012*
+  * tipy aplikace
+
 *26.8.2012*
   * log okno pro prave probihajici operace
   * opraveno nastaveni modu zobrazovani sousedu
