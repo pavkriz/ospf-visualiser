@@ -1,5 +1,9 @@
+*28.8.2012*
+  * hlavni okno upraveno do noveho vzhledu
+
 *27.8.2012*
   * tipy aplikace
+  * preklad tipu aplikace
 
 *26.8.2012*
   * log okno pro prave probihajici operace
