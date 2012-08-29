@@ -73,7 +73,6 @@ public class OspfLoader {
 
     /**
      * Metoda, která načte ze zadaného umístění ceny spojů načtené topologie
-     * TODO načíst stuby
      * @throws IOException
      */
     public void loadCosts(OspfModel model, String routerIP, BufferedReader input) throws IOException {

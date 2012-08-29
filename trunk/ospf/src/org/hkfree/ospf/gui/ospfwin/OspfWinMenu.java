@@ -91,7 +91,7 @@ public class OspfWinMenu extends JMenuBar {
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLockAll()));
 	
 	// nabídka nápověda
-	//mNap.add(new JMenuItem(((NovyOspfWinActionListener) actionListener).getActionTips()));
+	mHelp.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionTips()));
 	mHelp.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionAbout()));
 	
 	this.add(mProgram);

@@ -16,54 +16,54 @@ import org.hkfree.ospf.model.ospf.OspfModel;
  */
 public class OspfDataPanel extends JPanel {
 
-    private static final long serialVersionUID = 1L;
-    private JTextArea ospfDataText = new JTextArea();
-    private OspfModel ospfModel = null;
+	private static final long serialVersionUID = 1L;
+	private JTextArea ospfDataText = new JTextArea();
+	private OspfModel ospfModel = null;
 
 
-    /**
-     * Konstruktor
-     */
-    public OspfDataPanel() {
-	makeComponents();
-    }
+	/**
+	 * Konstruktor
+	 */
+	public OspfDataPanel() {
+		makeComponents();
+	}
 
 
-    /**
-     * Konstruktor
-     * @param model
-     */
-    public OspfDataPanel(OspfModel model) {
-	this.ospfModel = model;
-	makeComponents();
-    }
+	/**
+	 * Konstruktor
+	 * @param model
+	 */
+	public OspfDataPanel(OspfModel model) {
+		this.ospfModel = model;
+		makeComponents();
+	}
 
 
-    /**
-     * Vytvoří komponenty GUI
-     */
-    public void makeComponents() {
-	Font font = new Font("Monospaced", Font.PLAIN, 12);
-	ospfDataText.setFont(font);
-	ospfDataText.setEditable(false);
-	this.setLayout(new BorderLayout());
-	this.add(new JScrollPane(ospfDataText));
-    }
+	/**
+	 * Vytvoří komponenty GUI
+	 */
+	public void makeComponents() {
+		Font font = new Font("Monospaced", Font.PLAIN, 12);
+		ospfDataText.setFont(font);
+		ospfDataText.setEditable(false);
+		this.setLayout(new BorderLayout());
+		this.add(new JScrollPane(ospfDataText));
+	}
 
 
-    /**
-     * Nastaví OspfModel
-     * @param model
-     */
-    public void setOspfModel(OspfModel model) {
-	this.ospfModel = model;
-    }
+	/**
+	 * Nastaví OspfModel
+	 * @param model
+	 */
+	public void setOspfModel(OspfModel model) {
+		this.ospfModel = model;
+	}
 
 
-    /**
-     * Vyplní text o modelu
-     */
-    public void fillOspfDataText() {
-	this.ospfDataText.setText(this.ospfModel.modelToString());
-    }
+	/**
+	 * Vyplní text o modelu
+	 */
+	public void fillOspfDataText() {
+		this.ospfDataText.setText(this.ospfModel.modelToString());
+	}
 }

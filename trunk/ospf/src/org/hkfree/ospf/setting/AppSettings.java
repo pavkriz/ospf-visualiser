@@ -12,6 +12,11 @@ import org.hkfree.ospf.model.Constants.LANGUAGE;
  * @author Jan Schovánek
  */
 public class AppSettings {
+    
+    public static String MAP_PANEL = "MAP_PANEL";
+    public static String NET_STATE_WINDOW = "NET_STATE_WINDOW";
+    public static String IPV4 = "IPV4";
+    public static String IPV6 = "IPV6";
 
     private List<String> filePaths = new ArrayList<String>();
     private int dataSourceType = Constants.LOCAL;
@@ -40,6 +45,7 @@ public class AppSettings {
     public int countDaysBack; //=7
     public String ipv;//=IPV4
     public String fromDateToDateLoadTo; //=MAP_PANEL
+	public boolean closeLogDialog;	//=true
    
 
 
