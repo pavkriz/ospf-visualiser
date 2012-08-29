@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 
@@ -27,8 +28,9 @@ public class SettingsDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     private ResourceBundle rb = Factory.getRb();
     private OspfWinManager manager = null;
-    private AppSettings appSettings = null;
+    private AppSettings settings = null;
     private JComboBox cbLangs = null;
+    private JCheckBox chbCloseLogDialog = null;
     private JButton btnSave = new JButton();
     private JButton btnStorno = new JButton();
     private ImageIcon[] images;
@@ -43,7 +45,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
      */
     public SettingsDialog(Frame okno, OspfWinManager ospfWinManager, AppSettings appSettings) {
 	super(okno);
-	this.appSettings = appSettings;
+	this.settings = appSettings;
 	this.manager = ospfWinManager;
 	createGUI(okno);
 	this.setTitle(rb.getString("sd.title"));
@@ -72,8 +74,10 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	    images[i] = createImageIcon(Constants.URL_IMG_GUI + "lng_" + LANGUAGE.values()[i] + ".png");
 	}
 	cbLangs = new JComboBox(images);
-	cbLangs.setSelectedIndex(appSettings.lng.ordinal());
+	cbLangs.setSelectedIndex(settings.lng.ordinal());
 	cbLangs.addActionListener(this);
+	chbCloseLogDialog = new JCheckBox(rb.getString("sd.closeLogDialog"));
+	chbCloseLogDialog.setSelected(settings.closeLogDialog);
 	btnSave.setText(rb.getString("save"));
 	btnSave.addActionListener(this);
 	btnStorno.setText(rb.getString("storno"));
@@ -81,11 +85,13 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	layout.setHorizontalGroup(layout.createSequentialGroup()
 		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 			.addComponent(cbLangs)
+			.addComponent(chbCloseLogDialog)
 			.addGroup(layout.createSequentialGroup()
 				.addComponent(btnSave, 100, 100, 100)
 				.addComponent(btnStorno, 100, 100, 100))));
 	layout.setVerticalGroup(layout.createSequentialGroup()
 		.addComponent(cbLangs)
+		.addComponent(chbCloseLogDialog)
 		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 			.addComponent(btnStorno)
 			.addComponent(btnSave)));
@@ -115,7 +121,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	if (e.getSource() == btnStorno)
 	    this.setVisible(false);
 	else if (e.getSource() == btnSave) {
-	    appSettings.lng = (LANGUAGE.values()[cbLangs.getSelectedIndex()]);
+	    settings.lng = (LANGUAGE.values()[cbLangs.getSelectedIndex()]);
+	    settings.closeLogDialog = chbCloseLogDialog.isSelected();
 	    manager.saveSettings();
 	    this.setVisible(false);
 	}
