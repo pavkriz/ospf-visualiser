@@ -1,3 +1,6 @@
+*2.9.2012*
+  * statusbar v netstate okne
+
 *29.8.2012*
   * oprava rozdilu darum od - do pro vyber dat
 
