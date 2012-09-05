@@ -1,5 +1,6 @@
 *5.9.2012*
   * net state okno - hover
+  * preklad tipu
 
 *2.9.2012*
   * statusbar v netstate okne
