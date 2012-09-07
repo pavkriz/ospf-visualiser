@@ -1,3 +1,6 @@
+*7.9.2012*
+  * upraven state dialog a pridan k ostatnimu nacitani dat
+
 *5.9.2012*
   * net state okno - hover
   * preklad tipu
