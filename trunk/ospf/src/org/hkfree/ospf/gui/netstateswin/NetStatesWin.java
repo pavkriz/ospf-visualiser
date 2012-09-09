@@ -5,27 +5,24 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.ToolTipManager;
-import javax.swing.border.BevelBorder;
 
 import org.hkfree.ospf.gui.costdifferencesdialog.CostDifferencesDialog;
 import org.hkfree.ospf.gui.linkfaultdialog.LinkFaultDialog;
+import org.hkfree.ospf.gui.ospfwin.StatusBar;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.netchange.CostDifference;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
@@ -46,9 +43,7 @@ public class NetStatesWin extends JFrame {
     private NetStatesWinActionListener netStatesWinActListener = null;
     private NetStatesWinManager netStatesWinManager = null;
     private NSWGraphComponent graphComponent = null;
-    private JLabel statusInfo1 = new JLabel();
-    private JLabel statusInfo2 = new JLabel();
-    private JPanel status2 = null;
+    private StatusBar statusBar = null;
     private JButton btnFirstState = null;
     private JButton btnPreviousState = null;
     private JButton btnNextState = null;
@@ -87,77 +82,43 @@ public class NetStatesWin extends JFrame {
 	// toolbar
 	NetStatesWinToolBar toolBar = new NetStatesWinToolBar(netStatesWinActListener);
 	c.add(toolBar, BorderLayout.NORTH);
-	// status panel - dole
-	JPanel statusPanel = new JPanel();
-	statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.LINE_AXIS));
-	statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
-	statusPanel.setAlignmentY(CENTER_ALIGNMENT);
-	statusPanel.setPreferredSize(new Dimension(this.getWidth(), 30));
-	JPanel statusH = new JPanel();
-	JLabel statusHeading = new JLabel(rb.getString("nsw.0") + ":");
-	statusHeading.setFont(new Font("Arial", 2, 11));
-	statusH.add(statusHeading);
-	JPanel status1 = new JPanel();
-	status1.add(statusInfo1);
-	statusInfo1.setText(rb.getString("nsw.1"));
-	status2 = new JPanel();
-	status2.add(statusInfo2);
-	statusInfo2.setText(rb.getString("nsw.2"));
-	status2.add(new JLabel(new ImageIcon(getClass().getResource(Constants.URL_IMG_GUI + "help.png"))));
-	status2.addMouseListener(new MouseAdapter() { // přeimplementování metod, aby se u
-	    					      // tohoto panelu zobrazoval tooltip nepřetržitě
-	    int initialD = -1, dismissD = -1;
-
-
-	    public void mouseEntered(MouseEvent arg0) {
-		ToolTipManager ttm = ToolTipManager.sharedInstance();
-		initialD = ttm.getInitialDelay();
-		dismissD = ttm.getDismissDelay();
-		ttm.setInitialDelay(1);
-		ttm.setDismissDelay(Integer.MAX_VALUE);
-	    }
-
-
-	    public void mouseExited(MouseEvent arg0) {
-		if (initialD < 0 || dismissD < 0)
-		    return;
-		ToolTipManager ttm = ToolTipManager.sharedInstance();
-		ttm.setInitialDelay(initialD);
-		ttm.setDismissDelay(dismissD);
-	    }
-	});
-	statusPanel.add(statusH);
-	statusPanel.add(status1);
-	statusPanel.add(status2);
-	
-	//postranni panel
+	// statusbar
+	statusBar = new StatusBar();
+	getManager().setStatusText(0, rb.getString("nswal.5"));
+	getManager().setStatusText(1, rb.getString("nswal.11"));
+	getManager().setStatusTextToolTip(1, rb.getString("nswal.11.toolTip"));
+	// postranni panel
 	JPanel sidePanel = new JPanel();
-	sidePanel.setPreferredSize(new Dimension(230,50));
+	sidePanel.setPreferredSize(new Dimension(230, 50));
 	sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
-	
-	//tlacitka pro posun vpred/vzad
-	JPanel l1 = new JPanel(new GridLayout(2,2));
-	l1.setBorder(BorderFactory.createTitledBorder(rb.getString("nsw.3")));
+	// tlacitka pro posun vpred/vzad
+	JPanel l1 = new JPanel(new GridBagLayout());
+	l1.setMaximumSize(new Dimension(220, 50));
 	btnFirstState = new JButton(netStatesWinActListener.getActionFirstState());
 	btnPreviousState = new JButton(netStatesWinActListener.getActionPreviousState());
 	btnNextState = new JButton(netStatesWinActListener.getActionNextState());
 	btnLastState = new JButton(netStatesWinActListener.getActionLastState());
-	l1.add(btnPreviousState);
-	l1.add(btnNextState);
-	l1.add(btnFirstState);
-	l1.add(btnLastState);
+	lblModelName.setFont(new Font("Arial", Font.BOLD, 15));
+	GridBagConstraints gbc = new GridBagConstraints();
+	gbc.fill = GridBagConstraints.BOTH;
+	gbc.weightx = 0.5;
+	gbc.gridwidth = 2;
+	l1.add(lblModelName, gbc);
+	gbc.gridwidth = 1;
+	gbc.gridx = 0;
+	gbc.gridy = 1;
+	l1.add(btnPreviousState, gbc);
+	gbc.gridx = 1;
+	gbc.gridy = 1;
+	l1.add(btnNextState, gbc);
+	gbc.gridx = 0;
+	gbc.gridy = 2;
+	l1.add(btnFirstState, gbc);
+	gbc.gridx = 1;
+	gbc.gridy = 2;
+	l1.add(btnLastState, gbc);
 	sidePanel.add(l1);
 	sidePanel.add(Box.createVerticalStrut(10));
-	
-	//informace
-	JPanel l2 = new JPanel();
-	l2.setBorder(BorderFactory.createTitledBorder(rb.getString("nsw.4")));
-	lblModelName = new JLabel("");
-	lblModelName.setFont(new Font("Arial", Font.BOLD, 14));
-	l2.add(lblModelName);
-	sidePanel.add(l2);
-	sidePanel.add(Box.createVerticalStrut(10));
-	
 	JPanel l3 = new JPanel();
 	l3.setLayout(new BorderLayout());
 	l3.setBorder(BorderFactory.createTitledBorder(rb.getString("nsw.5")));
@@ -187,7 +148,7 @@ public class NetStatesWin extends JFrame {
 	txtDeadRouters.setForeground(Color.RED);
 	sidePanel.add(l6);
 	c.add(sidePanel, BorderLayout.EAST);
-	c.add(statusPanel, BorderLayout.SOUTH);
+	c.add(statusBar, BorderLayout.SOUTH);
 	c.add(new GraphZoomScrollPane(graphComponent.getVisualizationComponent()), BorderLayout.CENTER);
 	this.setSize(800, 600);
 	this.setMinimumSize(new Dimension(800, 600));
@@ -270,37 +231,19 @@ public class NetStatesWin extends JFrame {
 
 
     /**
-     * Nastaví informace o pracovním módu1
-     * @param infoText
-     */
-    public void setStatusInfo1(String infoText) {
-	statusInfo1.setText(infoText);
-    }
-
-
-    /**
-     * Nastaví informace o pracovním módu2
-     * @param infoText
-     */
-    public void setStatusInfo2(String infoText) {
-	statusInfo2.setText(infoText);
-    }
-
-
-    /**
-     * Nastaví text status infa 2
-     * @param text
-     */
-    public void setStatusInfo2ToolTip(String text) {
-	statusInfo2.setToolTipText(text);
-    }
-
-
-    /**
      * Vrací manager okna
      * @return NetStatesWinManager
      */
     public NetStatesWinManager getManager() {
 	return netStatesWinManager;
+    }
+
+
+    /**
+     * Vrací status bar
+     * @return
+     */
+    protected StatusBar getStatusBar() {
+	return statusBar;
     }
 }

@@ -1,7 +1,5 @@
 package org.hkfree.ospf.gui.mappanel;
 
-import java.awt.Color;
-
 import javax.swing.JPanel;
 
 import org.hkfree.ospf.model.map.LinkEdge;
@@ -19,105 +17,104 @@ import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
  */
 public class MapPanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
-	private MapManager manager = null;
-	private MapGraphComponent graphComponent = null;
-	private PropertiesPanel prop = null;
-	private GraphZoomScrollPane graphPanel = null;
+    private static final long serialVersionUID = 1L;
+    private MapManager manager = null;
+    private MapGraphComponent graphComponent = null;
+    private PropertiesPanel prop = null;
+    private GraphZoomScrollPane graphPanel = null;
 
 
-	/**
-	 * Konstruktor
-	 */
-	public MapPanel() {
-		graphComponent = new MapGraphComponent(this);
-		manager = new MapManager(this);
-		manager.setGraphComponent(graphComponent);
+    /**
+     * Konstruktor
+     */
+    public MapPanel() {
+	graphComponent = new MapGraphComponent(this);
+	manager = new MapManager(this);
+	manager.setGraphComponent(graphComponent);
+    }
+
+
+    /**
+     * Konstruktor
+     */
+    public MapPanel(OspfModel ospfModel) {
+	this();
+	manager.setOspfModel(ospfModel);
+	createComponents();
+    }
+
+
+    /**
+     * Konstruktor
+     */
+    public MapPanel(MapModel mapModel) {
+	this();
+	manager.setMapModel(mapModel);
+	createComponents();
+    }
+
+
+    /**
+     * Vytvoří komponenty GUI
+     */
+    private void createComponents() {
+	prop = new PropertiesPanel(manager.getOspfModel());
+	graphPanel = new GraphZoomScrollPane(graphComponent.getVisualizationComponent());
+    }
+
+
+    /**
+     * Aktualizuje properties okno s informacemi o routeru/spoji
+     * na který bylo kliknuto
+     * @param o objekt routeru nebo spoje
+     */
+    public void setPropertiesPanel(Object o) {
+	if (o instanceof RouterVertex) {
+	    prop.actualizeValues((RouterVertex) o);
 	}
-
-
-	/**
-	 * Konstruktor
-	 */
-	public MapPanel(OspfModel ospfModel) {
-		this();
-		manager.setOspfModel(ospfModel);
-		createComponents();
+	if (o instanceof LinkEdge) {
+	    prop.actualizeValues((LinkEdge) o);
 	}
+    }
 
 
-	/**
-	 * Konstruktor
-	 */
-	public MapPanel(MapModel mapModel) {
-		this();
-		manager.setMapModel(mapModel);
-		createComponents();
-	}
+    /**
+     * Volá manažera okna ke zpracování předaných modelů
+     * @param processWholeModel
+     * @param center
+     * @param depth
+     */
+    public void processModelsAfterStart(boolean processWholeModel, Router center, int depth) {
+	manager.setLoadSettings(processWholeModel, center, depth);
+	manager.loadMapModel();
+	this.repaint();
+    }
 
 
-	/**
-	 * Vytvoří komponenty GUI
-	 */
-	private void createComponents() {
-		prop = new PropertiesPanel(manager.getOspfModel());
-		prop.setBackground(Color.RED);
-		graphPanel = new GraphZoomScrollPane(graphComponent.getVisualizationComponent());
-	}
+    /**
+     * Vrací instanci managera okna
+     * @return manager
+     */
+    public MapManager getMapDesignWinManager() {
+	return manager;
+    }
 
 
-	/**
-	 * Aktualizuje properties okno s informacemi o routeru/spoji
-	 * na který bylo kliknuto
-	 * @param o objekt routeru nebo spoje
-	 */
-	public void setPropertiesPanel(Object o) {
-		if (o instanceof RouterVertex) {
-			prop.actualizeValues((RouterVertex) o);
-		}
-		if (o instanceof LinkEdge) {
-			prop.actualizeValues((LinkEdge) o);
-		}
-	}
+    /**
+     * Vrací komponentu grafu
+     * @return
+     */
+    public MapGraphComponent getGraphComponent() {
+	return graphComponent;
+    }
 
 
-	/**
-	 * Volá manažera okna ke zpracování předaných modelů
-	 * @param processWholeModel
-	 * @param center
-	 * @param depth
-	 */
-	public void processModelsAfterStart(boolean processWholeModel, Router center, int depth) {
-		manager.setLoadSettings(processWholeModel, center, depth);
-		manager.loadMapModel();
-		this.repaint();
-	}
+    public JPanel getGraphPanel() {
+	return graphPanel;
+    }
 
 
-	/**
-	 * Vrací instanci managera okna
-	 * @return manager
-	 */
-	public MapManager getMapDesignWinManager() {
-		return manager;
-	}
-
-
-	/**
-	 * Vrací komponentu grafu
-	 * @return
-	 */
-	public MapGraphComponent getGraphComponent() {
-		return graphComponent;
-	}
-
-
-	public JPanel getGraphPanel() {
-		return graphPanel;
-	}
-
-
-	public JPanel getPropertiesPanel() {
-		return prop;
-	}
+    public JPanel getPropertiesPanel() {
+	return prop;
+    }
 }

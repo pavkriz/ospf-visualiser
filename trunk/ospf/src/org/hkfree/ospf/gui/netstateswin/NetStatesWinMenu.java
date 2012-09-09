@@ -49,12 +49,10 @@ public class NetStatesWinMenu extends JMenuBar {
 	mMod.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionPickingMode()));
 	// nabídka "Pozice vrcholů"
 	JMenu mPozice = new JMenu(rb.getString("nswm.2"));
+	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionStartLayouting()));
+	mPozice.addSeparator();
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockMode()));
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockAll()));
-	// nabídka "Rozvrhování grafu"
-	JMenu mRozvrhovani = new JMenu(rb.getString("nswm.3"));
-	mRozvrhovani.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionStartLayouting()));
-//	mRozvrhovani.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionStopLayouting()));
 	// nabídka "Změny cen"
 	JMenu mCeny = new JMenu(rb.getString("nswm.4"));
 	mCeny.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionShowCostDifferences()));
@@ -62,6 +60,5 @@ public class NetStatesWinMenu extends JMenuBar {
 	this.add(mMod);
 	this.add(mPozice);
 	this.add(mCeny);
-	this.add(mRozvrhovani);
     }
 }
