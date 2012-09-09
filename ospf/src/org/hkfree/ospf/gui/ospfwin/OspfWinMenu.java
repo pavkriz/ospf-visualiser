@@ -24,7 +24,6 @@ public class OspfWinMenu extends JMenuBar {
     /**
      * Konstruktor
      * @param actionListener
-     * @param rb
      */
     public OspfWinMenu(ActionListener actionListener) {
 	this.actionListener = actionListener;
@@ -42,13 +41,11 @@ public class OspfWinMenu extends JMenuBar {
 	JMenu mMode = new JMenu(rb.getString("menu.mode"));
 	JMenu mVertices = new JMenu(rb.getString("menu.vertices"));
 	JMenu mHelp = new JMenu(rb.getString("menu.help"));
-
 	// nabídka "Program"
 	mProgram.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionSettings()));
 	mProgram.addSeparator();
 	mProgram.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionCloseActualModel()));
 	mProgram.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionCloseWin()));
-	
 	// nabídka Data
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionOpenXMLModel()));
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLoadData()));
@@ -59,13 +56,11 @@ public class OspfWinMenu extends JMenuBar {
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionSaveToXML()));
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionExportModelToXGMML()));
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionExportModelToSVG()));
-	
 	// nabídka Mapa info
 	mMapaInfo.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionShowInfoTable()));
 	mMapaInfo.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionShowNetStates()));
 	mMapaInfo.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionComputeRouterImportance()));
 	mMapaInfo.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionComputeLinkImportance()));
-	
 	// nabidka Mod
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionCenterRouter()));
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionShowNeighboursMode()));
@@ -80,7 +75,6 @@ public class OspfWinMenu extends JMenuBar {
 	mMode.addSeparator();
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionTransformingMode()));
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionPickingMode()));
-	
 	// nabidka Pozice vrcholu
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionStartLayouting()));
 	mVertices.addSeparator();
@@ -89,11 +83,9 @@ public class OspfWinMenu extends JMenuBar {
 	mVertices.addSeparator();
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLockMode()));
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLockAll()));
-	
 	// nabídka nápověda
 	mHelp.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionTips()));
 	mHelp.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionAbout()));
-	
 	this.add(mProgram);
 	this.add(mData);
 	this.add(mMapaInfo);

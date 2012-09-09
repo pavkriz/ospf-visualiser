@@ -14,8 +14,8 @@ import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 
 import edu.uci.ics.jung.visualization.RenderContext;
-//import org.apache.commons.collections15.Predicate;
 
+//import org.apache.commons.collections15.Predicate;
 /**
  * Třída představující objekt transformeru, který určuje podobu vrcholů a hran grafu
  * @author Jakub Menzel
@@ -39,7 +39,7 @@ public class NetStateMapStyleTransformer {
      * Konstruktor
      */
     public NetStateMapStyleTransformer(final NSWGraphComponent ownerComponent) {
-	owner = ownerComponent;
+	this.owner = ownerComponent;
 	vertexFillPainter = new Transformer<RouterVertex, Paint>() {
 
 	    public Paint transform(RouterVertex r) {
@@ -137,31 +137,37 @@ public class NetStateMapStyleTransformer {
 	};
 	edgeLinePainter = new Transformer<LinkEdge, Paint>() {
 
-	    public Paint transform(LinkEdge e) {
+	    public Paint transform(LinkEdge le) {
+		if (le.isHover()) {
+		    return Color.ORANGE;
+		}
 		if (owner.getMapGraphComponentMode() != MapGraphComponentMode.LINK_FAULT) {
-		    if (e.isEnabled()) {
-			if (e.isEdgeOfShortestPath())
+		    if (le.isEnabled()) {
+			if (le.isEdgeOfShortestPath())
 			    return Color.GREEN;
-			else if (e.isActuallyLive())
+			else if (le.isActuallyLive())
 			    return new Color(0, 153, 0);
 			else
 			    return Color.DARK_GRAY;
 		    } else {
-			if (e.isActuallyDead())
+			if (le.isActuallyDead())
 			    return Color.RED;
 			else
 			    return Color.LIGHT_GRAY;
 		    }
 		} else {
-		    return new Color(255, 255 - (int) e.getFaultIntensity(), 255 - (int) e.getFaultIntensity());
+		    return new Color(255, 255 - (int) le.getFaultIntensity(), 255 - (int) le.getFaultIntensity());
 		}
 	    }
 	};
 	edgeLineStroker = new Transformer<LinkEdge, Stroke>() {
 
-	    public Stroke transform(LinkEdge e) {
-		if (e.isEnabled()) {
-		    if (e.isEdgeOfShortestPath())
+	    public Stroke transform(LinkEdge le) {
+		if (le.isHover()) {
+		    return new BasicStroke(3);
+		}
+		if (le.isEnabled()) {
+		    if (le.isEdgeOfShortestPath())
 			return new BasicStroke(3);
 		    else
 			return new BasicStroke(1);

@@ -11,6 +11,7 @@ import org.hkfree.ospf.model.ospffault.OspfLinkFault;
 /**
  * Třída představující manažer okna zobrazení stavu sítě v čase
  * @author Jakub Menzel
+ * @author Jan Schovánek
  */
 public class NetStatesWinManager {
 
@@ -36,7 +37,8 @@ public class NetStatesWinManager {
 	graphComponent.setNetChangeModel(netChangeModel);
 	graphComponent.createGraph();
 	graphComponent.applyActualNetStateView(actualNetStateIndex);
-	((NetStatesWin) owner).setChangeInfo(netChangeModel.getNetStates().get(actualNetStateIndex).getStateName().toString(), "", "", "", "");
+	((NetStatesWin) owner).setChangeInfo(netChangeModel.getNetStates().get(actualNetStateIndex).getStateName()
+		.toString(), "", "", "", "");
     }
 
 
@@ -52,7 +54,8 @@ public class NetStatesWinManager {
 	((NetStatesWin) owner).getNSWActionListener().getActionPreviousState().setEnabled(false);
 	((NetStatesWin) owner).getNSWActionListener().getActionNextState().setEnabled(true);
 	((NetStatesWin) owner).getNSWActionListener().getActionLastState().setEnabled(true);
-	((NetStatesWin) owner).setChangeInfo(netChangeModel.getNetStates().get(actualNetStateIndex).getStateName().toString(), "", "", "", "");
+	((NetStatesWin) owner).setChangeInfo(netChangeModel.getNetStates().get(actualNetStateIndex).getStateName()
+		.toString(), "", "", "", "");
 	graphComponent.tryShowShortestPathOnOtherState();
 	checkCostDifferences();
     }
@@ -133,7 +136,7 @@ public class NetStatesWinManager {
 
 
     /**
-     * Pokud je nastaven ospf link fault model, je povolena akce zobrzení výpadků spojů
+     * Pokud je nastaven ospf link fault model, je povolena akce zobrazení výpadků spojů
      */
     public void checkLinkFaultModeToEnable() {
 	if (netChangeModel.getOspfLinkFaultModel() != null) {
@@ -207,7 +210,7 @@ public class NetStatesWinManager {
     /**
      * Zkontroluje zda nebyly nalezeny nějaké rozdíly v costech mezi současným a předchozím modelem
      */
-    public void checkCostDifferences() {
+    private void checkCostDifferences() {
 	netChangeModel.checkExistenceOfCostDifferences();
 	if (netChangeModel.existCostDifferences()) {
 	    ((NetStatesWin) owner).getNSWActionListener().getActionShowCostDifferences().setEnabled(true);
@@ -244,28 +247,19 @@ public class NetStatesWinManager {
 
 
     /**
-     * Nastaví text status infa 1
+     * Nastaví text status infa dle indesu (číslováno od 0)
      * @param text
      */
-    public void setStatusInfo1Text(String text) {
-	((NetStatesWin) owner).setStatusInfo1(text);
+    protected void setStatusText(int index, String text) {
+	((NetStatesWin) owner).getStatusBar().setStatus(index, text);
     }
 
 
     /**
-     * Nastaví text status infa 2
+     * Nastaví text tooltipu status infa dle indexu (číslováno od 0)
      * @param text
      */
-    public void setStatusInfo2Text(String text) {
-	((NetStatesWin) owner).setStatusInfo2(text);
-    }
-
-
-    /**
-     * Nastaví tooltip text status infa 2
-     * @param text
-     */
-    public void setStatusInfo2ToolTip(String text) {
-	((NetStatesWin) owner).setStatusInfo2ToolTip(text);
+    protected void setStatusTextToolTip(int index, String text) {
+	((NetStatesWin) owner).getStatusBar().setToolTip(index, text);
     }
 }

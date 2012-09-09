@@ -2,6 +2,7 @@ package org.hkfree.ospf.gui.ospfwin;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,255 +40,263 @@ import org.hkfree.ospf.tools.Factory;
  */
 public class OspfWin extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private ResourceBundle rb = null; // zde je null, v teto tride se teprve nastavuje pres konstruktor manageru
-	private OspfWinActionListener actionListener = null;
-	private OspfWinManager manager = null;
-	private JToolBar toolBar;
-	private StatusBar statusBar;
-	private LogDialog stateDialog;
-	private JComboBox cbModels = null;
-	private Map<String, MapPanel> models = null;
-	JSplitPane spPanel = null;
+    private static final long serialVersionUID = 1L;
+    private ResourceBundle rb = null; // zde je null, v teto tride se teprve nastavuje pres konstruktor manageru
+    private OspfWinActionListener actionListener = null;
+    private OspfWinManager manager = null;
+    private JToolBar toolBar;
+    private StatusBar statusBar;
+    private StateDialog stateDialog;
+    private JComboBox cbModels = null;
+    private Map<String, MapPanel> models = null;
+    private JSplitPane spPanel = null;
+    private Dimension propSize = null;
 
 
-	/**
-	 * Konstruktor
-	 */
-	public OspfWin() {
-		manager = new OspfWinManager(this);
-		Factory.setRb(manager.getRb());
-		rb = Factory.getRb();
-		actionListener = new OspfWinActionListener(manager);
-		models = new HashMap<String, MapPanel>();
-		createGUI();
-	}
+    /**
+     * Konstruktor
+     */
+    public OspfWin() {
+	manager = new OspfWinManager(this);
+	Factory.setRb(manager.getRb());
+	rb = Factory.getRb();
+	actionListener = new OspfWinActionListener(manager);
+	models = new HashMap<String, MapPanel>();
+	propSize = new Dimension(150, 10);
+	createGUI();
+    }
 
 
-	/**
-	 * Vytvoří komponenty GUI
-	 */
-	public void createGUI() {
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(900, 600);
-		this.setLocationRelativeTo(null);
-		this.setTitle(rb.getString("ow.title"));
-		this.setIconImage(this.getToolkit().getImage(getClass().getResource(Constants.URL_IMG_GUI + "ico.gif")));
-		Container c = this.getContentPane();
-		c.setLayout(new BorderLayout());
-		JPanel stred = new JPanel();
-		stred.setLayout(new BorderLayout());
-		// menu
-		OspfWinMenu mainMenu = new OspfWinMenu(actionListener);
-		this.setJMenuBar(mainMenu);
-		// toolbar
-		toolBar = new OspfWinToolBar(actionListener);
-		c.add(toolBar, BorderLayout.NORTH);
-		cbModels = new JComboBox();
-		cbModels.setVisible(false);
-		cbModels.setFont(new Font("Arial", Font.PLAIN, 10));
-		cbModels.addActionListener(new ActionListener() {
+    /**
+     * Vytvoří komponenty GUI
+     */
+    public void createGUI() {
+	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	this.setSize(900, 600);
+	this.setLocationRelativeTo(null);
+	this.setTitle(rb.getString("ow.title"));
+	this.setIconImage(this.getToolkit().getImage(getClass().getResource(Constants.URL_IMG_GUI + "ico.gif")));
+	Container c = this.getContentPane();
+	c.setLayout(new BorderLayout());
+	JPanel stred = new JPanel();
+	stred.setLayout(new BorderLayout());
+	// menu
+	OspfWinMenu mainMenu = new OspfWinMenu(actionListener);
+	this.setJMenuBar(mainMenu);
+	// toolbar
+	toolBar = new OspfWinToolBar(actionListener);
+	c.add(toolBar, BorderLayout.NORTH);
+	cbModels = new JComboBox();
+	cbModels.setVisible(false);
+	cbModels.setFont(new Font("Arial", Font.PLAIN, 10));
+	cbModels.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				actualizeContent();
-			}
-		});
-		JPanel pSide = new JPanel(new BorderLayout());
-		pSide.add(cbModels, BorderLayout.NORTH);
-		spPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pSide, null);
-		c.add(spPanel, BorderLayout.CENTER);
-		// statusbar
-		statusBar = new StatusBar();
-		c.add(statusBar, BorderLayout.SOUTH);
-		// info o provadene akci
-		stateDialog = new LogDialog(manager.getSettings().closeLogDialog, this);
-		// pridani klavesovych zkratek
-		addKeyShorts();
-		try {
-			// nastavení jednotného fontu pro celou aplikaci
-			FontUIResource f = new javax.swing.plaf.FontUIResource(new Font("Arial", Font.PLAIN, 12));
-			Enumeration<Object> keys = UIManager.getDefaults().keys();
-			while (keys.hasMoreElements()) {
-				Object key = keys.nextElement();
-				Object value = UIManager.get(key);
-				if (value instanceof FontUIResource) {
-					UIManager.put(key, f);
-				}
-			}
-			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			System.out.print(e.getMessage());
-		}
-		SwingUtilities.updateComponentTreeUI(OspfWin.this);
-	}
-
-
-	private void actualizeContent() {
-		MapPanel mp = ((MapPanel) models.get(cbModels.getSelectedItem()));
-		spPanel.setRightComponent(null);
-		if (((JPanel) spPanel.getLeftComponent()).getComponentCount() > 1) {
-			((JPanel) spPanel.getLeftComponent()).remove(1);
-		}
-		if (mp != null) {
-			spPanel.setRightComponent(mp.getGraphPanel());
-			((JPanel) spPanel.getLeftComponent()).add(mp.getPropertiesPanel(), 1);
-		} else {
-			cbModels.setVisible(false);
-		}
-	}
-
-
-	/**
-	 * Přidá klávesové zkratky do aplikace
-	 */
-	private void addKeyShorts() {
-		// focus pro vyhledavani routeru
-		this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "find");
-		this.getRootPane().getActionMap().put("find", new AbstractAction() {
-
-			private static final long serialVersionUID = 1L;
-
-
-			public void actionPerformed(ActionEvent e) {
-				((OspfWinToolBar) toolBar).getTfFind().requestFocus();
-				((OspfWinToolBar) toolBar).getTfFind().selectAll();
-			}
-		});
-	}
-
-
-	/**
-	 * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu
-	 * @param modelName
-	 * @param model
-	 */
-	public void addAndFillModelTabbedPane(String modelName, OspfModel model) {
-		MapPanel map = new MapPanel(model);
-		addMapPanel(modelName, map);
-	}
-
-
-	/**
-	 * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu
-	 * @param modelName
-	 * @param model
-	 */
-	public void addAndFillModelTabbedPane(String modelName, MapModel model) {
-		MapPanel map = new MapPanel(model);
-		addMapPanel(modelName, map);
-	}
-
-
-	private void addMapPanel(String name, MapPanel mapPanel) {
-		mapPanel.processModelsAfterStart(true, null, 0);
-		models.put(name, mapPanel);
-		cbModels.insertItemAt(name, cbModels.getItemCount());
-		if (cbModels.getItemCount() == 1) {
-			cbModels.setSelectedIndex(0);
-			cbModels.setVisible(true);
-		}
-	}
-
-
-	/**
-	 * Zavře aktuálně vybraný model
-	 */
-	public void closeActiveModelTabbedPane() {
-		String name = cbModels.getSelectedItem().toString();
-		cbModels.removeItemAt(cbModels.getSelectedIndex());
-		if (cbModels.getSelectedObjects().length > 0) {
-			cbModels.setSelectedIndex(0);
-		}
-		models.remove(name);
+	    public void actionPerformed(ActionEvent e) {
 		actualizeContent();
-	}
-
-
-	/**
-	 * Zobrazí informační dialog
-	 * @param messageTitle
-	 * @param textMessage
-	 */
-	public void showInfoMessage(String messageTitle, String textMessage) {
-		JOptionPane.showMessageDialog(this, "\n" + textMessage + "\n\n", messageTitle, JOptionPane.INFORMATION_MESSAGE);
-	}
-
-
-	/**
-	 * Zobrazí varovný dialog
-	 * @param messageTitle
-	 * @param textMessage
-	 */
-	public void showAlertMessage(String messageTitle, String textMessage) {
-		JOptionPane.showMessageDialog(this, "\n" + textMessage + "\n\n", messageTitle, JOptionPane.WARNING_MESSAGE);
-	}
-
-
-	/**
-	 * Zobrazí dialog s chybou
-	 * @param messageTitle
-	 * @param textMessage
-	 */
-	public void showErrorMessage(String messageTitle, String textMessage) {
-		JOptionPane.showMessageDialog(this, "\n" + textMessage + "\n\n", messageTitle, JOptionPane.ERROR_MESSAGE);
-	}
-
-
-	/**
-	 * Vrací actionlistener okna
-	 * @return actionlistener
-	 */
-	public OspfWinActionListener getOspfWinActListener() {
-		return actionListener;
-	}
-
-
-	/**
-	 * Vrací statusbar
-	 * @return
-	 */
-	public StatusBar getStatusBar() {
-		return statusBar;
-	}
-
-
-	/**
-	 * Vrací dialog s info o probíhající akci
-	 * @return
-	 */
-	public LogDialog getStateDialog() {
-		return stateDialog;
-	}
-
-
-	/**
-	 * Vrací řetězec k vyhledání
-	 * @return
-	 */
-	protected String getSearhString() {
-		return ((OspfWinToolBar) toolBar).getTfFind().getText();
-	}
-
-
-	/**
-	 * Vrací kolekci manažerů všech tabů
-	 * @return
-	 */
-	public Set<MapManager> getAllMDManager() {
-		Set<MapManager> mans = new HashSet<MapManager>();
-		for (MapPanel mp : models.values()) {
-			mans.add(mp.getMapDesignWinManager());
+	    }
+	});
+	JPanel pSide = new JPanel(new BorderLayout());
+	pSide.add(cbModels, BorderLayout.NORTH);
+	spPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pSide, null);
+	spPanel.setPreferredSize(propSize);
+	spPanel.setOneTouchExpandable(true);
+	c.add(spPanel, BorderLayout.CENTER);
+	// statusbar
+	statusBar = new StatusBar();
+	c.add(statusBar, BorderLayout.SOUTH);
+	// info o provadene akci
+	stateDialog = new StateDialog(this);
+	// pridani klavesovych zkratek
+	addKeyShorts();
+	try {
+	    // nastavení jednotného fontu pro celou aplikaci
+	    FontUIResource f = new javax.swing.plaf.FontUIResource(new Font("Arial", Font.PLAIN, 12));
+	    Enumeration<Object> keys = UIManager.getDefaults().keys();
+	    while (keys.hasMoreElements()) {
+		Object key = keys.nextElement();
+		Object value = UIManager.get(key);
+		if (value instanceof FontUIResource) {
+		    UIManager.put(key, f);
 		}
-		return mans;
+	    }
+	    // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	} catch (Exception e) {
+	    System.out.print(e.getMessage());
 	}
+	SwingUtilities.updateComponentTreeUI(OspfWin.this);
+    }
 
 
-	/**
-	 * Vrací manažera aktivní mapy
-	 * @return
-	 */
-	public MapManager getActualMDManager() {
-		return ((MapPanel) models.get(cbModels.getSelectedItem().toString())).getMapDesignWinManager();
+    /**
+     * Aktualzace komponent hlavniho okna
+     */
+    private void actualizeContent() {
+	MapPanel mp = ((MapPanel) models.get(cbModels.getSelectedItem()));
+	spPanel.setRightComponent(null);
+	if (((JPanel) spPanel.getLeftComponent()).getComponentCount() > 1) {
+	    ((JPanel) spPanel.getLeftComponent()).remove(1);
 	}
+	if (mp != null) {
+	    spPanel.setRightComponent(mp.getGraphPanel());
+	    ((JPanel) spPanel.getLeftComponent()).add(mp.getPropertiesPanel(), 1);
+	    ((JPanel) spPanel.getLeftComponent()).setPreferredSize(propSize);
+	} else {
+	    cbModels.setVisible(false);
+	}
+    }
+
+
+    /**
+     * Přidá klávesové zkratky do aplikace
+     */
+    private void addKeyShorts() {
+	// focus pro vyhledavani routeru
+	this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "find");
+	this.getRootPane().getActionMap().put("find", new AbstractAction() {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		((OspfWinToolBar) toolBar).getTfFind().requestFocus();
+		((OspfWinToolBar) toolBar).getTfFind().selectAll();
+	    }
+	});
+    }
+
+
+    /**
+     * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu
+     * @param modelName
+     * @param model
+     */
+    public void addAndFillModelTabbedPane(String modelName, OspfModel model) {
+	MapPanel map = new MapPanel(model);
+	addMapPanel(modelName, map);
+    }
+
+
+    /**
+     * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu
+     * @param modelName
+     * @param model
+     */
+    public void addAndFillModelTabbedPane(String modelName, MapModel model) {
+	MapPanel map = new MapPanel(model);
+	addMapPanel(modelName, map);
+    }
+
+
+    private void addMapPanel(String name, MapPanel mapPanel) {
+	mapPanel.processModelsAfterStart(true, null, 0);
+	models.put(name, mapPanel);
+	cbModels.insertItemAt(name, cbModels.getItemCount());
+	if (cbModels.getItemCount() == 1) {
+	    cbModels.setSelectedIndex(0);
+	    cbModels.setVisible(true);
+	}
+    }
+
+
+    /**
+     * Zavře aktuálně vybraný model
+     */
+    public void closeActiveModelTabbedPane() {
+	String name = cbModels.getSelectedItem().toString();
+	cbModels.removeItemAt(cbModels.getSelectedIndex());
+	if (cbModels.getSelectedObjects().length > 0) {
+	    cbModels.setSelectedIndex(0);
+	}
+	models.remove(name);
+	actualizeContent();
+    }
+
+
+    /**
+     * Zobrazí informační dialog
+     * @param messageTitle
+     * @param textMessage
+     */
+    public void showInfoMessage(String messageTitle, String textMessage) {
+	JOptionPane.showMessageDialog(this, "\n" + textMessage + "\n\n", messageTitle, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    /**
+     * Zobrazí varovný dialog
+     * @param messageTitle
+     * @param textMessage
+     */
+    public void showAlertMessage(String messageTitle, String textMessage) {
+	JOptionPane.showMessageDialog(this, "\n" + textMessage + "\n\n", messageTitle, JOptionPane.WARNING_MESSAGE);
+    }
+
+
+    /**
+     * Zobrazí dialog s chybou
+     * @param messageTitle
+     * @param textMessage
+     */
+    public void showErrorMessage(String messageTitle, String textMessage) {
+	JOptionPane.showMessageDialog(this, "\n" + textMessage + "\n\n", messageTitle, JOptionPane.ERROR_MESSAGE);
+    }
+
+
+    /**
+     * Vrací actionlistener okna
+     * @return actionlistener
+     */
+    public OspfWinActionListener getOspfWinActListener() {
+	return actionListener;
+    }
+
+
+    /**
+     * Vrací statusbar
+     * @return
+     */
+    public StatusBar getStatusBar() {
+	return statusBar;
+    }
+
+
+    /**
+     * Vrací dialog s info o probíhající akci
+     * @return
+     */
+    public StateDialog getStateDialog() {
+	return stateDialog;
+    }
+
+
+    /**
+     * Vrací řetězec k vyhledání
+     * @return
+     */
+    protected String getSearhString() {
+	return ((OspfWinToolBar) toolBar).getTfFind().getText();
+    }
+
+
+    /**
+     * Vrací kolekci manažerů všech tabů
+     * @return
+     */
+    public Set<MapManager> getAllMDManager() {
+	Set<MapManager> mans = new HashSet<MapManager>();
+	for (MapPanel mp : models.values()) {
+	    mans.add(mp.getMapDesignWinManager());
+	}
+	return mans;
+    }
+
+
+    /**
+     * Vrací manažera aktivní mapy
+     * @return
+     */
+    public MapManager getActualMDManager() {
+	return ((MapPanel) models.get(cbModels.getSelectedItem().toString())).getMapDesignWinManager();
+    }
 }

@@ -42,7 +42,7 @@ public class MapGraphComponent extends JComponent {
     private static final long serialVersionUID = 1L;
     private MapPanel owner = null;
     private MapModel mapModel = null;
-    private int mapGraphCompMode = MapGraphComponentMode.SHOW_NEIGHBOURS;
+    private int mapGraphCompMode;
     private RouterVertex shortestTreeCenter = null;
     private VisualizationViewer<RouterVertex, LinkEdge> vv = null;
     private Graph<RouterVertex, LinkEdge> graph = null;
@@ -60,7 +60,7 @@ public class MapGraphComponent extends JComponent {
 
     /**
      * Konstruktor
-     * @param mapDesignPanel 
+     * @param mapDesignPanel
      */
     public MapGraphComponent(MapPanel mapDesignPanel) {
 	this.owner = mapDesignPanel;
@@ -104,18 +104,16 @@ public class MapGraphComponent extends JComponent {
 	layout.setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
 	layout.setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
 	layout.setSize(new Dimension(2300, 2300));
-	layout.setMaxIterations(800);	//default
+	layout.setMaxIterations(800); // default
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
 	vv.setSize(2000, 2000);
 	scaler = new CrossoverScalingControl();
 	graphMouse = new OspfModalGraphMouse<RouterVertex, LinkEdge>(this);
-	//graphMouse.setMode(Mode.TRANSFORMING);
 	vv.setGraphMouse(graphMouse);
 	graphMouse.add(new MapGraphContextMenu(this));
 	graphMouse.add(new MapGraphMouseClickPlugin(this));
-	styleTransformer = new MapStyleTransformer();
-	styleTransformer.setMdwGraphComponent(this);
+	styleTransformer = new MapStyleTransformer(this);
 	vv.getRenderContext().setVertexFillPaintTransformer(styleTransformer.getVertexFillPainter());
 	vv.getRenderContext().setVertexDrawPaintTransformer(styleTransformer.getVertexBorderPainter());
 	vv.getRenderContext().setVertexLabelTransformer(styleTransformer.getVertexLabeler());
@@ -498,15 +496,6 @@ public class MapGraphComponent extends JComponent {
 
 
     /**
-     * Zastaví automatické laoutování
-     */
-    public void stopLayouting() {
-	layout.lock(true);
-	vv.getModel().getRelaxer().stop();
-    }
-
-
-    /**
      * Zapne automatické layoutování
      */
     public void startLayouting() {
@@ -847,14 +836,14 @@ public class MapGraphComponent extends JComponent {
      * Vrátí pozice routerů na plátně, které se v grafu nacházejí
      * @return map
      */
-    public  Map<RouterVertex, Point2D> getRouterVertexPositions() {
+    public Map<RouterVertex, Point2D> getRouterVertexPositions() {
 	Map<RouterVertex, Point2D> positions = new HashMap<RouterVertex, Point2D>();
 	for (RouterVertex rv : graph.getVertices()) {
 	    positions.put(rv, new Point2D.Double(layout.getX(rv), layout.getY(rv)));
 	}
 	return positions;
     }
-    
+
 
     /**
      * Odstraní externě přidaný routerVertex z grafu a mapModelu
@@ -901,8 +890,8 @@ public class MapGraphComponent extends JComponent {
 	    b = false;
 	    for (String name : foundedNames) {
 		if (!name.isEmpty()) {
-		    if (rv.getName().toUpperCase().contains(name.toUpperCase()) 
-			|| rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
+		    if (rv.getName().toUpperCase().contains(name.toUpperCase())
+			    || rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
 			b = true;
 		    }
 		}
@@ -911,8 +900,8 @@ public class MapGraphComponent extends JComponent {
 	    vv.getPickedVertexState().pick(rv, b);
 	}
     }
-    
-    
+
+
     public MapPanel getOwner() {
 	return owner;
     }

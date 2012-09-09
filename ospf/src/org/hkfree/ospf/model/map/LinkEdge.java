@@ -160,12 +160,13 @@ public class LinkEdge {
 
 
     /**
-     * Vrací sílu štětce - jeho tlouštku
+     * Vrací sílu štětce - jeho tlouštku.<br>
+     * Používat pouze při pro MapPanel (ne v netstatepanel)
      * @return síla štětce
      */
     public Stroke getStroker() {
 	if (isHover()) {
-	    return new BasicStroke(5);
+	    return new BasicStroke(3);
 	}
 	if (isEnabled()) {
 	    if (isEdgeOfShortestPath() || isEdgeOfFirstPath() || isEdgeOfSecondPath())
@@ -296,6 +297,12 @@ public class LinkEdge {
     }
 
 
+    /**
+     * Vrací barvu spoje.<br>
+     * Používat pouze při pro MapPanel (ne v netstatepanel)
+     * @param mode
+     * @return
+     */
     public Paint getLineColor(int mode) {
 	if (isHover()) {
 	    return Color.ORANGE;

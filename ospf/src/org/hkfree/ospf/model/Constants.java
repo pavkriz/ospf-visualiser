@@ -44,6 +44,6 @@ public abstract class Constants {
 		ADD_VERTEXES, 
 		ADD_EDGES, 
 		ASYMETRIC_LINKS, 
-		SHORTEST_PATH_TWO_ROUTERS,
+		SHORTEST_PATH_TWO_ROUTERS
 	}
 }

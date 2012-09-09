@@ -28,7 +28,6 @@ public class NetStatesWinActionListener implements ActionListener {
     private Action actionPickingMode = null;
     private Action actionTransformingMode = null;
     private Action actionStartLayouting = null;
-   // private Action actionStopLayouting = null;
     private Action actionLockMode = null;
     private Action actionLockAll = null;
     private Action actionNoneMode = null;
@@ -120,7 +119,7 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setPickingMode();
-		netStatesWinManager.setStatusInfo1Text(rb.getString("nswal.4"));
+		netStatesWinManager.setStatusText(0, rb.getString("nswal.4"));
 	    }
 	};
 	actionPickingMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.4.title"));
@@ -132,7 +131,7 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setTransformingMode();
-		netStatesWinManager.setStatusInfo1Text(rb.getString("nswal.5"));
+		netStatesWinManager.setStatusText(0, rb.getString("nswal.5"));
 	    }
 	};
 	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.5.title"));
@@ -144,25 +143,10 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().startLayouting();
-		//actionStartLayouting.setEnabled(true);
-		//actionStopLayouting.setEnabled(true);
 	    }
 	};
 	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.6.title"));
 	actionStartLayouting.setEnabled(true);
-//	actionStopLayouting = new AbstractAction(rb.getString("nswal.7"), new ImageIcon(getClass().getResource(
-//		Constants.URL_IMG_GUI + "stoplayout.png"))) {
-//
-//	    private static final long serialVersionUID = 1L;
-//
-//
-//	    public void actionPerformed(ActionEvent e) {
-//		netStatesWinManager.getGraphComponent().stopLayouting();
-//		actionStartLayouting.setEnabled(true);
-//		actionStopLayouting.setEnabled(false);
-//	    }
-//	};
-//	actionStopLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.7.title"));
 	actionLockAll = new AbstractAction(rb.getString("nswal.8"), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "lock_all.png"))) {
 
@@ -182,8 +166,8 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setLockVertexMode();
-		netStatesWinManager.setStatusInfo2Text(rb.getString("nswal.9"));
-		netStatesWinManager.setStatusInfo2ToolTip(rb.getString("nswal.9.toolTip"));
+		netStatesWinManager.setStatusText(1, rb.getString("nswal.9"));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("nswal.9.toolTip"));
 	    }
 	};
 	actionLockMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.9.title"));
@@ -195,8 +179,8 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setShowShortestPathMode();
-		netStatesWinManager.setStatusInfo2Text(rb.getString("nswal.10"));
-		netStatesWinManager.setStatusInfo2ToolTip(rb.getString("nswal.10.toolTip"));
+		netStatesWinManager.setStatusText(1, rb.getString("nswal.10"));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("nswal.10.toolTip"));
 	    }
 	};
 	actionShortestPath.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.10.title"));
@@ -208,8 +192,8 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setNoneMode();
-		netStatesWinManager.setStatusInfo2Text("");
-		netStatesWinManager.setStatusInfo2ToolTip(rb.getString("nswal.11.toolTip"));
+		netStatesWinManager.setStatusText(1, rb.getString("nswal.11"));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("nswal.11.toolTip"));
 	    }
 	};
 	actionNoneMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.11.title"));
@@ -233,8 +217,8 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setLinkFaultMode();
-		netStatesWinManager.setStatusInfo2Text(rb.getString("nswal.13"));
-		netStatesWinManager.setStatusInfo2ToolTip(rb.getString("nswal.13.toolTip"));
+		netStatesWinManager.setStatusText(1, rb.getString("nswal.13"));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("nswal.13.toolTip"));
 	    }
 	};
 	actionLinkFaultMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.13.title"));
@@ -326,15 +310,6 @@ public class NetStatesWinActionListener implements ActionListener {
     public Action getActionStartLayouting() {
 	return actionStartLayouting;
     }
-
-
-    /**
-     * Vrací akci vypnutí automatického layoutování
-     * @return action
-     */
-//    public Action getActionStopLayouting() {
-//	return actionStopLayouting;
-//    }
 
 
     /**

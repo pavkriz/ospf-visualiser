@@ -13,8 +13,7 @@ import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.tools.Factory;
 
 /**
- * Třída představující objekt transformeru, který určuje podobu vrcholů a hran
- * grafu
+ * Třída představující objekt transformeru, který určuje podobu vrcholů a hran grafu
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
@@ -36,8 +35,10 @@ public class MapStyleTransformer {
 
     /**
      * Konstruktor
+     * @param mapGraphComponent
      */
-    public MapStyleTransformer() {
+    public MapStyleTransformer(MapGraphComponent mapGraphComponent) {
+	this.mdwGraphComponent = mapGraphComponent;
 	vertexFillPainter = new Transformer<RouterVertex, Paint>() {
 
 	    public Paint transform(RouterVertex r) {
@@ -115,8 +116,8 @@ public class MapStyleTransformer {
 	};
 	edgeLinePainter = new Transformer<LinkEdge, Paint>() {
 
-	    public Paint transform(LinkEdge el) {
-		return el.getLineColor(mdwGraphComponent.getMapGraphComponentMode());
+	    public Paint transform(LinkEdge le) {
+		return le.getLineColor(mdwGraphComponent.getMapGraphComponentMode());
 	    }
 	};
 	edgeLineStroker = new Transformer<LinkEdge, Stroke>() {
@@ -215,15 +216,5 @@ public class MapStyleTransformer {
      */
     public Transformer<LinkEdge, Stroke> getEdgeLineStroker() {
 	return edgeLineStroker;
-    }
-
-
-    /**
-     * Nastaví komponentu vykreslování grafu
-     * @param mdwGraphComponent
-     *            the mdwGraphComponent to set
-     */
-    public void setMdwGraphComponent(MapGraphComponent mdwGraphComponent) {
-	this.mdwGraphComponent = mdwGraphComponent;
     }
 }

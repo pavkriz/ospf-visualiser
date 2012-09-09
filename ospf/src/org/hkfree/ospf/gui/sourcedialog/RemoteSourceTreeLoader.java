@@ -5,11 +5,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-
 
 /**
  * Třída sloužící k načítání rozbalovacího stromu vstupních dat umístěných na serveru
@@ -127,35 +129,41 @@ public class RemoteSourceTreeLoader {
      * @throws Exception
      */
     public void readAndParsePageStructure(DefaultMutableTreeNode node, String urlpath) {
-	/*
-	 * BufferedReader reader = null;
-	 * Pattern ipPattern = Pattern.compile("^.*(href=\")(.*)(\".*</a>)");
-	 * Matcher ipMatcher = null;
-	 * try {
-	 * URL address = new URL(urlpath);
-	 * reader = new BufferedReader(new InputStreamReader(address.openStream()));
-	 * String line = "";
-	 * while ((line = reader.readLine()) != null) {
-	 * if (line.contains(folderIdentification)) {
-	 * ipMatcher = ipPattern.matcher(line);
-	 * ipMatcher.find();
-	 * String name = ipMatcher.group(2).replace("/", "");
-	 * node.add(new DefaultMutableTreeNode(name));
-	 * this.readAndParsePageStructure((DefaultMutableTreeNode) node.getLastLeaf(), urlpath + "/" + name);
-	 * }
-	 * if (line.contains(fileIdentification)) {
-	 * ipMatcher = ipPattern.matcher(line);
-	 * ipMatcher.find();
-	 * String name = ipMatcher.group(2);
-	 * if (name.startsWith(fileNameStartFilter)) {
-	 * node.add(new DefaultMutableTreeNode(new FileNameCheckBoxNode(name)));
-	 * }
-	 * }
-	 * }
-	 * } finally {
-	 * reader.close();
-	 * }
-	 */
+	BufferedReader reader = null;
+	Pattern ipPattern = Pattern.compile("^.*(href=\")(.*)(\".*</a>)");
+	Matcher ipMatcher = null;
+	try {
+	    URL address = new URL(urlpath);
+	    reader = new BufferedReader(new InputStreamReader(address.openStream()));
+	    String line = "";
+	    while ((line = reader.readLine()) != null) {
+		if (line.contains(folderIdentification)) {
+		    ipMatcher = ipPattern.matcher(line);
+		    ipMatcher.find();
+		    String name = ipMatcher.group(2).replace("/", "");
+		    node.add(new DefaultMutableTreeNode(name));
+		    this.readAndParsePageStructure((DefaultMutableTreeNode) node.getLastLeaf(), urlpath + "/" + name);
+		}
+		if (line.contains(fileIdentification)) {
+		    ipMatcher = ipPattern.matcher(line);
+		    ipMatcher.find();
+		    String name = ipMatcher.group(2);
+		    if (name.startsWith(fileNameStartFilter)) {
+			node.add(new DefaultMutableTreeNode(new FileNameCheckBoxNode(name)));
+		    }
+		}
+	    }
+	} catch (MalformedURLException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	} finally {
+	    try {
+		reader.close();
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	}
     }
 
 

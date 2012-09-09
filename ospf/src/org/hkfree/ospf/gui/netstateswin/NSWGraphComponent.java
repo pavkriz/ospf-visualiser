@@ -113,10 +113,11 @@ public class NSWGraphComponent extends JComponent {
 	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
 	layout.setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
 	layout.setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
-	layout.setSize(new Dimension(1500, 1500));
+	layout.setSize(new Dimension(2300, 2300));
+	layout.setMaxIterations(800); // default
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
-	vv.setSize(1000, 1000);
+	vv.setSize(2000, 2000);
 	scaler = new CrossoverScalingControl();
 	graphMouse = new OspfModalGraphMouse<RouterVertex, LinkEdge>();
 	graphMouse.setMode(Mode.TRANSFORMING);
@@ -182,7 +183,6 @@ public class NSWGraphComponent extends JComponent {
      */
     public void setPickingMode() {
 	graphMouse.setMode(Mode.PICKING);
-	// mapGraphCompMode = MapGraphComponentMode.PICKING;
     }
 
 
@@ -191,7 +191,6 @@ public class NSWGraphComponent extends JComponent {
      */
     public void setTransformingMode() {
 	graphMouse.setMode(Mode.TRANSFORMING);
-	// mapGraphCompMode = MapGraphComponentMode.TRANSFORMING;
     }
 
 
@@ -239,15 +238,6 @@ public class NSWGraphComponent extends JComponent {
 
 
     /**
-     * Vypne automatické rozvrhování mapy
-     */
-    public void stopLayouting() {
-	layout.lock(true);
-	// vv.getModel().getRelaxer().stop();
-    }
-
-
-    /**
      * Zapne automatické rozvrhování mapy
      */
     public void startLayouting() {
@@ -255,7 +245,6 @@ public class NSWGraphComponent extends JComponent {
 	    if (!r.isLocked())
 		layout.lock(r, false);
 	}
-	// vv.getModel().getRelaxer().relax();
 	layout.initialize();
 	vv.getModel().getRelaxer().setSleepTime(50);
 	vv.getModel().getRelaxer().relax();

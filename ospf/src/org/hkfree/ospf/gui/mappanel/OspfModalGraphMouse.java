@@ -108,17 +108,19 @@ public class OspfModalGraphMouse<V, E> extends AbstractModalGraphMouse implement
     @SuppressWarnings("unchecked")
     @Override
     public void mouseClicked(MouseEvent e) {
-	final VisualizationViewer<RouterVertex, LinkEdge> vv = (VisualizationViewer<RouterVertex, LinkEdge>) e.getSource();
-	Point2D p = e.getPoint();
-	GraphElementAccessor<RouterVertex, LinkEdge> pickSupport = vv.getPickSupport();
-	if (pickSupport != null) {
-	    LinkEdge le = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
-	    if (le != null) {
-		owner.getOwner().setPropertiesPanel(le);
-	    }
-	    RouterVertex rv = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
-	    if (rv != null) {
-		owner.getOwner().setPropertiesPanel(rv);
+	if (owner != null) {	//pokud owner neni null, tak je instanci MapPanelu
+	    final VisualizationViewer<RouterVertex, LinkEdge> vv = (VisualizationViewer<RouterVertex, LinkEdge>) e.getSource();
+	    Point2D p = e.getPoint();
+	    GraphElementAccessor<RouterVertex, LinkEdge> pickSupport = vv.getPickSupport();
+	    if (pickSupport != null) {
+		LinkEdge le = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
+		if (le != null) {
+		    owner.getOwner().setPropertiesPanel(le);
+		}
+		RouterVertex rv = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+		if (rv != null) {
+		    owner.getOwner().setPropertiesPanel(rv);
+		}
 	    }
 	}
 	super.mouseClicked(e);
