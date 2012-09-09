@@ -1,3 +1,7 @@
+*9.9.2012
+  * opraveno nacitani logu
+  * opraven net state window proti null exception
+
 *7.9.2012*
   * upraven state dialog a pridan k ostatnimu nacitani dat
 
