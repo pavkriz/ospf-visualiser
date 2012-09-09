@@ -1,4 +1,5 @@
 *9.9.2012
+  * dodelan state dialog
   * opraveno nacitani logu
   * opraven net state window proti null exception
 
