@@ -1,3 +1,6 @@
+*11.9.2012*
+  * IPv6 - telnet, nacitani
+
 *10.9.2012*
   * sjednoceni popisku net state window a menu map panelu
 
