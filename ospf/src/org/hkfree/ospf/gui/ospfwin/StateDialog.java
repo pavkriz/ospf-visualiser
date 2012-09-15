@@ -75,6 +75,8 @@ public class StateDialog extends JDialog {
     public void addText(String text) {
 	cp.append(Color.BLACK, String.format(" %-" + POCET_ZNAKU_ZAROVNANI + "s", text));
 	time = new Date().getTime();
+	cp.update(cp.getGraphics());
+	this.validate();
     }
 
 
@@ -94,9 +96,12 @@ public class StateDialog extends JDialog {
      * 
      */
     public void operationFailed() {
+	Long l = time == null ? 0 : (new Date().getTime() - time);
 	cp.append(Color.RED, "er");
-	cp.append(Color.DARK_GRAY, String.format("  [ %5sms ]\n", (new Date().getTime() - time)));
+	cp.append(Color.DARK_GRAY, String.format("  [ %5sms ]\n", l));
+	cp.update(cp.getGraphics());
 	this.update(this.getGraphics());
+	this.validate();
     }
 
 

@@ -9,6 +9,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.tools.Factory;
 
 /**
@@ -111,7 +112,7 @@ public class NetStatesWinActionListener implements ActionListener {
 	    }
 	};
 	actionLastState.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.3.title"));
-	actionPickingMode = new AbstractAction(rb.getString("nswal.4"), new ImageIcon(getClass().getResource(
+	actionPickingMode = new AbstractAction(rb.getString("mode." + MODE.PICKING), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "picking.png"))) {
 
 	    private static final long serialVersionUID = 1L;
@@ -119,24 +120,25 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setPickingMode();
-		netStatesWinManager.setStatusText(0, rb.getString("nswal.4"));
+		netStatesWinManager.setStatusText(0, rb.getString("mode." + MODE.PICKING));
 	    }
 	};
-	actionPickingMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.4.title"));
-	actionTransformingMode = new AbstractAction(rb.getString("nswal.5"), new ImageIcon(getClass().getResource(
-		Constants.URL_IMG_GUI + "transforming.png"))) {
+	actionPickingMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.PICKING + ".title"));
+	actionTransformingMode = new AbstractAction(rb.getString("mode." + MODE.TRANSFORMING), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "transforming.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setTransformingMode();
-		netStatesWinManager.setStatusText(0, rb.getString("nswal.5"));
+		netStatesWinManager.setStatusText(0, rb.getString("mode." + MODE.TRANSFORMING));
 	    }
 	};
-	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.5.title"));
-	actionStartLayouting = new AbstractAction(rb.getString("nswal.6"), new ImageIcon(getClass().getResource(
-		Constants.URL_IMG_GUI + "startlayout.png"))) {
+	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.TRANSFORMING + ".title"));
+	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "startlayout.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
@@ -145,9 +147,8 @@ public class NetStatesWinActionListener implements ActionListener {
 		netStatesWinManager.getGraphComponent().startLayouting();
 	    }
 	};
-	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.6.title"));
-	actionStartLayouting.setEnabled(true);
-	actionLockAll = new AbstractAction(rb.getString("nswal.8"), new ImageIcon(getClass().getResource(
+	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LAYOUTING + ".title"));
+	actionLockAll = new AbstractAction(rb.getString("mode." + MODE.LOCK_ALL), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "lock_all.png"))) {
 
 	    private static final long serialVersionUID = 1L;
@@ -157,8 +158,8 @@ public class NetStatesWinActionListener implements ActionListener {
 		netStatesWinManager.getGraphComponent().lockAllRouterVertexes();
 	    }
 	};
-	actionLockAll.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.8.title"));
-	actionLockMode = new AbstractAction(rb.getString("nswal.9"), new ImageIcon(getClass().getResource(
+	actionLockAll.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LOCK_ALL + ".title"));
+	actionLockMode = new AbstractAction(rb.getString("mode." + MODE.LOCK_VERTEX), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "lock.png"))) {
 
 	    private static final long serialVersionUID = 1L;
@@ -166,25 +167,25 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setLockVertexMode();
-		netStatesWinManager.setStatusText(1, rb.getString("nswal.9"));
-		netStatesWinManager.setStatusTextToolTip(1, rb.getString("nswal.9.toolTip"));
+		netStatesWinManager.setStatusText(1, rb.getString("mode." + MODE.LOCK_VERTEX));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("mode." + MODE.LOCK_VERTEX + ".toolTip"));
 	    }
 	};
-	actionLockMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.9.title"));
-	actionShortestPath = new AbstractAction(rb.getString("nswal.10"), new ImageIcon(getClass().getResource(
-		Constants.URL_IMG_GUI + "shortest_path.png"))) {
+	actionLockMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LOCK_VERTEX + ".title"));
+	actionShortestPath = new AbstractAction(rb.getString("mode." + MODE.SHORTEST_PATH), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "shortest_path.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setShowShortestPathMode();
-		netStatesWinManager.setStatusText(1, rb.getString("nswal.10"));
-		netStatesWinManager.setStatusTextToolTip(1, rb.getString("nswal.10.toolTip"));
+		netStatesWinManager.setStatusText(1, rb.getString("mode." + MODE.SHORTEST_PATH));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("mode." + MODE.SHORTEST_PATH + ".toolTip"));
 	    }
 	};
-	actionShortestPath.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.10.title"));
-	actionNoneMode = new AbstractAction(rb.getString("nswal.11"), new ImageIcon(getClass().getResource(
+	actionShortestPath.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.SHORTEST_PATH + ".title"));
+	actionNoneMode = new AbstractAction(rb.getString("mode." + MODE.NONE), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "none.png"))) {
 
 	    private static final long serialVersionUID = 1L;
@@ -192,11 +193,11 @@ public class NetStatesWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		netStatesWinManager.getGraphComponent().setNoneMode();
-		netStatesWinManager.setStatusText(1, rb.getString("nswal.11"));
-		netStatesWinManager.setStatusTextToolTip(1, rb.getString("nswal.11.toolTip"));
+		netStatesWinManager.setStatusText(1, rb.getString("mode." + MODE.NONE));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("mode." + MODE.NONE + ".toolTip"));
 	    }
 	};
-	actionNoneMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.11.title"));
+	actionNoneMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.NONE + ".title"));
 	actionShowCostDifferences = new AbstractAction(rb.getString("nswal.12"), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "cost_difference.png"))) {
 

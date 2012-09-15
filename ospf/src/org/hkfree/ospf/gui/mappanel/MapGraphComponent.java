@@ -104,7 +104,7 @@ public class MapGraphComponent extends JComponent {
 	layout.setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
 	layout.setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
 	layout.setSize(new Dimension(2300, 2300));
-	layout.setMaxIterations(800); // default
+	layout.setMaxIterations(400); // default
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
 	vv.setSize(2000, 2000);

@@ -54,7 +54,7 @@ public class NetStatesWinMenu extends JMenuBar {
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockMode()));
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockAll()));
 	// nabídka "Změny cen"
-	JMenu mCeny = new JMenu(rb.getString("nswm.4"));
+	JMenu mCeny = new JMenu(rb.getString("nswm.3"));
 	mCeny.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionShowCostDifferences()));
 	this.add(mOkno);
 	this.add(mMod);

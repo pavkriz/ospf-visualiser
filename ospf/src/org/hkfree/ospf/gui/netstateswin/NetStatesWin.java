@@ -24,6 +24,7 @@ import org.hkfree.ospf.gui.costdifferencesdialog.CostDifferencesDialog;
 import org.hkfree.ospf.gui.linkfaultdialog.LinkFaultDialog;
 import org.hkfree.ospf.gui.ospfwin.StatusBar;
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.netchange.CostDifference;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
 import org.hkfree.ospf.model.ospffault.IntervalFault;
@@ -84,9 +85,9 @@ public class NetStatesWin extends JFrame {
 	c.add(toolBar, BorderLayout.NORTH);
 	// statusbar
 	statusBar = new StatusBar();
-	getManager().setStatusText(0, rb.getString("nswal.5"));
-	getManager().setStatusText(1, rb.getString("nswal.11"));
-	getManager().setStatusTextToolTip(1, rb.getString("nswal.11.toolTip"));
+	getManager().setStatusText(0, rb.getString("mode." + MODE.TRANSFORMING));
+	getManager().setStatusText(1, rb.getString("mode." + MODE.NONE));
+	getManager().setStatusTextToolTip(1, rb.getString("mode." + MODE.NONE + ".toolTip"));
 	// postranni panel
 	JPanel sidePanel = new JPanel();
 	sidePanel.setPreferredSize(new Dimension(230, 50));
