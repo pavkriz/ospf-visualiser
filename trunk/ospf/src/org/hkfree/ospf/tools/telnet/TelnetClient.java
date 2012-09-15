@@ -73,8 +73,10 @@ public class TelnetClient {
 	_os = _socket.getOutputStream();
 	_is = _socket.getInputStream();
 	readThread = new ReadThread();
-	send("");// odeslu enter, kvuli srovnani prijatych/odeslanych dat
-	if (password != null) {
+	while (!_sb.toString().endsWith("Password: ") ) {
+	    send("");// odeslu enter, kvuli srovnani prijatych/odeslanych dat
+	}
+	if (password != null) {	//nemelo by byt nikdy nullove
 	    send(this.password);
 	}
 	send("terminal length 0");

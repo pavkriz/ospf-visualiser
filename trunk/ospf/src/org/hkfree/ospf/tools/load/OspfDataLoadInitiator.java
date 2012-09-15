@@ -349,7 +349,7 @@ public class OspfDataLoadInitiator {
 	// nazev noveho tabbu
 	Date date = new Date(System.currentTimeMillis());
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm");
-	ospfModel.setModelName(formatter.format(date) + "_telnet");
+	ospfModel.setModelName(formatter.format(date) + "_telnet" + (settings.isIPv4() ? "IPv4" : "IPv6"));	//pro rozliseni verze IP
     }
 
 
@@ -371,7 +371,11 @@ public class OspfDataLoadInitiator {
 	OspfLoader dataLoader = new OspfLoader();
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
-	dataLoader.loadTopology(ospfModel, new BufferedReader(new StringReader(data.toString())));
+	if (settings.isIPv4()) {
+	    dataLoader.loadTopology(ospfModel, new BufferedReader(new StringReader(data.toString())));
+	} else {
+	    dataLoader.loadTopologyIPv6(ospfModel, new BufferedReader(new StringReader(data.toString())));
+	}
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
     }
 
@@ -399,8 +403,13 @@ public class OspfDataLoadInitiator {
 	for (int i = 0; i < ospfModel.getRouters().size(); i++) {
 	    Router r = ospfModel.getRouters().get(i);
 	    // cena
-	    dataLoader.loadCosts(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
+	    if (settings.isIPv4()) {
+		dataLoader.loadCosts(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
 		    .toString())));
+	    } else {
+		dataLoader.loadCostsIPv6(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
+			    .toString())));
+	    }
 	    // pridani IP routeru do seznamu pro dohledani nazvu
 	    ips.add(r.getRouterID());
 	}

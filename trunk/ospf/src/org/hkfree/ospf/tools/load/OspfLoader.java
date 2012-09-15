@@ -71,6 +71,44 @@ public class OspfLoader {
     }
 
 
+    public void loadTopologyIPv6(OspfModel model, BufferedReader input) throws IOException {
+	BufferedReader vstup = null;
+	// Reader in = null;
+	String radek = "";
+	Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+	Matcher ipMatcher = null;
+//	Pattern maskPattern = Pattern.compile("^.*/([0-9]{1,2})");
+//	Matcher maskMatcher = null;
+	vstup = input;
+	while ((radek = vstup.readLine()) != null) {
+	    if (radek.contains("Link State ID")) {
+		String linkName = "";
+		int linkMask = 0;
+		ipMatcher = ipPattern.matcher(radek);
+		ipMatcher.find();
+		linkName = ipMatcher.group(0);
+		// while (!((radek = vstup.readLine()).contains("Network Mask"))) {}
+		// maskMatcher = maskPattern.matcher(radek);
+		// maskMatcher.find();
+		// linkMask = Integer.valueOf(maskMatcher.group(1));
+		model.addOspfLink(linkName, linkMask);
+		// čtení řádků než narazí na Attached Router
+		while (!((radek = vstup.readLine()).contains("Attached Router"))) {}
+		// načtení první IP jdoucí do spoje
+		ipMatcher = ipPattern.matcher(radek);
+		ipMatcher.find();
+		model.addRouter(ipMatcher.group(0));
+		// načtení zbylých IP jdoucích do spoje
+		while ((radek = vstup.readLine()).contains("Attached Router")) {
+		    ipMatcher = ipPattern.matcher(radek);
+		    ipMatcher.find();
+		    model.addRouter(ipMatcher.group(0));
+		}
+	    }
+	}
+    }
+
+
     /**
      * Metoda, která načte ze zadaného umístění ceny spojů načtené topologie
      * @throws IOException
@@ -122,6 +160,60 @@ public class OspfLoader {
 			costMatcher.find();
 			stub.setCost(Integer.valueOf(costMatcher.group(1)));
 			router.getStubs().add(stub);
+		    }
+		}
+	    }
+	    for (int i = act_spoje.size() - 1; i >= 0; i--) {
+		act_spoje.remove(i);
+	    }
+	}
+    }
+
+
+    /**
+     * Metoda, která načte ze zadaného umístění ceny spojů načtené topologie pro IPv6
+     * @throws IOException
+     */
+    public void loadCostsIPv6(OspfModel model, String routerIP, BufferedReader input) throws IOException {
+	BufferedReader infoUzlu = null;
+	Router router = null;
+	String radek;
+	Pattern costPattern = Pattern.compile("^.*:\\s([0-9]{1,})");
+	Matcher costMatcher = null;
+	Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+	Matcher ipMatcher = null;
+	int cost;
+	List<OspfLink> act_spoje = new ArrayList<OspfLink>();
+	router = model.getRouterByIp(routerIP);
+	if (router != null) {
+	    for (OspfLink s : model.getOspfLinks()) {
+		if (s.containsRouter(router))
+		    act_spoje.add(s);
+	    }
+	    
+	    //Link ID radek.endsWith(s.getLinkID())
+	    //interfaceIp  (Link Data) Router Interface address: 10.107.0.107 
+	    
+	    infoUzlu = input;
+	    // změnit cenu a ip interface routeru ve spojích kde router figuruje
+	    while ((radek = infoUzlu.readLine()) != null) {
+		if (radek.contains("Transit-Network Metric")) {
+		    // nasel jsem zaznam, nactu jeho data
+		    costMatcher = costPattern.matcher(radek);
+		    costMatcher.find();
+		    cost = Integer.valueOf(costMatcher.group(1));
+		    while (!(radek = infoUzlu.readLine()).contains("Neighbor Interface ID")) {}
+		    ipMatcher = ipPattern.matcher(radek);
+		    ipMatcher.find();
+		    String neighborInterface = ipMatcher.group(0);
+		    while (!(radek = infoUzlu.readLine()).contains("Neighbor Router ID")) {}
+		    ipMatcher = ipPattern.matcher(radek);
+		    ipMatcher.find();
+//		    String neighborRouter = ipMatcher.group(0);
+		    for (OspfLink s : act_spoje) {
+			if (neighborInterface.endsWith(s.getLinkID())) {
+			    model.updateCost(s.getLinkID(), router, neighborInterface, cost);
+			}
 		    }
 		}
 	    }

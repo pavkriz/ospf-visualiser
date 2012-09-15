@@ -62,11 +62,12 @@ public class PropertiesPanel extends JPanel {
 	tree.addMouseListener(new MouseAdapter() {
 
 	    public void mouseClicked(MouseEvent me) {
+		String text = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject().toString();
 		if (me.getClickCount() == 1) {
 		    // klik - zobrazení informací v properties okně
-		    String text = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject().toString();
 		    actualizeValues(model.getRouterByIp(text.substring(0, text.indexOf("-") - 1)));
 		} else if (me.getClickCount() == 2) {
+		    
 		    // double klik - vyhledání routeru
 		    // String text = ((DefaultMutableTreeNode)
 		    // tree.getLastSelectedPathComponent()).getUserObject().toString();
@@ -180,7 +181,7 @@ public class PropertiesPanel extends JPanel {
 	c.gridx = 0;
 	c.gridy = 0;
 	c.insets = new Insets(2, 6, 0, 0);
-	pInfo.add(new JLabel(rb.getString("pw.10") + ":"), c);
+	pInfo.add(new JLabel(rb.getString("pw.0") + ":"), c);
 	c.gridy = c.gridy + 1;
 	c.insets = new Insets(0, 30, 0, 0);
 	pInfo.add(new JLabel(le.getLinkID()), c);
