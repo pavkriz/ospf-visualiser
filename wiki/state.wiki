@@ -1,3 +1,8 @@
+*16.9.2012*
+  * IPv6
+  * oprava tips
+  * lng - preklady
+
 *11.9.2012*
   * IPv6 - telnet, nacitani
 
