@@ -44,7 +44,9 @@ public class PropertiesPanel extends JPanel {
      */
     public PropertiesPanel(OspfModel ospfModel) {
 	this.model = ospfModel;
-	createComponents();
+	if (model != null) {
+	    createComponents();
+	}
     }
 
 
