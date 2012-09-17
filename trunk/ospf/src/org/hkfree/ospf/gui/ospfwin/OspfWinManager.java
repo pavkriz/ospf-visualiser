@@ -295,7 +295,7 @@ public class OspfWinManager {
 
 
     /**
-     * Otevře dialog pro výběr xml souboru k načtení
+     * Otevře dialog pro výběr NML (XML) souboru k načtení
      */
     protected void openLoadXMLFileDialog() {
 	JFileChooser fchooser = new JFileChooser();
@@ -335,6 +335,7 @@ public class OspfWinManager {
 	    mapXmlLoader.setInputFile(inputFile);
 	    mapXmlLoader.loadModelFromDocument();
 	    mapModel = mapXmlLoader.getMapModel();
+	    //FIXME opravit chybu
 	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapModel);
 	}
     }
@@ -558,7 +559,7 @@ public class OspfWinManager {
 
 
     /**
-     * Uloží rozpracovaný mapModel do xml souboru
+     * Uloží vybraný model do NML (XML) souboru pro pozdější otevření
      * @param outputFile
      */
     private void saveModelToXML(File outputFile) {

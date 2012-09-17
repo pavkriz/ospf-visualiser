@@ -415,7 +415,7 @@ public class OspfWinActionListener implements ActionListener {
 	    }
 	};
 	actionSettings.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.program.settings.title"));
-	actionExportModelToXGMML = new AbstractAction(rb.getString("menu.map.exportModel")) {
+	actionExportModelToXGMML = new AbstractAction(rb.getString("menu.map.exportXGMML")) {
 
 	    private static final long serialVersionUID = 1L;
 
@@ -424,7 +424,7 @@ public class OspfWinActionListener implements ActionListener {
 		winManager.openExportModelToXGMMLDialog();
 	    }
 	};
-	actionExportModelToXGMML.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.map.exportModel.title"));
+	actionExportModelToXGMML.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.map.exportXGMML.title"));
 	actionExportModelToXGMML.setEnabled(false);
 	actionSearchRouter = new AbstractAction(null, new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "search.png"))) {
