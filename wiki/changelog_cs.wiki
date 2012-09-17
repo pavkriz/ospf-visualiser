@@ -8,7 +8,8 @@ Postup:
 
 = Verze =
 
-== ospf3.0.2 ==
+== ospf3.0.2 (17.9.2012) ==
+  * {{Font color|red|UPOZORNĚNÍ: byl pozměněn soubor s nastavením aplikace v domovském adresáři, doporučuji jej smazat a nechat aplikací vytvořit nový při prvním spuštění}}
   * úprava vyhledávání v mapě (dle IP nebo ID routeru - non-case senzitivní)
   * celková změna GUI na jedno okno + okno pro sledování stavů sítě v čase
   * oprava dialogu pro XGMML export
@@ -29,7 +30,7 @@ Postup:
   * opravy popisků (úprava, sjednocení...)
   * tipy pro práci s aplikací v menu
 
-== ospf3.0.1 ==
+== ospf3.0.1 (26.6.2012) ==
   * opravy layoutů (výpadky spojů, následky výpadku spojů/routerů)
   * opravy popisků
   * oprava stahování dat přes telnet
@@ -40,7 +41,7 @@ Postup:
     * rychlejší, nevytěžuje stále CPU
   * zjištění suffixu a jeho odmazání (vyhledá se nejvyskytovanější suffix názvu) - pouze u načítání dat přes telnet
 
-== ospf3.0.0 ==
+== ospf3.0.0 (20.6.2012) ==
   * cs/en dokončen překlad
   * možnost vyhledávat v mapě routerů
     * CTRL+f předá focus poli pro zadání hledaného řetězce
