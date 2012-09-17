@@ -1,3 +1,7 @@
+*17.9.2012*
+  * upravy textu
+  * *nova verze 3.0.2*
+
 *16.9.2012*
   * IPv6
   * oprava tips
