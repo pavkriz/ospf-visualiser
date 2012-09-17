@@ -17,7 +17,9 @@ Postup:
   * informační postraní panel s:
     * seznamem routerů v modelu
     * informacemi o vybraném routeru/spoji
-  * výběr dat dle časového intervalu v zadaném čase, možnost načtení modlů do seznamu/okna pro sledování stavů
+  * výběr dat dle časového intervalu v zadaném čase
+    * možnost načtení modelů do seznamu
+    * nebo do okna pro sledování stavů
   * výběr dat ze zip souboru obsahujícího všechny dostupné modely
   * zrychlení telnet (překlad hostname)
   * telnet pro IPv6
