@@ -10,8 +10,9 @@ Postup:
 
 == ospf3.0.2 (17.9.2012) ==
   * <font color="red">UPOZORNĚNÍ: byl pozměněn soubor s nastavením aplikace v domovském adresáři, doporučuji jej smazat a nechat aplikací vytvořit nový při prvním spuštění</font>
-  * úprava vyhledávání v mapě (dle IP nebo ID routeru - non-case senzitivní)
   * celková změna GUI na jedno okno + okno pro sledování stavů sítě v čase
+  * úprava vyhledávání v mapě (dle IP nebo ID routeru - non-case senzitivní)
+  * dialog pro informaci o právě probíhající operaci
   * oprava dialogu pro XGMML export
   * export SVG
   * zvýraznění spoje pod kurzorem
@@ -23,11 +24,10 @@ Postup:
     * nebo do okna pro sledování stavů
   * výběr dat ze zip souboru obsahujícího všechny dostupné modely
   * zrychlení telnet (překlad hostname)
-  * telnet pro IPv6
+  * přidána podpora získání dat přes telnet pro IPv6
   * použití defaultního DNS serveru v případě nezadání explicitního
-  * změna statusbaru
-  * dialog pro informaci o právě probíhající operaci
   * opravy popisků (úprava, sjednocení...)
+  * změna statusbaru
   * tipy pro práci s aplikací v menu
 
 == ospf3.0.1 (26.6.2012) ==
