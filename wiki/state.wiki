@@ -1,6 +1,9 @@
+*18.9.2012*
+  * oprava na nenutnost mazani sett souboru v home pri nove verzi
+  * *nova verze 3.0.2*
+
 *17.9.2012*
   * upravy textu
-  * *nova verze 3.0.2*
 
 *16.9.2012*
   * IPv6
