@@ -28,6 +28,9 @@ Postup:
   * opravy popisků (úprava, sjednocení...)
   * změna statusbaru
   * tipy pro práci s aplikací v menu
+  * opravy bugů pro okno sledování stavů:
+    * mód nejkratších cest
+    * dodány možnosti zarovnat dle GPS
 
 == ospf3.0.1 (26.6.2012) ==
   * opravy layoutů (výpadky spojů, následky výpadku spojů/routerů)
