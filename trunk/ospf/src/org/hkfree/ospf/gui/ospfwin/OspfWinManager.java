@@ -72,12 +72,12 @@ public class OspfWinManager {
      */
     public OspfWinManager(JFrame owner) {
 	this.owner = owner;
-	settingsManager = new SettingsManager(settings);
 	try {
+	    settingsManager = new SettingsManager(settings);
 	    // načte nastavení aplikace a nastavení načítání dat
 	    settingsManager.loadSettings();
 	    // jazyk/země
-	    Locale locale = new Locale(settings.lng.toString().substring(0, 2), settings.lng.toString().substring(3, 5));
+	    Locale locale = new Locale(settings.language.toString().substring(0, 2), settings.language.toString().substring(3, 5));
 	    rb = ResourceBundle.getBundle("org.hkfree.ospf.lng.ospf", locale);
 	} catch (Exception e) {
 	    ((OspfWin) owner).showErrorMessage(rb == null ? "Error" : rb.getString("error"), e.getMessage());
@@ -451,7 +451,7 @@ public class OspfWinManager {
      * Zobrazí dialog "Tipy"
      */
     public void showTipsDialog() {
-	TipsDialog dialog = new TipsDialog(owner, settings.lng);
+	TipsDialog dialog = new TipsDialog(owner, settings.language);
 	dialog.setVisible(true);
     }
 

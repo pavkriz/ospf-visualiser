@@ -74,7 +74,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	    images[i] = createImageIcon(Constants.URL_IMG_GUI + "lng_" + LANGUAGE.values()[i] + ".png");
 	}
 	cbLangs = new JComboBox(images);
-	cbLangs.setSelectedIndex(settings.lng.ordinal());
+	cbLangs.setSelectedIndex(settings.language.ordinal());
 	cbLangs.addActionListener(this);
 	chbCloseLogDialog = new JCheckBox(rb.getString("sd.closeLogDialog"));
 	chbCloseLogDialog.setSelected(settings.closeLogDialog);
@@ -121,7 +121,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	if (e.getSource() == btnStorno)
 	    this.setVisible(false);
 	else if (e.getSource() == btnSave) {
-	    settings.lng = (LANGUAGE.values()[cbLangs.getSelectedIndex()]);
+	    settings.language = (LANGUAGE.values()[cbLangs.getSelectedIndex()]);
 	    settings.closeLogDialog = chbCloseLogDialog.isSelected();
 	    manager.saveSettings();
 	    this.setVisible(false);

@@ -36,7 +36,7 @@ public class AppSettings {
     public String telnetPassword;// =free
     public int telnetTimeout;// =5000
     public String rdnsServer;// =lab.hkfree.org
-    public LANGUAGE lng;
+    public LANGUAGE language;
     public String fileNameRouterNames;// =router_names
     public String remoteFileIdentification;// =file
     public String fileNameTopology;// =ospf_database_network

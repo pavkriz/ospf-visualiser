@@ -24,16 +24,117 @@ public class SettingsManager {
     /**
      * Konstruktor
      * @param settings nastavení
+     * @throws IOException
+     * @throws FileNotFoundException
      */
-    public SettingsManager(AppSettings settings) {
+    public SettingsManager(AppSettings settings) throws FileNotFoundException, IOException {
 	this.settings = settings;
-	pathFolder = System.getProperty("user.home") + "/.ospf-visualiserNEW/";
+	pathFolder = System.getProperty("user.home") + "/.ospf-visualiser/";
 	pathFile = pathFolder + Constants.SETTINGS_FILE;
 	// overeni, ze existuje properties s nastavenim, pokud ne tak jej vytvoří
 	File f = new File(pathFile);
 	if (!f.exists()) {
 	    createSettingsProperties();
+	} else {
+	    // uzivatelske nastaveni z domovskeho adresare
+	    Properties propUser = new Properties();
+	    propUser.load(new FileInputStream(f));
+	    if (propUser.getProperty("appVersion") == null) { // atribut appVersion se nenasel
+		// defaultni nastaveni
+		Properties propDef = new Properties();
+		propDef.load(ClassLoader.getSystemResourceAsStream(Constants.SETTINGS_FILE));
+		updateSettings(propUser, propDef);
+	    }
 	}
+    }
+
+
+    /**
+     * Aktualizuje uživatelské nastavení aplikace v domovském adresáři tak,
+     * aby odpovídalo verzi aplikace
+     * @param propUser uživatelské nastavení
+     * @param propDef defaultní nastavení
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    private void updateSettings(Properties propUser, Properties propDef) throws FileNotFoundException, IOException {
+	// zjistuje se pritomnost atributu v nastaveni, pokud neexistuje, prida se spolu s defaultni hodnotou
+	if (propUser.getProperty("logsRemoteZipSourcePath") == null) {
+	    propUser.setProperty("logsRemoteZipSourcePath", propDef.getProperty("logsRemoteZipSourcePath"));
+	}
+	if (propUser.getProperty("logsRemoteFolderIdentification") == null) {
+	    propUser.setProperty("logsRemoteFolderIdentification", propDef.getProperty("logsRemoteFolderIdentification"));
+	}
+	if (propUser.getProperty("logsRemoteZipFileIdentification") == null) {
+	    propUser.setProperty("logsRemoteZipFileIdentification", propDef.getProperty("logsRemoteZipFileIdentification"));
+	}
+	if (propUser.getProperty("loadDataTypIndex") == null) {
+	    propUser.setProperty("loadDataTypIndex", propDef.getProperty("loadDataTypIndex"));
+	}
+	if (propUser.getProperty("modelZipRemotePath") == null) {
+	    propUser.setProperty("modelZipRemotePath", propDef.getProperty("modelZipRemotePath"));
+	}
+	if (propUser.getProperty("remoteZipFileIdentification") == null) {
+	    propUser.setProperty("remoteZipFileIdentification", propDef.getProperty("remoteZipFileIdentification"));
+	}
+	if (propUser.getProperty("modelSingleLocalPath") == null) {
+	    propUser.setProperty("modelSingleLocalPath", propDef.getProperty("modelSingleLocalPath"));
+	}
+	if (propUser.getProperty("modelZipLocalPath") == null) {
+	    propUser.setProperty("modelZipLocalPath", propDef.getProperty("modelZipLocalPath"));
+	}
+	if (propUser.getProperty("telnetUrl") == null) {
+	    propUser.setProperty("telnetUrl", propDef.getProperty("telnetUrl"));
+	}
+	if (propUser.getProperty("telnetPort") == null) {
+	    propUser.setProperty("telnetPort", propDef.getProperty("telnetPort"));
+	}
+	if (propUser.getProperty("telnetPassword") == null) {
+	    propUser.setProperty("telnetPassword", propDef.getProperty("telnetPassword"));
+	}
+	if (propUser.getProperty("telnetTimeout") == null) {
+	    propUser.setProperty("telnetTimeout", propDef.getProperty("telnetTimeout"));
+	}
+	if (propUser.getProperty("rdnsServer") == null) {
+	    propUser.setProperty("rdnsServer", propDef.getProperty("rdnsServer"));
+	}
+	if (propUser.getProperty("language") == null) {
+	    propUser.setProperty("language", propDef.getProperty("language"));
+	}
+	if (propUser.getProperty("fileNameRouterNames") == null) {
+	    propUser.setProperty("fileNameRouterNames", propDef.getProperty("fileNameRouterNames"));
+	}
+	if (propUser.getProperty("fileNameTopology") == null) {
+	    propUser.setProperty("fileNameTopology", propDef.getProperty("fileNameTopology"));
+	}
+	if (propUser.getProperty("fileNameGeoPositions") == null) {
+	    propUser.setProperty("fileNameGeoPositions", propDef.getProperty("fileNameGeoPositions"));
+	}
+	if (propUser.getProperty("remoteFileIdentification") == null) {
+	    propUser.setProperty("remoteFileIdentification", propDef.getProperty("remoteFileIdentification"));
+	}
+	if (propUser.getProperty("modelZipRemotePathBetween") == null) {
+	    propUser.setProperty("modelZipRemotePathBetween", propDef.getProperty("modelZipRemotePathBetween"));
+	}
+	if (propUser.getProperty("modelTimeBetween") == null) {
+	    propUser.setProperty("modelTimeBetween", propDef.getProperty("modelTimeBetween"));
+	}
+	if (propUser.getProperty("countDaysBack") == null) {
+	    propUser.setProperty("countDaysBack", propDef.getProperty("countDaysBack"));
+	}
+	if (propUser.getProperty("ipv") == null) {
+	    propUser.setProperty("ipv", propDef.getProperty("ipv"));
+	}
+	if (propUser.getProperty("fromDateToDateLoadTo") == null) {
+	    propUser.setProperty("fromDateToDateLoadTo", propDef.getProperty("fromDateToDateLoadTo"));
+	}
+	if (propUser.getProperty("closeLogDialog") == null) {
+	    propUser.setProperty("closeLogDialog", propDef.getProperty("closeLogDialog"));
+	}
+	if (propUser.getProperty("appVersion") == null) {
+	    propUser.setProperty("appVersion", Constants.APP_VERSION);
+	}
+	propUser.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }
 
 
@@ -84,7 +185,7 @@ public class SettingsManager {
 	settings.telnetPassword = prop.getProperty("telnetPassword");
 	settings.telnetTimeout = Integer.valueOf(prop.getProperty("telnetTimeout"));
 	settings.rdnsServer = prop.getProperty("rdnsServer");
-	settings.lng = Constants.LANGUAGE.valueOf(prop.getProperty("language"));
+	settings.language = Constants.LANGUAGE.valueOf(prop.getProperty("language"));
 	settings.fileNameRouterNames = prop.getProperty("fileNameRouterNames");
 	settings.fileNameTopology = prop.getProperty("fileNameTopology");
 	settings.fileNameGeoPositions = prop.getProperty("fileNameGeoPositions");
@@ -119,7 +220,7 @@ public class SettingsManager {
 	prop.setProperty("telnetPassword", settings.telnetPassword);
 	prop.setProperty("telnetTimeout", String.valueOf(settings.telnetTimeout));
 	prop.setProperty("rdnsServer", settings.rdnsServer);
-	prop.setProperty("language", settings.lng.toString());
+	prop.setProperty("language", settings.language.toString());
 	prop.setProperty("fileNameRouterNames", settings.fileNameRouterNames);
 	prop.setProperty("fileNameTopology", settings.fileNameTopology);
 	prop.setProperty("fileNameGeoPositions", settings.fileNameGeoPositions);
@@ -130,6 +231,7 @@ public class SettingsManager {
 	prop.setProperty("ipv", settings.ipv);
 	prop.setProperty("fromDateToDateLoadTo", settings.fromDateToDateLoadTo);
 	prop.setProperty("closeLogDialog", String.valueOf(settings.closeLogDialog));
+	prop.setProperty("appVersion", Constants.APP_VERSION);
 	prop.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }
 }

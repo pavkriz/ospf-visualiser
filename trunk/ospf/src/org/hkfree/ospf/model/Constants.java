@@ -10,6 +10,8 @@ public abstract class Constants {
 	public static final String SETTINGS_FILE = "settings.properties";
 	/** komentář do properties souboru s nastavením aplikace */
 	public static final String SETTINGS_COMMENT = "OSPF VISUALISER SETTINGS";
+	/** verze aplikace */
+	public static final String APP_VERSION = "3.0.2";
 	// konstanty pro vyber zdroje pro nacteni dat
 	public static final int FROM_DATE_TO_DATE = 0;
 	public static final int ZIP_SERVER = 1;
