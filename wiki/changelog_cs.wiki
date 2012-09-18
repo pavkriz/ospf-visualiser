@@ -9,7 +9,6 @@ Postup:
 = Verze =
 
 == ospf3.0.2 (17.9.2012) ==
-  * <font color="red">UPOZORNĚNÍ: byl změněn soubor s nastavením aplikace v domovském adresáři, doporučuji jej smazat a nechat aplikací vytvořit nový při prvním spuštění</font>
   * celková změna GUI na jedno okno + okno pro sledování stavů sítě v čase
   * úprava vyhledávání v mapě (dle IP nebo ID routeru - non-case senzitivní)
   * dialog pro informaci o právě probíhající operaci
