@@ -1,5 +1,7 @@
 *18.9.2012*
   * oprava na nenutnost mazani sett souboru v home pri nove verzi
+  * oprava bugu net state window - mod nejkratsich cest ihned prekresli mapu
+  * net state okno - pridano umistovani dle GPS
   * *nova verze 3.0.2*
 
 *17.9.2012*
