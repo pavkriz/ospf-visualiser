@@ -16,6 +16,7 @@ Postup:
   * export SVG
   * zvýraznění spoje pod kurzorem
   * informační postranní panel s:
+    * načtenými modely - roletka pro výběr modelu
     * seznamem routerů v modelu
     * informacemi o vybraném routeru/spoji
   * výběr dat dle časového intervalu v zadaném čase
@@ -28,7 +29,7 @@ Postup:
   * opravy popisků (úprava, sjednocení...)
   * změna statusbaru
   * tipy pro práci s aplikací v menu
-  * opravy bugů pro okno sledování stavů:
+  * opravy bugů okna sledování stavů:
     * mód nejkratších cest
     * dodány možnosti zarovnat dle GPS
 
