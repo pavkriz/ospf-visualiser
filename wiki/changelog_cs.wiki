@@ -28,10 +28,10 @@ Postup:
   * použití defaultního DNS serveru v případě nezadání explicitního
   * opravy popisků (úprava, sjednocení...)
   * změna statusbaru
-  * tipy pro práci s aplikací v menu
+  * tipy pro práci s aplikací v menu nápověda
   * opravy bugů okna sledování stavů:
     * mód nejkratších cest
-    * dodány možnosti zarovnat dle GPS
+    * přidána možnost zarovnat dle GPS
 
 == ospf3.0.1 (26.6.2012) ==
   * opravy layoutů (výpadky spojů, následky výpadku spojů/routerů)
