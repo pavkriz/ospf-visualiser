@@ -32,6 +32,7 @@ Postup:
   * opravy bugů okna sledování stavů:
     * mód nejkratších cest
     * přidána možnost zarovnat dle GPS
+    * u vypadlých spojů zůstává zobrazení poslední známé ceny
 
 == ospf3.0.1 (26.6.2012) ==
   * opravy layoutů (výpadky spojů, následky výpadku spojů/routerů)
