@@ -119,11 +119,13 @@ public class NetStateMapStyleTransformer {
 	edgeLabeler = new Transformer<LinkEdge, String>() {
 
 	    public String transform(LinkEdge e) {
-		if (e.isEnabled()) {
+//		if (e.isEnabled()) {
+			//zmena, vzdy se zobrazuje cena spoje (pro vypadly se zobrazi posledni znama)
 		    return owner.getActualNetStateLinkEdgeLabel(e);
-		} else {
-		    return "";
-		}
+//		} else {
+//		    return "";
+//		    
+//		}
 	    }
 	};
 	edgeToolTiper = new Transformer<LinkEdge, String>() {

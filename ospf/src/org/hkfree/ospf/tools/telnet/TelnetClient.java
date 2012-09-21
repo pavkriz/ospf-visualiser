@@ -34,23 +34,13 @@ public class TelnetClient {
 
     /**
      * Konstruktor
-     * @param telnetUrl
-     * @param telnetPort
-     */
-    public TelnetClient(String host, int port) {
-	this.host = host;
-	this.port = port;
-    }
-
-
-    /**
-     * Konstruktor
      * @param host
      * @param port
      * @param password
      */
     public TelnetClient(String host, int port, String password, int timeout) {
-	this(host, port);
+	this.host = host;
+	this.port = port;
 	this.password = password;
 	this.timeout = timeout;
     }
@@ -73,10 +63,10 @@ public class TelnetClient {
 	_os = _socket.getOutputStream();
 	_is = _socket.getInputStream();
 	readThread = new ReadThread();
-	while (!_sb.toString().endsWith("Password: ") ) {
+	while (!_sb.toString().endsWith("Password: ")) {
 	    send("");// odeslu enter, kvuli srovnani prijatych/odeslanych dat
 	}
-	if (password != null) {	//nemelo by byt nikdy nullove
+	if (password != null) { // nemelo by byt nikdy nullove
 	    send(this.password);
 	}
 	send("terminal length 0");
@@ -225,7 +215,7 @@ public class TelnetClient {
 	/**
 	 * Konstruktor
 	 */
-	public ReadThread() {}
+	public ReadThread() { }
 
 
 	/**
@@ -251,9 +241,7 @@ public class TelnetClient {
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
-		if (getSb() == null 
-			|| getSb().toString().endsWith("> ") 
-			|| receiveLength == -1
+		if (getSb() == null || getSb().toString().endsWith("> ") || receiveLength == -1
 			|| getSb().toString().endsWith("Password: ")) {
 		    break;
 		}

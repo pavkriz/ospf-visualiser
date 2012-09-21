@@ -13,6 +13,7 @@ import org.hkfree.ospf.model.netchange.NetChangeModel;
 import org.hkfree.ospf.model.netchange.NetStateLinkEdge;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.MapModelShortestPathFinder;
+import org.hkfree.ospf.tools.geo.GPSPointConverter;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -29,6 +30,7 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 public class NSWGraphComponent extends JComponent {
 
     private static final long serialVersionUID = 1L;
+    private GPSPointConverter gpsPointConverter = null;
     private NetChangeModel netChangeModel = null;
     private int mapGraphCompMode = MapGraphComponentMode.NONE;
     private RouterVertex shortestTreeCenter = null;
@@ -84,6 +86,9 @@ public class NSWGraphComponent extends JComponent {
      */
     public void setNetChangeModel(NetChangeModel model) {
 	this.netChangeModel = model;
+	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
+	gpsPointConverter.setGPSMaxsAndMins(netChangeModel.getMinimumLatitude(), netChangeModel.getMaximumLatitude(),
+		netChangeModel.getMinimumLongtitude(), netChangeModel.getMaximumLongtitude());
     }
 
 
@@ -203,6 +208,40 @@ public class NSWGraphComponent extends JComponent {
 
 
     /**
+     * Nastaví režim přesunu na pozice dle GPS
+     */
+    public void setGPSPositioningMode() {
+	returnColorOfShortestPath();
+	// returnColorOfNewEdgeFirstVertex();
+	mapGraphCompMode = MapGraphComponentMode.GPS_POSITIONING;
+    }
+
+
+    /**
+     * Rozmístí všechny vrcholy dle jejich odpovídajících gps souřadnic
+     */
+    public void setAllVerticesToGPSPosition() {
+	for (RouterVertex r : graph.getVertices()) {
+	    setVertexPositionByGPS(r);
+	}
+	layout.initialize();
+	vv.repaint();
+    }
+
+
+    /**
+     * Pokud má vrchol nadefinovánu gps pozici, bude na ni přemístěn
+     * @param r
+     */
+    private void setVertexPositionByGPS(RouterVertex r) {
+	if (r.getGpsLatitude() != 0 && r.getGpsLongtitude() != 0) {
+	    layout.setLocation(r, gpsPointConverter.getPosition(r.getGPSCoordinates()));
+	    lockVertexPosition(r);
+	}
+    }
+
+
+    /**
      * Nastavuje režim zobrazení nejkratších cest
      */
     public void setShowShortestPathMode() {
@@ -292,6 +331,7 @@ public class NSWGraphComponent extends JComponent {
 	for (RouterVertex rv : netChangeModel.getRouterVertices()) {
 	    rv.setCenterOfShortestPathTree(false);
 	}
+	vv.repaint();
     }
 
 
@@ -305,6 +345,16 @@ public class NSWGraphComponent extends JComponent {
 	    if (nlse.getLinkEdge().equals(linkEdge)) {
 		return nlse.getNetStateLinkCostLabel();
 	    }
+	}
+	// pokud se nenašly ceny v aktuálním modelu, vrací se ceny z posledního modelu, kde se spoj nalézal
+	int index = actualNetStateIndex - 1;
+	while (index >= 0) {
+	    for (NetStateLinkEdge nlse : netChangeModel.getNetStates().get(index).getNetStateLinkEdges()) {
+		if (nlse.getLinkEdge().equals(linkEdge)) {
+		    return nlse.getNetStateLinkCostLabel();
+		}
+	    }
+	    index--;
 	}
 	return "";
     }
@@ -320,6 +370,16 @@ public class NSWGraphComponent extends JComponent {
 	    if (nlse.getLinkEdge().equals(linkEdge)) {
 		return nlse.getNetStateLinkDescription();
 	    }
+	}
+	// pokud se nenašel popisek v aktuálním modelu, vrací se popisek z posledního modelu, kde se spoj nalézal
+	int index = actualNetStateIndex - 1;
+	while (index >= 0) {
+	    for (NetStateLinkEdge nlse : netChangeModel.getNetStates().get(index).getNetStateLinkEdges()) {
+		if (nlse.getLinkEdge().equals(linkEdge)) {
+		    return nlse.getNetStateLinkDescription();
+		}
+	    }
+	    index--;
 	}
 	return "";
     }

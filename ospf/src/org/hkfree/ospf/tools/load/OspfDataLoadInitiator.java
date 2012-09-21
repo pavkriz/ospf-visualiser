@@ -342,10 +342,15 @@ public class OspfDataLoadInitiator {
     private void loadDataViaTelnet(OspfModel ospfModel, String sourcePath) throws Exception {
 	TelnetClient tc = new TelnetClient(settings.telnetUrl, settings.telnetPort, settings.telnetPassword,
 		settings.telnetTimeout);
+	System.out.println(0);
 	tc.initConnection();
+	System.out.println(1);
 	loadTopologyDataFromTelnet(ospfModel, tc);
+	System.out.println(2);
 	loadNonTopologyDataFromTelnet(ospfModel, tc);
+	System.out.println(3);
 	tc.close();
+	System.out.println(4);
 	// nazev noveho tabbu
 	Date date = new Date(System.currentTimeMillis());
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm");

@@ -547,4 +547,60 @@ public class NetChangeModel implements AbstractMapModel {
 	    }
 	}
     }
+
+
+    /**
+     * Vrací maximální hodnotu zeměpisné šířky
+     * @return double
+     */
+    public double getMaximumLatitude() {
+	double max = 0;
+	for (RouterVertex r : routerVertices) {
+	    if (r.getGpsLatitude() > max)
+		max = r.getGpsLatitude();
+	}
+	return max;
+    }
+
+
+    /**
+     * Vrací minimální hodnotu zeměpisné šířky
+     * @return double
+     */
+    public double getMinimumLatitude() {
+	double min = 0;
+	for (RouterVertex r : routerVertices) {
+	    if ((r.getGpsLatitude() < min && r.getGpsLatitude() != 0) || min == 0)
+		min = r.getGpsLatitude();
+	}
+	return min;
+    }
+
+
+    /**
+     * Vrací maximální hodnotu zeměpisné délky
+     * @return double
+     */
+    public double getMaximumLongtitude() {
+	double max = 0;
+	for (RouterVertex r : routerVertices) {
+	    if (r.getGpsLongtitude() > max)
+		max = r.getGpsLongtitude();
+	}
+	return max;
+    }
+
+
+    /**
+     * Vrací minimáln hodnotu zeměpisné délky
+     * @return double
+     */
+    public double getMinimumLongtitude() {
+	double min = 0;
+	for (RouterVertex r : routerVertices) {
+	    if ((r.getGpsLongtitude() < min && r.getGpsLongtitude() != 0) || min == 0)
+		min = r.getGpsLongtitude();
+	}
+	return min;
+    }
 }
