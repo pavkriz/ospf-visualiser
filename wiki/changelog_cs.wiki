@@ -8,7 +8,7 @@ Postup:
 
 = Verze =
 
-== ospf3.0.2 (18.9.2012) ==
+== ospf3.0.2 (20.9.2012) ==
   * celková změna GUI na jedno okno + okno pro sledování stavů sítě v čase
   * úprava vyhledávání v mapě (dle IP nebo ID routeru - non-case senzitivní)
   * dialog pro informaci o právě probíhající operaci
