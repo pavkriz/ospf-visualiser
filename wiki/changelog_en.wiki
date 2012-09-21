@@ -8,6 +8,33 @@ How to:
 
 = Version =
 
+
+== ospf3.0.2 (20.9.2012) ==
+  * completely changed GUI - one window plus net state window
+  * edited searching in map (now by IP or ID of router - non-case sensitive)
+  * dialog for information about operation in progress
+  * dialog for XGMML export fixed
+  * export SVG
+  * highlighting of links in map
+  * info panel containing:
+    * loaded models - select box for selecting model
+    * list of routers in selected model
+    * info about clicked router/link
+  * výběr dat dle časového intervalu v zadaném čase
+    * možnost načtení modelů do seznamu
+    * nebo do okna pro sledování stavů
+  * výběr dat ze zip souboru obsahujícího všechny dostupné modely
+  * zrychlení telnet (překlad hostname)
+  * přidána podpora získání dat přes telnet pro IPv6
+  * použití defaultního DNS serveru v případě nezadání explicitního
+  * fix of title and lables
+  * statusbar changed
+  * tips for working with application in menu help
+  * fix bugs - net state window:
+    * the shortest path mode
+    * added option for location by GPS
+    * u vypadlých spojů zůstává zobrazení poslední známé ceny
+
 == ospf3.0.1 ==
   * layout correction (failure results of links/routers)
   * label correction
