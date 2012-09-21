@@ -35,6 +35,8 @@ public class NetStatesWinActionListener implements ActionListener {
     private Action actionShortestPath = null;
     private Action actionShowCostDifferences = null;
     private Action actionLinkFaultMode = null;
+    private Action actionGPS = null;
+    private Action actionGPSAll = null;
 
 
     /**
@@ -224,6 +226,30 @@ public class NetStatesWinActionListener implements ActionListener {
 	};
 	actionLinkFaultMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("nswal.13.title"));
 	actionLinkFaultMode.setEnabled(false);
+	actionGPS = new AbstractAction(rb.getString("mode." + MODE.GPS), new ImageIcon(getClass().getResource(
+		Constants.URL_IMG_GUI + "gps.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		netStatesWinManager.getGraphComponent().setGPSPositioningMode();
+		netStatesWinManager.setStatusText(1, rb.getString("mode." + MODE.GPS));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("mode." + MODE.GPS + ".toolTip"));
+	    }
+	};
+	actionGPS.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.GPS + ".title"));
+	actionGPSAll = new AbstractAction(rb.getString("mode." + MODE.GPS_ALL), new ImageIcon(getClass().getResource(
+		Constants.URL_IMG_GUI + "gps_all.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		netStatesWinManager.getGraphComponent().setAllVerticesToGPSPosition();
+	    }
+	};
+	actionGPSAll.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.GPS_ALL + ".title"));
     }
 
 
@@ -364,5 +390,15 @@ public class NetStatesWinActionListener implements ActionListener {
      */
     public Action getActionLinkFaultMode() {
 	return actionLinkFaultMode;
+    }
+
+
+    public Action getActionGPS() {
+	return actionGPS;
+    }
+
+
+    public Action getActionGPSAll() {
+	return actionGPSAll;
     }
 }

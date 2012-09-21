@@ -188,8 +188,27 @@ public class OspfWin extends JFrame {
     }
 
 
+    /**
+     * Přidá panel s grafem do roletky dle jeho názvu.
+     * Pokud se již název v roletce vyskytuje, upraví jej
+     * @param name název modelu
+     * @param mapPanel panel s grafem
+     */
     private void addMapPanel(String name, MapPanel mapPanel) {
 	mapPanel.processModelsAfterStart(true, null, 0);
+	// pokud je jiz vlozen model se stejnym nazvem, upravi se nazev
+	int i = 1;
+	while (true) {
+	    if (!models.containsKey(name)) {
+		break;
+	    }
+	    if (name.endsWith("_" + i)) {
+		name = name.substring(0, name.lastIndexOf("_" + i));
+	    }
+	    i++;
+	    name = name + "_" + i;
+	}
+	// prida se model
 	models.put(name, mapPanel);
 	cbModels.insertItemAt(name, cbModels.getItemCount());
 	if (cbModels.getItemCount() == 1) {

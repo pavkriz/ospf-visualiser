@@ -51,6 +51,9 @@ public class NetStatesWinMenu extends JMenuBar {
 	JMenu mPozice = new JMenu(rb.getString("nswm.2"));
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionStartLayouting()));
 	mPozice.addSeparator();
+	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionGPS()));
+	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionGPSAll()));
+	mPozice.addSeparator();
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockMode()));
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockAll()));
 	// nabídka "Změny cen"

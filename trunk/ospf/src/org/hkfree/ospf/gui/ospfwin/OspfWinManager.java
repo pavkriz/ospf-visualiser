@@ -77,7 +77,8 @@ public class OspfWinManager {
 	    // načte nastavení aplikace a nastavení načítání dat
 	    settingsManager.loadSettings();
 	    // jazyk/země
-	    Locale locale = new Locale(settings.language.toString().substring(0, 2), settings.language.toString().substring(3, 5));
+	    Locale locale = new Locale(settings.language.toString().substring(0, 2), settings.language.toString().substring(
+		    3, 5));
 	    rb = ResourceBundle.getBundle("org.hkfree.ospf.lng.ospf", locale);
 	} catch (Exception e) {
 	    ((OspfWin) owner).showErrorMessage(rb == null ? "Error" : rb.getString("error"), e.getMessage());
@@ -198,7 +199,7 @@ public class OspfWinManager {
     private void loadData() {
 	OspfDataLoadInitiator loadInitiator = new OspfDataLoadInitiator(settings, this);
 	List<OspfModel> newModels = new ArrayList<OspfModel>();
-	//inicializace logu nacteni dat
+	// inicializace logu nacteni dat
 	((OspfWin) getOwner()).getStateDialog().init();
 	for (String sourcePath : settings.getFilePaths()) {
 	    newModels.add(new OspfModel());
@@ -221,7 +222,6 @@ public class OspfWinManager {
 	    }
 	}
 	((OspfWin) getOwner()).getStateDialog().addText(rb.getString("stated.5"));
-	
 	// pridani novych modelu do zalozek
 	if (settings.fromDateToDateLoadTo.equals(AppSettings.MAP_PANEL)) {
 	    for (OspfModel om : newModels) {
@@ -263,7 +263,7 @@ public class OspfWinManager {
 	    }
 	}
 	((OspfWin) getOwner()).getStateDialog().operationSucceeded();
-	//zavreni dialogu s vypisem logu o nacteni dat
+	// zavreni dialogu s vypisem logu o nacteni dat
 	if (settings.closeLogDialog) {
 	    ((OspfWin) getOwner()).getStateDialog().close();
 	}
@@ -335,7 +335,7 @@ public class OspfWinManager {
 	    mapXmlLoader.setInputFile(inputFile);
 	    mapXmlLoader.loadModelFromDocument();
 	    mapModel = mapXmlLoader.getMapModel();
-	    //FIXME opravit chybu
+	    // FIXME opravit chybu
 	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapModel);
 	}
     }
@@ -383,12 +383,14 @@ public class OspfWinManager {
      * Zavře aktuálně vybranou záložku a odstraní model, který v ní je zobrazen
      */
     protected void closeActualModel() {
-	if (ospfModely.size() > 0) {
+	if (ospfModely.isEmpty()) {
+	    // pokud je seznam s modely prazdny, neni co zavirat
+	    ((OspfWin) owner).getStatusBar().clear();
+	} else {
+	    // jinak se zavre vybrany model
 	    OspfModel modelToRemove = getActualMDManager().getOspfModel();
 	    ((OspfWin) owner).closeActiveModelTabbedPane();
 	    ospfModely.remove(modelToRemove);
-	} else {
-	    ((OspfWin) owner).getStatusBar().clear();
 	}
 	checkActionsEnable();
     }
