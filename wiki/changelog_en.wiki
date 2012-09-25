@@ -11,7 +11,7 @@ How to:
 
 == ospf3.0.2 (20.9.2012) ==
   * completely changed GUI - one window plus net state window
-  * edited searching in map (now by IP or ID of router - non-case sensitive)
+  * edited searching in map (now by ID or name of router - non-case sensitive)
   * dialog for information about operation in progress
   * dialog for XGMML export fixed
   * export SVG
