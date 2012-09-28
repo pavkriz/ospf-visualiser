@@ -102,7 +102,7 @@ public class OspfWin extends JFrame {
 	spPanel.setOneTouchExpandable(true);
 	c.add(spPanel, BorderLayout.CENTER);
 	// statusbar
-	statusBar = new StatusBar();
+	statusBar = new StatusBar(this);
 	c.add(statusBar, BorderLayout.SOUTH);
 	// info o provadene akci
 	stateDialog = new StateDialog(this);

@@ -20,9 +20,9 @@ public class MapModel implements AbstractMapModel {
     private ResourceBundle rb = Factory.getRb();
     private List<LinkEdge> linkEdges = new ArrayList<LinkEdge>();
     private List<RouterVertex> routerVertices = new ArrayList<RouterVertex>();
-    private boolean castSite = false;
 
 
+    // private boolean castSite = false;
     /**
      * Konstruktor - vytvoří instanci třídy
      */
@@ -191,23 +191,21 @@ public class MapModel implements AbstractMapModel {
     }
 
 
-    /**
-     * Metoda, která vtátí true, pokud se jedná o model části sítě
-     * @return boolean
-     */
-    public boolean isCastSite() {
-	return castSite;
-    }
-
-
-    /**
-     * Metoda, která nastaví atribut určující zda se jedná o model části sítě
-     */
-    public void setCastSite(boolean castSite) {
-	this.castSite = castSite;
-    }
-
-
+    // /**
+    // * Metoda, která vtátí true, pokud se jedná o model části sítě
+    // * @return boolean
+    // */
+    // public boolean isCastSite() {
+    // return castSite;
+    // }
+    //
+    //
+    // /**
+    // * Metoda, která nastaví atribut určující zda se jedná o model části sítě
+    // */
+    // public void setCastSite(boolean castSite) {
+    // this.castSite = castSite;
+    // }
     /**
      * Vrací maximální hodnotu zeměpisné šířky
      * @return double

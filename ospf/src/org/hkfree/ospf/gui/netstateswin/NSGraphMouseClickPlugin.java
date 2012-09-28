@@ -71,9 +71,16 @@ public class NSGraphMouseClickPlugin extends AbstractGraphMousePlugin implements
 		    }
 		}
 	    }
+	    if (owner.getMapGraphComponentMode() == MapGraphComponentMode.ZOOM) {
+		owner.zoomPlus(p);
+	    }
 	}
 	// RIGHT MOUSE BUTTON
-	if (e.getButton() == MouseEvent.BUTTON3) {}
+	if (e.getButton() == MouseEvent.BUTTON3) {
+	    if (owner.getMapGraphComponentMode() == MapGraphComponentMode.ZOOM) {
+		owner.zoomMinus(p);
+	    }
+	}
     }
 
 

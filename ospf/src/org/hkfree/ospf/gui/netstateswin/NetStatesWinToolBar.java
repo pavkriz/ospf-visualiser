@@ -37,6 +37,7 @@ public class NetStatesWinToolBar extends JToolBar {
 	this.setRollover(true);
 	this.add(((NetStatesWinActionListener) actionListener).getActionTransformingMode());
 	this.add(((NetStatesWinActionListener) actionListener).getActionPickingMode());
+	this.add(((NetStatesWinActionListener) actionListener).getActionZoom());
 	this.addSeparator();
 	this.add(((NetStatesWinActionListener) actionListener).getActionNoneMode());
 	this.add(((NetStatesWinActionListener) actionListener).getActionShortestPath());

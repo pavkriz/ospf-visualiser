@@ -2,16 +2,22 @@ package org.hkfree.ospf.gui.ospfwin;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
+import org.hkfree.ospf.gui.netstateswin.NetStatesWin;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.tools.Factory;
 
@@ -23,16 +29,21 @@ public class StatusBar extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private ResourceBundle rb = Factory.getRb();
+    private final static String space = "   |  ";
     private JLabel statusInfo1 = new JLabel();
     private JLabel statusInfo2 = new JLabel();
     private JLabel statusHeading = null;
-    private Icon ico = new ImageIcon(getClass().getResource(Constants.URL_IMG_GUI + "help.png"));
+    private JButton bZoomIn = null;
+    private JButton bZoomOut = null;
+    private Icon icoHelp = new ImageIcon(getClass().getResource(Constants.URL_IMG_GUI + "help.png"));
+    private Icon icoZoomOut = new ImageIcon(getClass().getResource(Constants.URL_IMG_GUI + "zoomOut.png"));
+    private Icon icoZoomIn = new ImageIcon(getClass().getResource(Constants.URL_IMG_GUI + "zoomIn.png"));
 
 
-    public StatusBar() {
+    public StatusBar(final JFrame owner) {
 	super();
-	this.setLayout(new FlowLayout(FlowLayout.LEADING));
-	this.setAlignmentY(JPanel.TOP_ALIGNMENT);
+	this.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+	this.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 	this.setPreferredSize(new Dimension(100, 22));
 	statusHeading = new JLabel();
 	statusHeading.setText(rb.getString("mdw.noModel"));
@@ -60,9 +71,52 @@ public class StatusBar extends JPanel {
 		ttm.setDismissDelay(dismissD);
 	    }
 	});
+	JPanel panelZoom = new JPanel();
+	panelZoom.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+	panelZoom.setAlignmentY(JPanel.TOP_ALIGNMENT);
+	bZoomIn = new JButton(new AbstractAction() {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		if (owner instanceof OspfWin) {
+		    ((OspfWin) owner).getActualMDManager().getGraphComponent().zoomPlus();
+		} else if (owner instanceof NetStatesWin) {
+		    ((NetStatesWin) owner).getManager().getGraphComponent().zoomPlus();
+		}
+	    }
+	});
+	bZoomIn.setIcon(icoZoomIn);
+	bZoomIn.setMargin(new Insets(1, 1, 1, 1));
+	// bZoomIn.setBorderPainted(false);
+	// bZoomIn.setBorder(null);
+	// bZoomIn.setFocusable(false);
+	// bZoomIn.setContentAreaFilled(false);
+	bZoomOut = new JButton(new AbstractAction() {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		if (owner instanceof OspfWin) {
+		    ((OspfWin) owner).getActualMDManager().getGraphComponent().zoomMinus();
+		} else if (owner instanceof NetStatesWin) {
+		    ((NetStatesWin) owner).getManager().getGraphComponent().zoomMinus();
+		}
+	    }
+	});
+	bZoomOut.setIcon(icoZoomOut);
+	bZoomOut.setMargin(new Insets(1, 1, 1, 1));
+	panelZoom.add(bZoomOut);
+	panelZoom.add(bZoomIn);
+	this.add(panelZoom);
 	this.add(statusHeading);
 	this.add(statusInfo1);
 	this.add(statusInfo2);
+	clear();
     }
 
 
@@ -72,10 +126,12 @@ public class StatusBar extends JPanel {
      * @param text zobrazený text
      */
     public void setStatus(int index, String text) {
-	statusHeading.setText(rb.getString("mdw.2") + ": ");
+	statusHeading.setText(space + rb.getString("mdw.2") + ": ");
+	bZoomIn.setVisible(true);
+	bZoomOut.setVisible(true);
 	switch (index) {
 	    case 0:
-		statusInfo1.setText(text + "   |  ");
+		statusInfo1.setText(text + space);
 		break;
 	    case 1:
 		statusInfo2.setText(text);
@@ -98,7 +154,7 @@ public class StatusBar extends JPanel {
 		break;
 	    case 1:
 		statusInfo2.setToolTipText(text);
-		statusInfo2.setIcon(ico);
+		statusInfo2.setIcon(icoHelp);
 		break;
 	    default:
 		break;
@@ -115,7 +171,8 @@ public class StatusBar extends JPanel {
 	statusInfo2.setText("");
 	statusInfo2.setToolTipText("");
 	statusInfo2.setIcon(null);
+	bZoomIn.setVisible(false);
+	bZoomOut.setVisible(false);
 	statusHeading.setText(rb.getString("mdw.noModel"));
     }
-
 }

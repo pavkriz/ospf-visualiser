@@ -28,6 +28,7 @@ public class NetStatesWinActionListener implements ActionListener {
     private Action actionLastState = null;
     private Action actionPickingMode = null;
     private Action actionTransformingMode = null;
+    private Action actionZoom = null;
     private Action actionStartLayouting = null;
     private Action actionLockMode = null;
     private Action actionLockAll = null;
@@ -139,6 +140,19 @@ public class NetStatesWinActionListener implements ActionListener {
 	};
 	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION,
 		rb.getString("mode." + MODE.TRANSFORMING + ".title"));
+	actionZoom = new AbstractAction(rb.getString("mode." + MODE.ZOOM), new ImageIcon(getClass().getResource(
+		Constants.URL_IMG_GUI + "zoom.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		netStatesWinManager.getGraphComponent().setZoomMode();
+		netStatesWinManager.setStatusText(1, rb.getString("mode." + MODE.ZOOM));
+		netStatesWinManager.setStatusTextToolTip(1, rb.getString("mode." + MODE.ZOOM + ".toolTip"));
+	    }
+	};
+	actionZoom.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ZOOM + ".title"));
 	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "startlayout.png"))) {
 
@@ -400,5 +414,10 @@ public class NetStatesWinActionListener implements ActionListener {
 
     public Action getActionGPSAll() {
 	return actionGPSAll;
+    }
+    
+    
+    public Action getActionZoom() {
+	return actionZoom;
     }
 }
