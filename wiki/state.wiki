@@ -1,5 +1,5 @@
 *28.9.2012*
-  * telnet - zruseni ReadThread, nyni vse v jednom vlakne
+  * telnet - zruseni Read vlakna, nyni vse v jednom vlakne
 
 *26.9.2012*
   * pridani + - tlacitko zoomu na status bar v ospfwin a netstatewin
