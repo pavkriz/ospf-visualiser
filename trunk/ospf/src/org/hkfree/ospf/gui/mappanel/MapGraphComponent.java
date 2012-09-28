@@ -512,8 +512,24 @@ public class MapGraphComponent extends JComponent {
     /**
      * Přiblíží mapu
      */
+    public void zoomPlus() {
+	zoomPlus(vv.getCenter());
+    }
+
+
+    /**
+     * Přiblíží mapu
+     */
     public void zoomPlus(Point2D clickPoint) {
 	scaler.scale(vv, 1.2f, clickPoint);
+    }
+
+
+    /**
+     * Oddálí mapu
+     */
+    public void zoomMinus() {
+	zoomMinus(vv.getCenter());
     }
 
 

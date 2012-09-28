@@ -75,6 +75,7 @@ public class OspfWinMenu extends JMenuBar {
 	mMode.addSeparator();
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionTransformingMode()));
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionPickingMode()));
+	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionZoom()));
 	// nabidka Pozice vrcholu
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionStartLayouting()));
 	mVertices.addSeparator();

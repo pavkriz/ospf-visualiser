@@ -84,7 +84,7 @@ public class NetStatesWin extends JFrame {
 	NetStatesWinToolBar toolBar = new NetStatesWinToolBar(netStatesWinActListener);
 	c.add(toolBar, BorderLayout.NORTH);
 	// statusbar
-	statusBar = new StatusBar();
+	statusBar = new StatusBar(this);
 	getManager().setStatusText(0, rb.getString("mode." + MODE.TRANSFORMING));
 	getManager().setStatusText(1, rb.getString("mode." + MODE.NONE));
 	getManager().setStatusTextToolTip(1, rb.getString("mode." + MODE.NONE + ".toolTip"));

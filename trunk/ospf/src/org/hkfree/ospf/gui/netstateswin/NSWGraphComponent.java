@@ -2,6 +2,7 @@ package org.hkfree.ospf.gui.netstateswin;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -318,6 +319,38 @@ public class NSWGraphComponent extends JComponent {
     public void unlockVertexPosition(RouterVertex r) {
 	r.setLocked(false);
 	layout.lock(r, false);
+    }
+
+
+    /**
+     * Přiblíží mapu
+     */
+    public void zoomPlus() {
+	zoomPlus(vv.getCenter());
+    }
+
+
+    /**
+     * Přiblíží mapu
+     */
+    public void zoomPlus(Point2D clickPoint) {
+	scaler.scale(vv, 1.2f, clickPoint);
+    }
+
+
+    /**
+     * Oddálí mapu
+     */
+    public void zoomMinus() {
+	zoomMinus(vv.getCenter());
+    }
+
+
+    /**
+     * Oddálí mapu
+     */
+    public void zoomMinus(Point2D clickPoint) {
+	scaler.scale(vv, 0.8f, clickPoint);
     }
 
 

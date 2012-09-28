@@ -19,7 +19,6 @@ public class TelnetClient {
 
     /** Výstupní stream odesílání dat */
     private OutputStream _os = null;
-    private ReadThread readThread = null;
     /** Vstupní stream pro přijetí dat */
     private InputStream _is = null;
     private Socket _socket;
@@ -28,8 +27,6 @@ public class TelnetClient {
     private int timeout;
     private String password = null;
     private StringBuilder _sb = null;
-    /** priznak zda probiha cteni z telnetu, jinak muzu posilat do telnetu prikazy */
-    private static boolean ctu = false;
 
 
     /**
@@ -52,7 +49,7 @@ public class TelnetClient {
      * @throws Exception
      * @throws InterruptedException
      */
-    public void initConnection() throws Exception {
+    public StringBuilder initConnection() throws Exception {
 	if (timeout == 0) {
 	    throw new Exception("Timeout must be greater than 0 ms.");
 	}
@@ -62,7 +59,6 @@ public class TelnetClient {
 	_socket.connect(sockAddr, timeout);
 	_os = _socket.getOutputStream();
 	_is = _socket.getInputStream();
-	readThread = new ReadThread();
 	while (!_sb.toString().endsWith("Password: ")) {
 	    send("");// odeslu enter, kvuli srovnani prijatych/odeslanych dat
 	}
@@ -74,7 +70,7 @@ public class TelnetClient {
 	if (getSb().toString().endsWith("Password: ")) {
 	    throw new Exception("Telnet connection error.");
 	}
-	getSb().append("init hotov");
+	return getSb();
     }
 
 
@@ -86,8 +82,6 @@ public class TelnetClient {
     public void close() {
 	setSb(new StringBuilder());
 	send("exit");
-	readThread.interrupt();
-	readThread = null;
     }
 
 
@@ -164,27 +158,46 @@ public class TelnetClient {
      * @throws IOException
      * @throws InterruptedException
      */
-    private synchronized void send(String msg) {
-	while (ctu) {
-	    try {
-		wait();
-	    } catch (InterruptedException e) {}
-	}
+    private void send(String msg) {
 	try {
 	    // odeslu prikaz
 	    _os.write(msg.getBytes());
 	    _os.write('\n');
 	    _os.flush();
-	    ctu = true;
-	    readThread.run();
-	    notify();
-	    while (ctu) {
-		try {
-		    wait();
-		} catch (InterruptedException e) {}
-	    }
+	    // prijmu data
+	    receiveData();
 	} catch (IOException e) {
 	    e.printStackTrace();
+	}
+    }
+
+
+    /**
+     * Příjem dat TEST
+     */
+    private void receiveData() {
+	try {
+	    Thread.sleep(50);
+	} catch (InterruptedException e1) {
+	    e1.printStackTrace();
+	}
+	byte[] buff = new byte[1024];
+	int receiveLength = 0; // počet znaků přijatého řetězce
+	while (true) {
+	    try {
+		receiveLength = _is.read(buff);
+		if (receiveLength != -1) {
+		    if (getSb() != null) {
+			getSb().append(new String(buff, 0, receiveLength));
+		    }
+		}
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	    if (getSb() == null || getSb().toString().endsWith("> ") || receiveLength == -1
+		    || getSb().toString().endsWith("Password: ")) {
+		break;
+	    }
 	}
     }
 
@@ -205,54 +218,4 @@ public class TelnetClient {
     private StringBuilder getSb() {
 	return _sb;
     }
-
-    /**
-     * Vlákno pro příjem dat
-     * @author Jan Schovánek
-     */
-    class ReadThread extends Thread {
-
-	/**
-	 * Konstruktor
-	 */
-	public ReadThread() { }
-
-
-	/**
-	 * Obsluha vlákna, přijímá data a vypisuje je
-	 */
-	public synchronized void run() {
-	    byte[] buff = new byte[1024];
-	    int receiveLength = 0; // počet znaků přijatého řetězce
-	    while (!ctu) {
-		try {
-		    wait();
-		} catch (InterruptedException e) {}
-	    }
-	    // prijmu data
-	    while (true) {
-		try {
-		    receiveLength = _is.read(buff);
-		    if (receiveLength != -1) {
-			if (getSb() != null) {
-			    getSb().append(new String(buff, 0, receiveLength));
-			}
-		    }
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-		if (getSb() == null || getSb().toString().endsWith("> ") || receiveLength == -1
-			|| getSb().toString().endsWith("Password: ")) {
-		    break;
-		}
-	    }// while(true)
-	    try {
-		ctu = false;
-		Thread.sleep(5);
-		notify();
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
-	    }
-	}// run
-    }// ReadThread
-}// TelnetClient
+}

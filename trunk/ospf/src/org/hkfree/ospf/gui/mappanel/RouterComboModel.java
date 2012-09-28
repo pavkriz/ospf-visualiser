@@ -52,7 +52,7 @@ public class RouterComboModel implements ComboBoxModel {
      * Vrací objekt na dané pozici
      */
     public Object getElementAt(int i) {
-	if (routerList.get(i).getRouterName() != "")
+	if (routerList.get(i).getRouterName() != null && !routerList.get(i).getRouterName().isEmpty())
 	    return routerList.get(i).getRouterID() + "   -   " + routerList.get(i).getRouterName();
 	else
 	    return routerList.get(i).getRouterID();

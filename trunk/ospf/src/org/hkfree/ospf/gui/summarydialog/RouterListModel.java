@@ -60,7 +60,7 @@ public class RouterListModel implements ListModel {
      * @return Object
      */
     public Object getElementAt(int i) {
-	if (routerList.get(i).getRouterName() != "")
+	if (routerList.get(i).getRouterName() != null && !routerList.get(i).getRouterName().isEmpty())
 	    return routerList.get(i).getRouterID() + "   -   " + routerList.get(i).getRouterName();
 	else
 	    return routerList.get(i).getRouterID();
@@ -72,7 +72,7 @@ public class RouterListModel implements ListModel {
      * @param router
      */
     public void setSelectedRouter(Router router) {
-	if (router.getRouterName() != "")
+	if (router.getRouterName() != null && !router.getRouterName().isEmpty())
 	    selected = (String) router.getRouterID() + "   -   " + router.getRouterName();
 	else
 	    selected = (String) router.getRouterID();

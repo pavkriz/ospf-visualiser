@@ -342,19 +342,15 @@ public class OspfDataLoadInitiator {
     private void loadDataViaTelnet(OspfModel ospfModel, String sourcePath) throws Exception {
 	TelnetClient tc = new TelnetClient(settings.telnetUrl, settings.telnetPort, settings.telnetPassword,
 		settings.telnetTimeout);
-	System.out.println(0);
 	tc.initConnection();
-	System.out.println(1);
 	loadTopologyDataFromTelnet(ospfModel, tc);
-	System.out.println(2);
 	loadNonTopologyDataFromTelnet(ospfModel, tc);
-	System.out.println(3);
 	tc.close();
-	System.out.println(4);
 	// nazev noveho tabbu
 	Date date = new Date(System.currentTimeMillis());
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm");
-	ospfModel.setModelName(formatter.format(date) + "_telnet" + (settings.isIPv4() ? "IPv4" : "IPv6"));	//pro rozliseni verze IP
+	ospfModel.setModelName(formatter.format(date) + "_telnet" + (settings.isIPv4() ? "IPv4" : "IPv6")); // pro rozliseni
+													    // verze IP
     }
 
 
@@ -410,10 +406,10 @@ public class OspfDataLoadInitiator {
 	    // cena
 	    if (settings.isIPv4()) {
 		dataLoader.loadCosts(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
-		    .toString())));
+			.toString())));
 	    } else {
 		dataLoader.loadCostsIPv6(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
-			    .toString())));
+			.toString())));
 	    }
 	    // pridani IP routeru do seznamu pro dohledani nazvu
 	    ips.add(r.getRouterID());

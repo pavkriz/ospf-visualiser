@@ -47,6 +47,7 @@ public class NetStatesWinMenu extends JMenuBar {
 	mMod.addSeparator();
 	mMod.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionTransformingMode()));
 	mMod.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionPickingMode()));
+	mMod.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionZoom()));
 	// nabídka "Pozice vrcholů"
 	JMenu mPozice = new JMenu(rb.getString("nswm.2"));
 	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionStartLayouting()));

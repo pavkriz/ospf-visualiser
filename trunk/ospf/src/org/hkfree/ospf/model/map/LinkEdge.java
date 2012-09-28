@@ -139,6 +139,10 @@ public class LinkEdge {
      * @return boolean
      */
     public boolean isSymetric() {
+	//TODO opravit symetricnost
+	if (routerVertex2.isMultilink()) {
+	    
+	}
 	if (cost1 == cost2 || routerVertex2.isMultilink()) {
 	    return true;
 	} else {
@@ -299,7 +303,7 @@ public class LinkEdge {
 
     /**
      * Vrací barvu spoje.<br>
-     * Používat pouze při pro MapPanel (ne v netstatepanel)
+     * Používat pouze pro MapPanel (ne v netstatepanel)
      * @param mode
      * @return
      */
@@ -308,7 +312,7 @@ public class LinkEdge {
 	    return Color.ORANGE;
 	}
 	if (isEnabled()) {
-	    if (mode == MapGraphComponentMode.ASYMETRIC_LINK && getCost1() != getCost2()) {
+	    if (mode == MapGraphComponentMode.ASYMETRIC_LINK && !isSymetric()) {
 		return new Color(0, 150, 255);
 	    }
 	    if (isEdgeOfShortestPath() || (isEdgeOfFirstPath() && isEdgeOfSecondPath())) {
