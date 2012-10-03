@@ -35,7 +35,7 @@ How to:
     * added option for location by GPS
     * u vypadlých spojů zůstává zobrazení poslední známé ceny
 
-== ospf3.0.1 ==
+== ospf3.0.1 (26.6.2012) ==
   * layout correction (failure results of links/routers)
   * label correction
   * correction of loading data via telnet
@@ -46,7 +46,7 @@ How to:
     * faster, lower CPU requirements
   * searching for suffix of routers name (the most occurence of string is used) - only for data loaded via telnet
 
-== ospf3.0.0 ==
+== ospf3.0.0 (20.6.2012) ==
   * cs/en translation completed 
   * searching in map of routers
     * CTRL+f set focus on the input field for searched string
@@ -54,7 +54,7 @@ How to:
     * looking for the name of the router which contains the search string
     * found routers are highlighted by green color and its label by blue color
 
-== ospf3.0.0rc ==
+== ospf3.0.0rc (9.6.2012) ==
   * language settings
   * cs/en partial translation
   * connect to router via telnet, options:
