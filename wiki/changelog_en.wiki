@@ -23,10 +23,10 @@ How to:
   * výběr dat dle časového intervalu v zadaném čase
     * možnost načtení modelů do seznamu
     * nebo do okna pro sledování stavů
-  * výběr dat ze zip souboru obsahujícího všechny dostupné modely
-  * zrychlení telnet (překlad hostname)
-  * přidána podpora získání dat přes telnet pro IPv6
-  * použití defaultního DNS serveru v případě nezadání explicitního
+  * choose data from zip file containing all models
+  * faster telnet
+  * IPv6 via telnet support
+  * used default DNS server in case of empty value
   * fix of title and lables
   * statusbar changed
   * tips for working with application in menu help
