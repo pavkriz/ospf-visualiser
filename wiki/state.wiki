@@ -1,3 +1,6 @@
+*3.10.2012*
+  * layout - moznost FR/Spring pres menu
+
 *28.9.2012*
   * telnet - zruseni Read vlakna, nyni vse v jednom vlakne
 
