@@ -7,7 +7,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-
 /**
  * Předefinovaný DefaultCellEditor pro použití zobrazení rozbalovacího stromu se zaškrtávacími koncovými prvky
  * @author Jakub Menzel

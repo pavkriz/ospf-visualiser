@@ -159,18 +159,21 @@ public class ModelSourceDialog extends JDialog {
 	this.getContentPane().setLayout(layout);
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
-	layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
-		layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+	layout.setHorizontalGroup(layout.createSequentialGroup()
+		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 			.addComponent(sourceTypeTabs)
-			.addGroup(
-				layout.createSequentialGroup()
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
-						Short.MAX_VALUE).addComponent(btnOk, 100, 100, 100)
-					.addComponent(btnStorno, 100, 100, 100))));
-	layout.setVerticalGroup(layout.createSequentialGroup().addComponent(sourceTypeTabs)
-		.addGroup(layout.createParallelGroup().addComponent(btnOk).addComponent(btnStorno)));
+			.addGroup(layout.createSequentialGroup()
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+					GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(btnOk, 100, 100, 100)
+				.addComponent(btnStorno, 100, 100, 100))));
+	layout.setVerticalGroup(layout.createSequentialGroup()
+		.addComponent(sourceTypeTabs)
+		.addGroup(layout.createParallelGroup()
+			.addComponent(btnOk)
+			.addComponent(btnStorno)));
 	this.setTitle(rb.getString("ssd.title"));
-	this.setSize(900, 450);
+	this.pack();
 	this.setResizable(false);
 	this.setLocationRelativeTo(null);
     }
@@ -196,7 +199,7 @@ public class ModelSourceDialog extends JDialog {
 	final JList list = new JList(model);
 	JScrollPane scroll = new JScrollPane(list);
 	JButton btnAdd = new JButton();
-	btnAdd.setAction(new AbstractAction("pridat") {
+	btnAdd.setAction(new AbstractAction(rb.getString("ssd.26")) {
 
 	    private static final long serialVersionUID = 1L;
 
@@ -226,7 +229,7 @@ public class ModelSourceDialog extends JDialog {
 	    }
 	});
 	JButton btnRemove = new JButton();
-	btnRemove.setAction(new AbstractAction("odebrat") {
+	btnRemove.setAction(new AbstractAction(rb.getString("ssd.27")) {
 
 	    private static final long serialVersionUID = 1L;
 
@@ -241,7 +244,7 @@ public class ModelSourceDialog extends JDialog {
 	    }
 	});
 	JButton btnRemoveAll = new JButton();
-	btnRemoveAll.setAction(new AbstractAction("odebrat vse") {
+	btnRemoveAll.setAction(new AbstractAction(rb.getString("ssd.28")) {
 
 	    private static final long serialVersionUID = 1L;
 
@@ -262,35 +265,45 @@ public class ModelSourceDialog extends JDialog {
 	groupWhereAdd.add(rbNetStateWindow);
 	l.setAutoCreateContainerGaps(true);
 	l.setAutoCreateGaps(true);
-	l.setHorizontalGroup(l
-		.createSequentialGroup()
-		.addGroup(
-			l.createParallelGroup()
-				.addComponent(lPath)
-				.addComponent(tfZIPRemoteAddressFieldPath, 320, 320, 320)
-				.addComponent(lDFrom)
-				.addComponent(tfDateFrom, 100, 100, 100)
-				.addComponent(lDTo)
-				.addComponent(tfDateTo, 100, 100, 100)
-				.addComponent(lTime)
-				.addComponent(tfTime, 100, 100, 100)
-				.addComponent(rbMapPanel)
-				.addComponent(rbNetStateWindow)
-				.addGroup(
-					l.createSequentialGroup().addComponent(btnAdd, 100, 100, 100)
-						.addComponent(btnRemove, 100, 100, 100))
-				.addComponent(btnRemoveAll, 100, 100, 100))
-		.addGroup(l.createParallelGroup().addComponent(lbl2).addComponent(scroll)));
-	l.setVerticalGroup(l
-		.createParallelGroup()
-		.addGroup(l.createSequentialGroup().addComponent(lbl2).addComponent(scroll))
-		.addGroup(
-			l.createSequentialGroup().addComponent(lPath).addComponent(tfZIPRemoteAddressFieldPath, 25, 25, 25)
-				.addComponent(lDFrom).addComponent(tfDateFrom, 25, 25, 25).addComponent(lDTo)
-				.addComponent(tfDateTo, 25, 25, 25).addComponent(lTime).addComponent(tfTime, 25, 25, 25)
-				.addComponent(rbMapPanel).addComponent(rbNetStateWindow).addGap(30)
-				.addGroup(l.createParallelGroup().addComponent(btnAdd).addComponent(btnRemove))
-				.addComponent(btnRemoveAll)));
+	l.setHorizontalGroup(l.createSequentialGroup()
+		.addGroup(l.createParallelGroup()
+			.addComponent(lPath)
+			.addComponent(tfZIPRemoteAddressFieldPath, 320, 320, 320)
+			.addComponent(lDFrom)
+			.addComponent(tfDateFrom, 100, 100, 100)
+			.addComponent(lDTo)
+			.addComponent(tfDateTo, 100, 100, 100)
+			.addComponent(lTime)
+			.addComponent(tfTime, 100, 100, 100)
+			.addComponent(rbMapPanel)
+			.addComponent(rbNetStateWindow)
+			.addGroup(l.createSequentialGroup()
+				.addComponent(btnAdd, 100, 100, 100)
+				.addComponent(btnRemove, 100, 100, 100))
+			.addComponent(btnRemoveAll, 100, 100, 100))
+		.addGroup(l.createParallelGroup()
+			.addComponent(lbl2)
+			.addComponent(scroll)));
+	l.setVerticalGroup(l.createParallelGroup()
+		.addGroup(l.createSequentialGroup()
+			.addComponent(lbl2)
+			.addComponent(scroll))
+		.addGroup(l.createSequentialGroup()
+			.addComponent(lPath)
+			.addComponent(tfZIPRemoteAddressFieldPath, 25, 25, 25)
+			.addComponent(lDFrom)
+			.addComponent(tfDateFrom, 25, 25, 25)
+			.addComponent(lDTo)
+			.addComponent(tfDateTo, 25, 25, 25)
+			.addComponent(lTime)
+			.addComponent(tfTime, 25, 25, 25)
+			.addComponent(rbMapPanel)
+			.addComponent(rbNetStateWindow)
+			.addGap(30)
+			.addGroup(l.createParallelGroup()
+				.addComponent(btnAdd)
+				.addComponent(btnRemove))
+			.addComponent(btnRemoveAll)));
     }
 
 
@@ -311,46 +324,52 @@ public class ModelSourceDialog extends JDialog {
 	tfTelnetRDNSServer.setMaximumSize(new Dimension(350, 25));
 	JRadioButton rbIPv4 = new JRadioButton();
 	JRadioButton rbIPv6 = new JRadioButton();
-	rbIPv4.setActionCommand(AppSettings.IPV4);
-	rbIPv6.setActionCommand(AppSettings.IPV6);
+	rbIPv4.setActionCommand(AppSettings.IP_V4);
+	rbIPv6.setActionCommand(AppSettings.IP_V6);
 	rbIPv4.setText(rb.getString("ssd.22"));
 	rbIPv6.setText(rb.getString("ssd.23"));
-	rbIPv4.setSelected(settings.ipv.equals(AppSettings.IPV4));
-	rbIPv6.setSelected(settings.ipv.equals(AppSettings.IPV6));
+	rbIPv4.setSelected(settings.ipv.equals(AppSettings.IP_V4));
+	rbIPv6.setSelected(settings.ipv.equals(AppSettings.IP_V6));
 	groupIP.add(rbIPv4);
 	groupIP.add(rbIPv6);
 	GroupLayout l3 = new GroupLayout(telnetSourcePanel);
 	telnetSourcePanel.setLayout(l3);
 	l3.setAutoCreateContainerGaps(true);
 	l3.setAutoCreateGaps(true);
-	l3.setHorizontalGroup(l3
-		.createSequentialGroup()
-		.addGroup(
-			l3.createParallelGroup(Alignment.TRAILING).addComponent(rbIPv4).addComponent(lTelnetUrl)
-				.addComponent(lTelnetPort).addComponent(lTelnetPassword).addComponent(lTelnetTimeout)
-				.addComponent(lTelnetRDNS))
-		.addGroup(
-			l3.createParallelGroup().addComponent(rbIPv6).addComponent(tfTelnetUrl).addComponent(tfTelnetPort)
-				.addComponent(tfTelnetPassword).addComponent(tfTelnetTimeout)
-				.addComponent(tfTelnetRDNSServer)));
-	l3.setVerticalGroup(l3
-		.createSequentialGroup()
-		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(rbIPv4).addComponent(rbIPv6))
-		.addGroup(
-			l3.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(lTelnetUrl)
-				.addComponent(tfTelnetUrl))
-		.addGroup(
-			l3.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(lTelnetPort)
-				.addComponent(tfTelnetPort))
-		.addGroup(
-			l3.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(lTelnetPassword)
-				.addComponent(tfTelnetPassword))
-		.addGroup(
-			l3.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(lTelnetRDNS)
-				.addComponent(tfTelnetRDNSServer))
-		.addGroup(
-			l3.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(lTelnetTimeout)
-				.addComponent(tfTelnetTimeout)));
+	l3.setHorizontalGroup(l3.createSequentialGroup()
+		.addGroup(l3.createParallelGroup(Alignment.TRAILING)
+			.addComponent(rbIPv4)
+			.addComponent(lTelnetUrl)
+			.addComponent(lTelnetPort)
+			.addComponent(lTelnetPassword)
+			.addComponent(lTelnetTimeout)
+			.addComponent(lTelnetRDNS))
+		.addGroup(l3.createParallelGroup()
+			.addComponent(rbIPv6)
+			.addComponent(tfTelnetUrl)
+			.addComponent(tfTelnetPort)
+			.addComponent(tfTelnetPassword)
+			.addComponent(tfTelnetTimeout)
+			.addComponent(tfTelnetRDNSServer)));
+	l3.setVerticalGroup(l3.createSequentialGroup()
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(rbIPv4)
+			.addComponent(rbIPv6))
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(lTelnetUrl)
+			.addComponent(tfTelnetUrl))
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(lTelnetPort)
+			.addComponent(tfTelnetPort))
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(lTelnetPassword)
+			.addComponent(tfTelnetPassword))
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(lTelnetRDNS)
+			.addComponent(tfTelnetRDNSServer))
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(lTelnetTimeout)
+			.addComponent(tfTelnetTimeout)));
     }
 
 
@@ -366,10 +385,14 @@ public class ModelSourceDialog extends JDialog {
 	localSingleSourcePanel.setLayout(l2);
 	l2.setAutoCreateContainerGaps(true);
 	l2.setAutoCreateGaps(true);
-	l2.setHorizontalGroup(l2.createSequentialGroup().addGroup(
-		l2.createParallelGroup().addComponent(lbl7).addComponent(tfSingleLocalAddressField)
+	l2.setHorizontalGroup(l2.createSequentialGroup()
+		.addGroup(l2.createParallelGroup()
+			.addComponent(lbl7)
+			.addComponent(tfSingleLocalAddressField)
 			.addComponent(selectSnglLclFolderBtn, Alignment.TRAILING)));
-	l2.setVerticalGroup(l2.createSequentialGroup().addComponent(lbl7).addComponent(tfSingleLocalAddressField)
+	l2.setVerticalGroup(l2.createSequentialGroup()
+		.addComponent(lbl7)
+		.addComponent(tfSingleLocalAddressField)
 		.addComponent(selectSnglLclFolderBtn));
     }
 
@@ -392,21 +415,22 @@ public class ModelSourceDialog extends JDialog {
 	localSourcesPanel.setLayout(l1);
 	l1.setAutoCreateContainerGaps(true);
 	l1.setAutoCreateGaps(true);
-	l1.setHorizontalGroup(l1
-		.createSequentialGroup()
-		.addGroup(
-			l1.createParallelGroup().addComponent(lbl5).addComponent(tfLocalAddressField)
-				.addComponent(selectLclFolderBtn, Alignment.TRAILING).addComponent(loadLclSrcTreeBtn))
+	l1.setHorizontalGroup(l1.createSequentialGroup()
+		.addGroup(l1.createParallelGroup()
+			.addComponent(lbl5)
+			.addComponent(tfLocalAddressField)
+			.addComponent(selectLclFolderBtn, Alignment.TRAILING)
+			.addComponent(loadLclSrcTreeBtn))
 		.addComponent(localScrollPanel));
-	l1.setVerticalGroup(l1.createSequentialGroup().addGroup(
-		l1.createParallelGroup()
-			.addGroup(
-				l1.createSequentialGroup()
-					.addComponent(lbl5)
-					.addComponent(tfLocalAddressField)
-					.addComponent(selectLclFolderBtn)
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
-						Short.MAX_VALUE).addComponent(loadLclSrcTreeBtn))
+	l1.setVerticalGroup(l1.createSequentialGroup()
+		.addGroup(l1.createParallelGroup()
+			.addGroup(l1.createSequentialGroup()
+				.addComponent(lbl5)
+				.addComponent(tfLocalAddressField)
+				.addComponent(selectLclFolderBtn)
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+					Short.MAX_VALUE)
+				.addComponent(loadLclSrcTreeBtn))
 			.addComponent(localScrollPanel)));
     }
 
@@ -429,22 +453,24 @@ public class ModelSourceDialog extends JDialog {
 	remoteSourcesPanel.setLayout(l);
 	l.setAutoCreateContainerGaps(true);
 	l.setAutoCreateGaps(true);
-	l.setHorizontalGroup(l
-		.createSequentialGroup()
-		.addGroup(
-			l.createParallelGroup().addComponent(lbl1).addComponent(tfRemoteAddressField).addComponent(lbl3)
-				.addComponent(tfRowZIPFileIdentification).addComponent(loadRmtSrcTreeBtn))
+	l.setHorizontalGroup(l.createSequentialGroup()
+		.addGroup(l.createParallelGroup()
+			.addComponent(lbl1)
+			.addComponent(tfRemoteAddressField)
+			.addComponent(lbl3)
+			.addComponent(tfRowZIPFileIdentification)
+			.addComponent(loadRmtSrcTreeBtn))
 		.addComponent(remoteScrollPanel));
-	l.setVerticalGroup(l.createSequentialGroup().addGroup(
-		l.createParallelGroup()
-			.addGroup(
-				l.createSequentialGroup()
-					.addComponent(lbl1)
-					.addComponent(tfRemoteAddressField)
-					.addComponent(lbl3)
-					.addComponent(tfRowZIPFileIdentification)
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
-						Short.MAX_VALUE).addComponent(loadRmtSrcTreeBtn))
+	l.setVerticalGroup(l.createSequentialGroup()
+		.addGroup(l.createParallelGroup()
+			.addGroup(l.createSequentialGroup()
+				.addComponent(lbl1)
+				.addComponent(tfRemoteAddressField)
+				.addComponent(lbl3)
+				.addComponent(tfRowZIPFileIdentification)
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+					Short.MAX_VALUE)
+				.addComponent(loadRmtSrcTreeBtn))
 			.addComponent(remoteScrollPanel)));
     }
 

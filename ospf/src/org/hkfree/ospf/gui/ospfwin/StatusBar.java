@@ -2,7 +2,6 @@ package org.hkfree.ospf.gui.ospfwin;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -44,7 +43,7 @@ public class StatusBar extends JPanel {
 	super();
 	this.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 	this.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-	this.setPreferredSize(new Dimension(100, 22));
+	this.setPreferredSize(new Dimension(100, 25));
 	statusHeading = new JLabel();
 	statusHeading.setText(rb.getString("mdw.noModel"));
 	statusInfo2.addMouseListener(new MouseAdapter() {
@@ -89,11 +88,6 @@ public class StatusBar extends JPanel {
 	    }
 	});
 	bZoomIn.setIcon(icoZoomIn);
-	bZoomIn.setMargin(new Insets(1, 1, 1, 1));
-	// bZoomIn.setBorderPainted(false);
-	// bZoomIn.setBorder(null);
-	// bZoomIn.setFocusable(false);
-	// bZoomIn.setContentAreaFilled(false);
 	bZoomOut = new JButton(new AbstractAction() {
 
 	    private static final long serialVersionUID = 1L;
@@ -109,7 +103,6 @@ public class StatusBar extends JPanel {
 	    }
 	});
 	bZoomOut.setIcon(icoZoomOut);
-	bZoomOut.setMargin(new Insets(1, 1, 1, 1));
 	panelZoom.add(bZoomOut);
 	panelZoom.add(bZoomIn);
 	this.add(panelZoom);

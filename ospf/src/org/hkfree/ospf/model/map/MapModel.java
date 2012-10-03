@@ -273,11 +273,7 @@ public class MapModel implements AbstractMapModel {
 		cnt++;
 	    }
 	}
-	if (cnt > 1) {
-	    return true;
-	} else {
-	    return false;
-	}
+	return (cnt > 1);
     }
 
 

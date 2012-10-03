@@ -93,7 +93,8 @@ public class TelnetClient {
      */
     public StringBuilder getTopologyData() throws IOException, InterruptedException {
 	setSb(new StringBuilder());
-	send("sh ip os da ne");
+//	send("sh ip os da ne");
+	send("show ip ospf database router");
 	return getSb();
     }
 
@@ -105,6 +106,7 @@ public class TelnetClient {
      * @throws InterruptedException
      * @throws IOException
      */
+    @Deprecated
     public List<StringBuilder> getNonTopologyData(List<Router> routers) throws IOException, InterruptedException {
 	List<StringBuilder> result = new ArrayList<StringBuilder>();
 	String prikaz = null;
@@ -127,6 +129,8 @@ public class TelnetClient {
     public StringBuilder getTopologyDataIPv6() {
 	setSb(new StringBuilder());
 	send("show ipv6 ospf6 database network detail");
+//	send("show ipv6 ospf6 database router detail");
+	
 	return getSb();
     }
 
@@ -138,6 +142,7 @@ public class TelnetClient {
      * @throws InterruptedException
      * @throws IOException
      */
+    @Deprecated
     public List<StringBuilder> getNonTopologyDataIPv6(List<Router> routers) {
 	List<StringBuilder> result = new ArrayList<StringBuilder>();
 	String prikaz = null;

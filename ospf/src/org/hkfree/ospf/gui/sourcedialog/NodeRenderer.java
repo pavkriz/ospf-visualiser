@@ -7,7 +7,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-
 /**
  * Předefinovaný DefaultTreeCellRenderer pro použití zobrazení rozbalovacího stromu se zaškrtávacími koncovými prvky
  * @author Jakub Menzel

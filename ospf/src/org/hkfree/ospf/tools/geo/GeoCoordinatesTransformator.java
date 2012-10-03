@@ -92,12 +92,10 @@ public class GeoCoordinatesTransformator {
 	if (B < 0) {
 	    B = -B;
 	}
-	;
 	L = L / Math.PI * 180;
 	if (L < 0) {
 	    L = -L;
 	}
-	;
 	// System.out.println(B+"\t\t"+L);
 	return new GPSPoint(B, L);
     }

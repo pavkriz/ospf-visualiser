@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import org.hkfree.ospf.gui.pathstreedialog.ShortestPathTreeDialog;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
@@ -22,6 +23,8 @@ import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.DelegateForest;
 import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.graph.Graph;
@@ -31,6 +34,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.layout.LayoutTransition;
+import edu.uci.ics.jung.visualization.util.Animator;
 
 /**
  * Třída představujíc koponentu grafu
@@ -46,7 +51,7 @@ public class MapGraphComponent extends JComponent {
     private RouterVertex shortestTreeCenter = null;
     private VisualizationViewer<RouterVertex, LinkEdge> vv = null;
     private Graph<RouterVertex, LinkEdge> graph = null;
-    private FRLayout<RouterVertex, LinkEdge> layout = null;
+    private Layout<RouterVertex, LinkEdge> layout = null;
     private OspfModalGraphMouse<RouterVertex, LinkEdge> graphMouse = null;
     private MapStyleTransformer styleTransformer = null;
     private GPSPointConverter gpsPointConverter = null;
@@ -56,6 +61,7 @@ public class MapGraphComponent extends JComponent {
     private RouterVertex firstRVertexToMakeEdge = null;
     private RouterVertex firstShortestPathRV = null;
     private RouterVertex secondShortestPathRV = null;
+    private LAYOUT layoutUsed;
 
 
     /**
@@ -101,10 +107,16 @@ public class MapGraphComponent extends JComponent {
     private void initializeGraph() {
 	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
 	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
-	layout.setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-	layout.setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
-	layout.setSize(new Dimension(2300, 2300));
-	layout.setMaxIterations(400); // default
+	// TODO dokoncit moznost spring vs fr layoutu, poradne to otestovat at nepada
+	// layout.setSize(new Dimension(2300, 2300));
+	// ((FRLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
+	// ((FRLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
+	// ((FRLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(400); // default
+	layout = new SpringLayout<RouterVertex, LinkEdge>(graph);
+	((SpringLayout<RouterVertex, LinkEdge>) layout).setStretch(0.7);
+	((SpringLayout<RouterVertex, LinkEdge>) layout).setRepulsionRange(120);
+	((SpringLayout<RouterVertex, LinkEdge>) layout).setForceMultiplier(0.85);
+	((SpringLayout<RouterVertex, LinkEdge>) layout).setSize(new Dimension(2000, 2000));
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
 	vv.setSize(2000, 2000);
@@ -161,7 +173,7 @@ public class MapGraphComponent extends JComponent {
 	    graph.removeVertex(rv);
 	}
 	graph.addVertex(center);
-	layout.setLocation(center, vv.getWidth() / 2, vv.getHeight() / 2);
+	((FRLayout<RouterVertex, LinkEdge>) layout).setLocation(center, vv.getWidth() / 2, vv.getHeight() / 2);
 	layout.lock(center, true);
 	center.setPermanentlyDisplayed(true);
 	List<RouterVertex> previousStepVertexes = new ArrayList<RouterVertex>();
@@ -499,13 +511,45 @@ public class MapGraphComponent extends JComponent {
      * Zapne automatické layoutování
      */
     public void startLayouting() {
-	for (RouterVertex r : graph.getVertices()) {
-	    if (!r.isLocked())
-		layout.lock(r, false);
+	Layout<RouterVertex, LinkEdge> l = null;
+	switch (layoutUsed) {
+	    case FR:
+		l = new FRLayout<RouterVertex, LinkEdge>(graph);
+		((FRLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
+		((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
+		((FRLayout<RouterVertex, LinkEdge>) l).setMaxIterations(400); // default
+		l.setSize(new Dimension(2200, 2200));
+		break;
+	    case SPRING:
+		l = new SpringLayout<RouterVertex, LinkEdge>(graph);
+		((SpringLayout<RouterVertex, LinkEdge>) l).setStretch(0.7);
+		((SpringLayout<RouterVertex, LinkEdge>) l).setRepulsionRange(120);
+		((SpringLayout<RouterVertex, LinkEdge>) l).setForceMultiplier(0.85);
+		l.setSize(new Dimension(2000, 2000));
+		break;
 	}
-	layout.initialize();
-	vv.getModel().getRelaxer().setSleepTime(50);
-	vv.getModel().getRelaxer().relax();
+	l.setInitializer(vv.getGraphLayout());
+	LayoutTransition<RouterVertex, LinkEdge> lt =
+		new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+	Animator animator = new Animator(lt);
+	animator.start();
+	vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+	vv.repaint();
+	// for (RouterVertex r : graph.getVertices()) {
+	// if (!r.isLocked())
+	// layout.lock(r, false);
+	// }
+	// layout.initialize();
+	// vv.getModel().getRelaxer().setSleepTime(50);
+	// vv.getModel().getRelaxer().relax();
+    }
+
+
+    /**
+     * Vypne automatické layoutování
+     */
+    public void stopLayouting() {
+	vv.getModel().getRelaxer().stop();
     }
 
 
@@ -807,7 +851,7 @@ public class MapGraphComponent extends JComponent {
 	    rv.setPermanentlyDisplayed(true);
 	    rv.setExtraAddedVertex(true);
 	    rvPoint = transformClickedPointToGraphPoint(rvPoint);
-	    layout.setLocation(rv, rvPoint.getX(), rvPoint.getY());
+	    ((FRLayout<RouterVertex, LinkEdge>) layout).setLocation(rv, rvPoint.getX(), rvPoint.getY());
 	}
     }
 
@@ -855,7 +899,8 @@ public class MapGraphComponent extends JComponent {
     public Map<RouterVertex, Point2D> getRouterVertexPositions() {
 	Map<RouterVertex, Point2D> positions = new HashMap<RouterVertex, Point2D>();
 	for (RouterVertex rv : graph.getVertices()) {
-	    positions.put(rv, new Point2D.Double(layout.getX(rv), layout.getY(rv)));
+	    positions.put(rv, new Point2D.Double(((FRLayout<RouterVertex, LinkEdge>) layout).getX(rv),
+		    ((FRLayout<RouterVertex, LinkEdge>) layout).getY(rv)));
 	}
 	return positions;
     }
@@ -920,5 +965,15 @@ public class MapGraphComponent extends JComponent {
 
     public MapPanel getOwner() {
 	return owner;
+    }
+
+
+    /**
+     * Nastaví layout kterým se bude rozmistovat graf a zavolá metodu startLayout pro layoutování
+     * @param layout typ layout
+     */
+    public void setLayout(LAYOUT layout) {
+	layoutUsed = layout;
+	startLayouting();
     }
 }

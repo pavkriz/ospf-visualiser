@@ -79,10 +79,10 @@ public class AboutApplicationDialog extends JDialog implements ActionListener {
 			.addGroup(layout.createSequentialGroup()
 				.addComponent(nazev)
 				.addComponent(version)))
-			.addGap(20)
-			.addComponent(infoText)
-			.addGap(20)
-			.addComponent(btnOk));
+		.addGap(20)
+		.addComponent(infoText)
+		.addGap(20)
+		.addComponent(btnOk));
     }
 
 

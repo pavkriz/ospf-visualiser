@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 
 /**
  * Manažer pro načítání a ukládání nastavení aplikace a nastavení načítaných dat
@@ -39,10 +40,13 @@ public class SettingsManager {
 	    // uzivatelske nastaveni z domovskeho adresare
 	    Properties propUser = new Properties();
 	    propUser.load(new FileInputStream(f));
-	    if (propUser.getProperty("appVersion") == null) { // atribut appVersion se nenasel
-		// defaultni nastaveni
+	    if (propUser.getProperty("appVersion") == null
+		    || !propUser.getProperty("appVersion").equals(Constants.APP_VERSION)) {
+		// atribut appVersion se nenasel (do verze 3.0.1 vcetne)
+		// nacteni defaultniho nastaveni
 		Properties propDef = new Properties();
 		propDef.load(ClassLoader.getSystemResourceAsStream(Constants.SETTINGS_FILE));
+		// update uzivatelskeho nastaveni na aktualni verzi
 		updateSettings(propUser, propDef);
 	    }
 	}
@@ -131,9 +135,10 @@ public class SettingsManager {
 	if (propUser.getProperty("closeLogDialog") == null) {
 	    propUser.setProperty("closeLogDialog", propDef.getProperty("closeLogDialog"));
 	}
-	if (propUser.getProperty("appVersion") == null) {
-	    propUser.setProperty("appVersion", Constants.APP_VERSION);
+	if (propUser.getProperty("layout") == null) {
+	    propUser.setProperty("layout", propDef.getProperty("layout"));
 	}
+	propUser.setProperty("appVersion", Constants.APP_VERSION);
 	propUser.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }
 
@@ -196,6 +201,7 @@ public class SettingsManager {
 	settings.ipv = prop.getProperty("ipv");
 	settings.fromDateToDateLoadTo = prop.getProperty("fromDateToDateLoadTo");
 	settings.closeLogDialog = Boolean.parseBoolean(prop.getProperty("closeLogDialog"));
+	settings.layout = LAYOUT.valueOf(prop.getProperty("layout"));
     }
 
 
@@ -229,6 +235,7 @@ public class SettingsManager {
 	prop.setProperty("modelTimeBetween", settings.modelTimeBetween);
 	prop.setProperty("countDaysBack", String.valueOf(settings.countDaysBack));
 	prop.setProperty("ipv", settings.ipv);
+	prop.setProperty("layout", settings.layout.toString());
 	prop.setProperty("fromDateToDateLoadTo", settings.fromDateToDateLoadTo);
 	prop.setProperty("closeLogDialog", String.valueOf(settings.closeLogDialog));
 	prop.setProperty("appVersion", Constants.APP_VERSION);

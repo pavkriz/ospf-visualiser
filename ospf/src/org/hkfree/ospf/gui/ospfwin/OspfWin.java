@@ -47,7 +47,7 @@ public class OspfWin extends JFrame {
     private JToolBar toolBar;
     private StatusBar statusBar;
     private StateDialog stateDialog;
-    private JComboBox cbModels = null;
+    private JComboBox<String> cbModels = null;
     private Map<String, MapPanel> models = null;
     private JSplitPane spPanel = null;
     private Dimension propSize = null;
@@ -86,7 +86,7 @@ public class OspfWin extends JFrame {
 	// toolbar
 	toolBar = new OspfWinToolBar(actionListener);
 	c.add(toolBar, BorderLayout.NORTH);
-	cbModels = new JComboBox();
+	cbModels = new JComboBox<String>();
 	cbModels.setVisible(false);
 	cbModels.setFont(new Font("Arial", Font.PLAIN, 10));
 	cbModels.addActionListener(new ActionListener() {
@@ -195,7 +195,7 @@ public class OspfWin extends JFrame {
      * @param mapPanel panel s grafem
      */
     private void addMapPanel(String name, MapPanel mapPanel) {
-	mapPanel.processModelsAfterStart(true, null, 0);
+	mapPanel.processModelsAfterStart(true, null, 0, manager.getSettings().layout);
 	// pokud je jiz vlozen model se stejnym nazvem, upravi se nazev
 	int i = 1;
 	while (true) {

@@ -28,7 +28,7 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
     private JButton btnOk = new JButton();
     private JButton btnStorno = new JButton();
     private JButton btnAll = new JButton();
-    private JButton btnNone= new JButton();
+    private JButton btnNone = new JButton();
     private boolean selectionConfirmed = false;
     private CheckBoxList ospfModelsList = new CheckBoxList();
 
@@ -48,21 +48,19 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
 	btnAll.addActionListener(this);
 	btnNone.setText(rb.getString("nsmcd.none"));
 	btnNone.addActionListener(this);
-	
 	GroupLayout layout = new GroupLayout(this.getContentPane());
 	this.getContentPane().setLayout(layout);
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
 	layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 		.addGroup(layout.createSequentialGroup()
-			.addComponent(btnAll, 100,100,150)
-			.addComponent(btnNone, 100,100,150))
-		.addComponent(scrollPane, 300,300,300)
+			.addComponent(btnAll, 100, 100, 150)
+			.addComponent(btnNone, 100, 100, 150))
+		.addComponent(scrollPane, 300, 300, 300)
 		.addGroup(layout.createSequentialGroup()
 			.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-			.addComponent(btnOk, 100,100,100)
-			.addComponent(btnStorno, 100,100,100))
-	);
+			.addComponent(btnOk, 100, 100, 100)
+			.addComponent(btnStorno, 100, 100, 100)));
 	layout.setVerticalGroup(layout.createSequentialGroup()
 		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 			.addComponent(btnAll)
@@ -70,9 +68,7 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
 		.addComponent(scrollPane, 300, 300, 300)
 		.addGroup(layout.createParallelGroup()
 			.addComponent(btnOk)
-			.addComponent(btnStorno)
-		)
-	);
+			.addComponent(btnStorno)));
 	this.setTitle(rb.getString("nsmcd.title"));
 	this.pack();
 	this.setLocationRelativeTo(null);
@@ -88,7 +84,8 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
      */
     public void loadModelsListItems(List<OspfModel> ospfModels) {
 	for (OspfModel model : ospfModels) {
-	    ((DefaultListModel) ospfModelsList.getModel()).addElement(new ModelCheckBoxItem(model.getModelName(), false, model));
+	    ((DefaultListModel) ospfModelsList.getModel()).addElement(new ModelCheckBoxItem(model.getModelName(), false,
+		    model));
 	}
     }
 
@@ -112,7 +109,7 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
 	    selectionConfirmed = true;
 	    this.setVisible(false);
 	} else if (e.getSource() == btnAll) {
-	   ospfModelsList.setAllChecked();
+	    ospfModelsList.setAllChecked();
 	} else if (e.getSource() == btnNone) {
 	    ospfModelsList.setNoneChecked();
 	}
