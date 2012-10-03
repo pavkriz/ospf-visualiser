@@ -9,6 +9,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.tools.Factory;
 
@@ -25,7 +26,10 @@ public class OspfWinActionListener implements ActionListener {
     private Action actionCostChangingMode = null;
     private Action actionPickingMode = null;
     private Action actionTransformingMode = null;
+    private Action actionFRLayout = null;
+    private Action actionSpringLayout = null;
     private Action actionStartLayouting = null;
+    private Action actionStopLayouting = null;
     private Action actionZoom = null;
     private Action actionLockMode = null;
     private Action actionLockAll = null;
@@ -200,18 +204,32 @@ public class OspfWinActionListener implements ActionListener {
 	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION,
 		rb.getString("mode." + MODE.TRANSFORMING + ".title"));
 	actionTransformingMode.setEnabled(false);
-	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING), new ImageIcon(getClass()
+	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING_START), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "startlayout.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.LAYOUTING);
+		winManager.getActualMDManager().setMode(MODE.LAYOUTING_START);
 	    }
 	};
-	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LAYOUTING + ".title"));
+	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUTING_START + ".title"));
 	actionStartLayouting.setEnabled(false);
+	actionStopLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING_STOP), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "stoplayout.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().setMode(MODE.LAYOUTING_STOP);
+	    }
+	};
+	actionStopLayouting.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUTING_STOP + ".title"));
+	actionStopLayouting.setEnabled(false);
 	actionAddVertexes = new AbstractAction(rb.getString("mode." + MODE.ADD_VERTEXES), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "router_add.png"))) {
 
@@ -472,6 +490,28 @@ public class OspfWinActionListener implements ActionListener {
 	};
 	actionExportModelToSVG.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.map.exportSVG.title"));
 	actionExportModelToSVG.setEnabled(false);
+	actionFRLayout = new AbstractAction(rb.getString("menu.layout.fr")) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().setLayout(LAYOUT.FR);
+	    }
+	};
+	actionFRLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.fr.title"));
+	actionFRLayout.setEnabled(false);
+	actionSpringLayout = new AbstractAction(rb.getString("menu.layout.spring")) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().setLayout(LAYOUT.SPRING);
+	    }
+	};
+	actionSpringLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.spring.title"));
+	actionSpringLayout.setEnabled(false);
     }
 
 
@@ -517,6 +557,15 @@ public class OspfWinActionListener implements ActionListener {
      */
     public Action getActionStartLayouting() {
 	return actionStartLayouting;
+    }
+
+
+    /**
+     * Vrací akci zastavení automatického rozvrhování
+     * @return action
+     */
+    public Action getActionStopLayouting() {
+	return actionStopLayouting;
     }
 
 
@@ -772,5 +821,15 @@ public class OspfWinActionListener implements ActionListener {
      */
     public Action getActionTips() {
 	return actionTips;
+    }
+
+
+    public Action getActionFRLayout() {
+	return actionFRLayout;
+    }
+
+
+    public Action getActionSpringLayout() {
+	return actionSpringLayout;
     }
 }

@@ -73,36 +73,39 @@ public class LogSourceDialog extends JDialog {
 	this.getContentPane().setLayout(layout);
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
-	layout.setHorizontalGroup(layout
-		.createParallelGroup()
+	layout.setHorizontalGroup(layout.createParallelGroup()
 		.addComponent(labelAddress)
 		.addComponent(addressField)
-		.addGroup(
-			layout.createSequentialGroup()
-				.addGroup(
-					layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-						.addComponent(labelFolderIdnt).addComponent(labelFileIdnt))
-				.addGroup(
-					layout.createParallelGroup().addComponent(rowFolderIdentification)
-						.addComponent(rowZIPFileIdentification)))
+		.addGroup(layout.createSequentialGroup()
+			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+				.addComponent(labelFolderIdnt)
+				.addComponent(labelFileIdnt))
+			.addGroup(layout.createParallelGroup()
+				.addComponent(rowFolderIdentification)
+				.addComponent(rowZIPFileIdentification)))
 		.addComponent(panelLoad)
-		.addGroup(
-			layout.createSequentialGroup()
-				.addComponent(loadLogSrcTreeBtn, 150, 150, 150)
-				.addGap(50)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
-					Short.MAX_VALUE).addComponent(remoteOk, 100, 120, 120)
-				.addComponent(remoteStorno, 100, 100, 100)));
-	layout.setVerticalGroup(layout
-		.createSequentialGroup()
+		.addGroup(layout.createSequentialGroup()
+			.addComponent(loadLogSrcTreeBtn, 150, 150, 150)
+			.addGap(50)
+			.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+				Short.MAX_VALUE)
+			.addComponent(remoteOk, 100, 120, 120)
+			.addComponent(remoteStorno, 100, 100, 100)));
+	layout.setVerticalGroup(layout.createSequentialGroup()
 		.addComponent(labelAddress)
 		.addComponent(addressField)
-		.addGroup(layout.createParallelGroup().addComponent(labelFolderIdnt).addComponent(rowFolderIdentification))
-		.addGroup(layout.createParallelGroup().addComponent(labelFileIdnt).addComponent(rowZIPFileIdentification))
+		.addGroup(layout.createParallelGroup()
+			.addComponent(labelFolderIdnt)
+			.addComponent(rowFolderIdentification))
+		.addGroup(layout.createParallelGroup()
+			.addComponent(labelFileIdnt)
+			.addComponent(rowZIPFileIdentification))
 		.addComponent(panelLoad, 300, 300, 300)
-		.addGroup(
-			layout.createParallelGroup().addComponent(loadLogSrcTreeBtn).addComponent(remoteOk)
-				.addComponent(remoteStorno)).addGap(10));
+		.addGroup(layout.createParallelGroup()
+			.addComponent(loadLogSrcTreeBtn)
+			.addComponent(remoteOk)
+			.addComponent(remoteStorno))
+		.addGap(10));
 	this.setResizable(false);
 	this.setTitle(rb.getString("slsd.title"));
 	this.pack();

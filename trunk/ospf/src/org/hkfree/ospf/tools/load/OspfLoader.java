@@ -299,4 +299,43 @@ public class OspfLoader {
 	    }
 	}
     }
+
+
+    //TODO dodelat nacitani topologie
+//    public void loadTopologyNEW(OspfModel model, BufferedReader input) throws NumberFormatException, IOException {
+//	BufferedReader vstup = null;
+//	// Reader in = null;
+//	String radek = "";
+//	Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+//	Matcher ipMatcher = null;
+//	Pattern maskPattern = Pattern.compile("^.*/([0-9]{1,2})");
+//	Matcher maskMatcher = null;
+//	vstup = input;
+//	while ((radek = vstup.readLine()) != null) {
+//	    if (radek.contains("Link State ID")) {
+//		String linkName = "";
+//		int linkMask = 0;
+//		ipMatcher = ipPattern.matcher(radek);
+//		ipMatcher.find();
+//		linkName = ipMatcher.group(0);
+//		while (!((radek = vstup.readLine()).contains("Network Mask"))) {}
+//		maskMatcher = maskPattern.matcher(radek);
+//		maskMatcher.find();
+//		linkMask = Integer.valueOf(maskMatcher.group(1));
+//		model.addOspfLink(linkName, linkMask);
+//		// čtení řádků než narazí na Attached Router
+//		while (!((radek = vstup.readLine()).contains("Attached Router"))) {}
+//		// načtení první IP jdoucí do spoje
+//		ipMatcher = ipPattern.matcher(radek);
+//		ipMatcher.find();
+//		model.addRouter(ipMatcher.group(0));
+//		// načtení zbylých IP jdoucích do spoje
+//		while ((radek = vstup.readLine()).contains("Attached Router")) {
+//		    ipMatcher = ipPattern.matcher(radek);
+//		    ipMatcher.find();
+//		    model.addRouter(ipMatcher.group(0));
+//		}
+//	    }
+//	}
+//    }
 }

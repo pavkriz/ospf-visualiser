@@ -2,9 +2,11 @@ package org.hkfree.ospf.tools.load;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -369,11 +371,16 @@ public class OspfDataLoadInitiator {
 	} else {
 	    data = tc.getTopologyDataIPv6();
 	}
+	
+//	 FileWriter fstream = new FileWriter("out_new.txt");
+//	  BufferedWriter out = new BufferedWriter(fstream);
+//	  out.write(data.toString());
+//	  out.close();
 	OspfLoader dataLoader = new OspfLoader();
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
 	if (settings.isIPv4()) {
-	    dataLoader.loadTopology(ospfModel, new BufferedReader(new StringReader(data.toString())));
+//	    dataLoader.loadTopologyNEW(ospfModel, new BufferedReader(new StringReader(data.toString())));
 	} else {
 	    dataLoader.loadTopologyIPv6(ospfModel, new BufferedReader(new StringReader(data.toString())));
 	}
@@ -397,6 +404,11 @@ public class OspfDataLoadInitiator {
 	} else {
 	    nonTopData = tc.getNonTopologyDataIPv6(ospfModel.getRouters());
 	}
+
+//	 FileWriter fstream = new FileWriter("out2.txt");
+//	  BufferedWriter out = new BufferedWriter(fstream);
+//	  out.write(nonTopData.toString());
+//	  out.close();
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
 	List<String> ips = new ArrayList<String>();
@@ -424,7 +436,7 @@ public class OspfDataLoadInitiator {
 	    Map<String, String> names = new HashMap<String, String>();
 	    Thread threads[] = new Thread[60];
 	    for (int i = 0; i < FastReverseDNS.DEFAULT_NUM_THREADS; i++) {
-		threads[i] = new Thread(new FastReverseDNS(rdns, ipe, names));
+		threads[i] = new Thread(new FastReverseDNS(rdns, ipe, names), "Thread"+i);
 		threads[i].start();
 	    }
 	    for (int i = 0; i < FastReverseDNS.DEFAULT_NUM_THREADS; i++) {

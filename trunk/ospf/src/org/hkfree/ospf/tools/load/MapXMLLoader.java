@@ -35,10 +35,7 @@ public class MapXMLLoader {
      * @return boolean
      */
     public boolean getBoolValue(int i) {
-	if (i == 1)
-	    return true;
-	else
-	    return false;
+	return i == 1;
     }
 
 

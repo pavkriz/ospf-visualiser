@@ -120,10 +120,7 @@ public class OspfGraphEdge {
      * @return boolean
      */
     public boolean cointainsVertex(OspfGraphVertex v) {
-	if (vertex1.equals(v) || vertex2.equals(v))
-	    return true;
-	else
-	    return false;
+	return (vertex1.equals(v) || vertex2.equals(v));
     }
 
 
@@ -133,10 +130,7 @@ public class OspfGraphEdge {
      * @return boolean
      */
     public boolean cointainsEnabledVertex(OspfGraphVertex v) {
-	if ((vertex1.equals(v) && vertex1.isEnabled()) || (vertex2.equals(v) && vertex2.isEnabled()))
-	    return true;
-	else
-	    return false;
+	return ((vertex1.equals(v) && vertex1.isEnabled()) || (vertex2.equals(v) && vertex2.isEnabled()));
     }
 
 

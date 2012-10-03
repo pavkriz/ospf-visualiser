@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.Constants.LANGUAGE;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 
 /**
  * Třída představující vstupní nastavení aplikace pro načítání dat
@@ -12,20 +13,21 @@ import org.hkfree.ospf.model.Constants.LANGUAGE;
  * @author Jan Schovánek
  */
 public class AppSettings {
-    
+
+    // konstanty
     public static String MAP_PANEL = "MAP_PANEL";
     public static String NET_STATE_WINDOW = "NET_STATE_WINDOW";
-    public static String IPV4 = "IPV4";
-    public static String IPV6 = "IPV6";
-
+    public static String IP_V4 = "IPV4";
+    public static String IP_V6 = "IPV6";
     private List<String> filePaths = new ArrayList<String>();
     private int dataSourceType = Constants.LOCAL;
     private int dataType = Constants.FOLDER;
-    
+    // nastaveni z properties souboru v domovskem adresari
+    // komentar informuje o defaultni hodnote
     public String logsRemoteZipSourcePath;// =http://lab.hkfree.org/ospfmap/ospf-data/logs
     public String logsRemoteFolderIdentification;// =folder
     public String logsRemoteZipFileIdentification;// =compressed
-    public int loadDataTypIndex; //=0
+    public int loadDataTypIndex; // =0
     public String modelZipRemotePath;// =http://lab.hkfree.org/ospfmap/ospf-data/data-archive/2012-03-03/
     public String modelZipRemotePathBetween;// =http://lab.hkfree.org/ospfmap/ospf-data/data-archive/
     public String remoteZipFileIdentification;// =/files.txt.gz
@@ -42,11 +44,11 @@ public class AppSettings {
     public String fileNameTopology;// =ospf_database_network
     public String fileNameGeoPositions;// =geo
     public String modelTimeBetween;// =20-00
-    public int countDaysBack; //=7
-    public String ipv;//=IPV4
-    public String fromDateToDateLoadTo; //=MAP_PANEL
-	public boolean closeLogDialog;	//=true
-   
+    public int countDaysBack; // =7
+    public String ipv;// =IPV4
+    public String fromDateToDateLoadTo; // =MAP_PANEL
+    public boolean closeLogDialog; // =true
+    public LAYOUT layout;// =FR
 
 
     /**
@@ -133,5 +135,4 @@ public class AppSettings {
     public boolean isIPv4() {
 	return this.ipv.equalsIgnoreCase("IPV4");
     }
-
 }

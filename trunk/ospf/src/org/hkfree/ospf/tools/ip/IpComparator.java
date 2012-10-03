@@ -79,10 +79,7 @@ public class IpComparator implements Comparator<Router> {
      * @return boolean
      */
     public boolean ipIsHigherOrEqualToMinIpValue(String ip, String minIpValue) {
-	if (compareIps(ip, minIpValue) == -1) {
-	    return false;
-	} else
-	    return true;
+	return (compareIps(ip, minIpValue) != -1);
     }
 
 
@@ -93,9 +90,6 @@ public class IpComparator implements Comparator<Router> {
      * @return boolean
      */
     public boolean ipIsLowerOrEqualToMaxIpValue(String ip, String maxIpValue) {
-	if (compareIps(ip, maxIpValue) == 1) {
-	    return false;
-	} else
-	    return true;
+	return (compareIps(ip, maxIpValue) != 1);
     }
 }

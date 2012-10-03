@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
@@ -178,8 +179,11 @@ public class MapManager {
 	    case TRANSFORMING:
 		graphComponent.setTransformingMode();
 		break;
-	    case LAYOUTING:
+	    case LAYOUTING_START:
 		graphComponent.startLayouting();
+		break;
+	    case LAYOUTING_STOP:
+		graphComponent.stopLayouting();
 		break;
 	    case ZOOM:
 		graphComponent.setZoomMode();
@@ -223,5 +227,10 @@ public class MapManager {
      */
     public JPanel getOwner() {
 	return owner;
+    }
+
+
+    public void setLayout(LAYOUT layout) {
+	graphComponent.setLayout(layout);
     }
 }
