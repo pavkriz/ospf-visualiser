@@ -40,7 +40,7 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
     private JLabel depthLabel = new JLabel();
     private JLabel rSearchLabel = new JLabel();
     private JTextField rSearchTxt = new JTextField();
-    private JList routersJList = null;
+    private JList<RouterListModel> routersJList = null;
     private JScrollPane routerScrollPane = null;
     private RouterListModel routerListModel = null;
     private JSpinner neighbourDepth = new JSpinner();
@@ -56,7 +56,7 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
      * @param preselectedRouter
      */
     public MapStartStateDialog(List<Router> routerList, Router preselectedRouter) {
-	routerListModel = new RouterListModel(routerList);
+	this.routerListModel = new RouterListModel(routerList);
 	radioGroup.add(wholeModelRB);
 	wholeModelRB.setText(rb.getString("mdssd.0"));
 	wholeModelRB.addActionListener(this);
@@ -66,10 +66,9 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 	startRouterRB.addActionListener(this);
 	JPanel panel1 = new JPanel();
 	panel1.setBorder(BorderFactory.createTitledBorder(rb.getString("mdssd.4") + ":"));
-	
 	rSearchLabel.setText(rb.getString("mdssd.3") + ":");
 	rSearchTxt.addActionListener(this);
-	routersJList = new JList(routerListModel);
+	routersJList = new JList<RouterListModel>(this.routerListModel);
 	routerScrollPane = new JScrollPane(routersJList);
 	depthLabel.setText(rb.getString("mdssd.2") + ":");
 	btnOk.setText(rb.getString("ok"));
@@ -80,15 +79,13 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 	depthModel.setMinimum(0);
 	depthModel.setMaximum(5);
 	neighbourDepth.setModel(depthModel);
-	//setPreselectedRouter(preselectedRouter);
+	// setPreselectedRouter(preselectedRouter);
 	routerScrollPane.setAutoscrolls(true);
 	activateWholeModelChoice(true);
-	
 	GroupLayout l0 = new GroupLayout(panel1);
 	panel1.setLayout(l0);
 	l0.setAutoCreateContainerGaps(true);
 	l0.setAutoCreateGaps(true);
-	
 	l0.setHorizontalGroup(l0.createSequentialGroup()
 		.addGroup(l0.createParallelGroup()
 			.addGroup(l0.createSequentialGroup()
@@ -98,7 +95,7 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 			.addGroup(l0.createSequentialGroup()
 				.addComponent(depthLabel)
 				.addComponent(neighbourDepth)
-		)));
+			)));
 	l0.setVerticalGroup(l0.createSequentialGroup()
 		.addGroup(l0.createParallelGroup()
 			.addComponent(rSearchLabel)
@@ -108,21 +105,22 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 			.addComponent(depthLabel)
 			.addComponent(neighbourDepth)
 		));
-	
 	GroupLayout layout = new GroupLayout(this.getContentPane());
 	this.setLayout(layout);
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
-	
 	layout.setHorizontalGroup(layout.createSequentialGroup()
-		.addGroup(layout.createParallelGroup()
-			.addComponent(wholeModelRB)
-			.addComponent(startRouterRB)
-			.addComponent(panel1)
-			.addGroup(layout.createSequentialGroup()
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addComponent(btnOk, 100,100,100)
-				.addComponent(btnStorno, 100,100,100)))				
+		.addGroup(
+			layout.createParallelGroup()
+				.addComponent(wholeModelRB)
+				.addComponent(startRouterRB)
+				.addComponent(panel1)
+				.addGroup(
+					layout.createSequentialGroup()
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+							GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnOk, 100, 100, 100)
+						.addComponent(btnStorno, 100, 100, 100)))
 		);
 	layout.setVerticalGroup(layout.createSequentialGroup()
 		.addComponent(wholeModelRB)
@@ -132,9 +130,8 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 			.addComponent(btnStorno)
 			.addComponent(btnOk))
 		);
-	
 	this.setTitle(rb.getString("mdssd.title"));
-	//this.setSize(440, 400);
+	// this.setSize(440, 400);
 	this.pack();
 	this.setLocationRelativeTo(null);
 	this.setResizable(false);

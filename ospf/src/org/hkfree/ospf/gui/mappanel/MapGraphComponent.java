@@ -3,6 +3,8 @@ package org.hkfree.ospf.gui.mappanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +15,7 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import org.hkfree.ospf.gui.pathstreedialog.ShortestPathTreeDialog;
-import org.hkfree.ospf.model.Constants.LAYOUT;
+import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
@@ -61,7 +63,6 @@ public class MapGraphComponent extends JComponent {
     private RouterVertex firstRVertexToMakeEdge = null;
     private RouterVertex firstShortestPathRV = null;
     private RouterVertex secondShortestPathRV = null;
-    private LAYOUT layoutUsed;
 
 
     /**
@@ -107,19 +108,13 @@ public class MapGraphComponent extends JComponent {
     private void initializeGraph() {
 	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
 	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
-	// TODO dokoncit moznost spring vs fr layoutu, poradne to otestovat at nepada
-	// layout.setSize(new Dimension(2300, 2300));
-	// ((FRLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-	// ((FRLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
-	// ((FRLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(400); // default
-	layout = new SpringLayout<RouterVertex, LinkEdge>(graph);
-	((SpringLayout<RouterVertex, LinkEdge>) layout).setStretch(0.7);
-	((SpringLayout<RouterVertex, LinkEdge>) layout).setRepulsionRange(120);
-	((SpringLayout<RouterVertex, LinkEdge>) layout).setForceMultiplier(0.85);
-	((SpringLayout<RouterVertex, LinkEdge>) layout).setSize(new Dimension(2000, 2000));
+	layout.setSize(new Dimension(2200, 2200));
+	((FRLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
+	((FRLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
+	((FRLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(400); // default
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
-	vv.setSize(2000, 2000);
+	vv.setSize(2200, 2200);
 	scaler = new CrossoverScalingControl();
 	graphMouse = new OspfModalGraphMouse<RouterVertex, LinkEdge>(this);
 	vv.setGraphMouse(graphMouse);
@@ -504,52 +499,6 @@ public class MapGraphComponent extends JComponent {
 	returnColorOfShortestPath();
 	returnColorOfNewEdgeFirstVertex();
 	mapGraphCompMode = MapGraphComponentMode.TWO_ROUTERS_SHORTEST_PATH;
-    }
-
-
-    /**
-     * Zapne automatické layoutování
-     */
-    public void startLayouting() {
-	Layout<RouterVertex, LinkEdge> l = null;
-	switch (layoutUsed) {
-	    case FR:
-		l = new FRLayout<RouterVertex, LinkEdge>(graph);
-		((FRLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-		((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
-		((FRLayout<RouterVertex, LinkEdge>) l).setMaxIterations(400); // default
-		l.setSize(new Dimension(2200, 2200));
-		break;
-	    case SPRING:
-		l = new SpringLayout<RouterVertex, LinkEdge>(graph);
-		((SpringLayout<RouterVertex, LinkEdge>) l).setStretch(0.7);
-		((SpringLayout<RouterVertex, LinkEdge>) l).setRepulsionRange(120);
-		((SpringLayout<RouterVertex, LinkEdge>) l).setForceMultiplier(0.85);
-		l.setSize(new Dimension(2000, 2000));
-		break;
-	}
-	l.setInitializer(vv.getGraphLayout());
-	LayoutTransition<RouterVertex, LinkEdge> lt =
-		new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
-	Animator animator = new Animator(lt);
-	animator.start();
-	vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
-	vv.repaint();
-	// for (RouterVertex r : graph.getVertices()) {
-	// if (!r.isLocked())
-	// layout.lock(r, false);
-	// }
-	// layout.initialize();
-	// vv.getModel().getRelaxer().setSleepTime(50);
-	// vv.getModel().getRelaxer().relax();
-    }
-
-
-    /**
-     * Vypne automatické layoutování
-     */
-    public void stopLayouting() {
-	vv.getModel().getRelaxer().stop();
     }
 
 
@@ -968,12 +917,77 @@ public class MapGraphComponent extends JComponent {
     }
 
 
-    /**
-     * Nastaví layout kterým se bude rozmistovat graf a zavolá metodu startLayout pro layoutování
-     * @param layout typ layout
-     */
-    public void setLayout(LAYOUT layout) {
-	layoutUsed = layout;
-	startLayouting();
+    public void layouting(MODE mode) {
+	try {
+	    Object[] constructorArgs = { graph };
+	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutC = null;
+	    Constructor<? extends Layout<RouterVertex, LinkEdge>> constructor = null;
+	    Object o = null;
+	    Layout<RouterVertex, LinkEdge> l = null;
+	    LayoutTransition<RouterVertex, LinkEdge> lt = null;
+	    Animator animator = null;
+	    switch (mode) {
+		case LAYOUT_FR_START:
+		    layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) FRLayout.class;
+		    constructor = layoutC
+			    .getConstructor(new Class[] { Graph.class });
+		    o = constructor.newInstance(constructorArgs);
+		    l = (Layout<RouterVertex, LinkEdge>) o;
+		    l.setInitializer(vv.getGraphLayout());
+		    ((FRLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
+		    ((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k
+											  // sobe
+		    ((FRLayout<RouterVertex, LinkEdge>) l).setMaxIterations(800); // default
+		    l.setSize(new Dimension(2200, 2200));
+		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+		    animator = new Animator(lt);
+		    animator.start();
+		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+		    vv.repaint();
+		    layout = l;
+		    break;
+		case LAYOUT_SPRING_START:
+		    if (layout instanceof SpringLayout<?, ?>) {
+			vv.getModel().getRelaxer().relax();
+		    } else {
+			layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) SpringLayout.class;
+			constructor = layoutC
+				.getConstructor(new Class[] { Graph.class });
+			o = constructor.newInstance(constructorArgs);
+			l = (Layout<RouterVertex, LinkEdge>) o;
+			l.setInitializer(vv.getGraphLayout());
+			((SpringLayout<RouterVertex, LinkEdge>) l).setStretch(0.7);
+			((SpringLayout<RouterVertex, LinkEdge>) l).setRepulsionRange(120);
+			((SpringLayout<RouterVertex, LinkEdge>) l).setForceMultiplier(0.85);
+			l.setSize(new Dimension(2000, 2000));
+			// break;
+			lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+			animator = new Animator(lt);
+			animator.start();
+			vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+			vv.repaint();
+			layout = l;
+		    }
+		    break;
+		case LAYOUT_SPRING_STOP:
+		    // pokud je aktivni rozvrhovani pomoci SpringLayoutu, pauza
+		    if (layout instanceof SpringLayout<?, ?>) {
+			vv.getModel().getRelaxer().pause();
+		    }
+		    break;
+	    }
+	} catch (NoSuchMethodException e) {
+	    e.printStackTrace();
+	} catch (SecurityException e) {
+	    e.printStackTrace();
+	} catch (InstantiationException e) {
+	    e.printStackTrace();
+	} catch (IllegalAccessException e) {
+	    e.printStackTrace();
+	} catch (IllegalArgumentException e) {
+	    e.printStackTrace();
+	} catch (InvocationTargetException e) {
+	    e.printStackTrace();
+	}
     }
 }

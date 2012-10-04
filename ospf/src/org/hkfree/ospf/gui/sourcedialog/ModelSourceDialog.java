@@ -58,7 +58,7 @@ public class ModelSourceDialog extends JDialog {
     private JTextField tfRowZIPFileIdentification = new JTextField();
     private JTextField tfZIPRemoteAddressFieldPath = new JTextField();
     private JTextField tfTime = new JTextField();
-    private DefaultListModel model = null;
+    private DefaultListModel<String> model = null;
     private JFileChooser localFolderChooser = new JFileChooser();
     private JTabbedPane sourceTypeTabs = null;
     private DefaultMutableTreeNode remoteRootNode = null;
@@ -74,12 +74,12 @@ public class ModelSourceDialog extends JDialog {
     private JPanel telnetSourcePanel = null;
     private JPanel remoteDateToDatePanel = null;
     private JTextField tfTelnetUrl = new JTextField();
-    private JTextField tfTelnetPort = new JTextField();
+    private JTextField tfTelnetPortIPv4 = new JTextField();
+    private JTextField tfTelnetPortIPv6 = new JTextField();
     private JTextField tfTelnetPassword = new JTextField();
     private JTextField tfTelnetRDNSServer = new JTextField();
     private JTextField tfTelnetTimeout = new JTextField();
     private ButtonGroup groupWhereAdd = new ButtonGroup();
-    private ButtonGroup groupIP = new ButtonGroup();
     private boolean loadDialogConfirmed = false;
     private int countDays = 0;
     private AppSettings settings = null;
@@ -107,7 +107,8 @@ public class ModelSourceDialog extends JDialog {
 	this.tfSingleLocalAddressField.setText(settings.modelSingleLocalPath);
 	this.tfRowZIPFileIdentification.setText(settings.remoteZipFileIdentification);
 	this.tfTelnetUrl.setText(settings.telnetUrl);
-	this.tfTelnetPort.setText(String.valueOf(settings.telnetPort));
+	this.tfTelnetPortIPv4.setText(String.valueOf(settings.telnetPortIPv4));
+	this.tfTelnetPortIPv6.setText(String.valueOf(settings.telnetPortIPv6));
 	this.tfTelnetPassword.setText(settings.telnetPassword);
 	this.tfTelnetRDNSServer.setText(settings.rdnsServer);
 	this.tfTelnetTimeout.setText(String.valueOf(settings.telnetTimeout));
@@ -195,8 +196,8 @@ public class ModelSourceDialog extends JDialog {
 	cal.add(Calendar.DATE, -countDays);
 	final JTextField tfDateFrom = new JTextField(sdf.format(cal.getTime()));
 	final JTextField tfDateTo = new JTextField(sdf.format(new Date()));
-	model = new DefaultListModel();
-	final JList list = new JList(model);
+	model = new DefaultListModel<String>();
+	final JList<String> list = new JList<String>(model);
 	JScrollPane scroll = new JScrollPane(list);
 	JButton btnAdd = new JButton();
 	btnAdd.setAction(new AbstractAction(rb.getString("ssd.26")) {
@@ -313,54 +314,46 @@ public class ModelSourceDialog extends JDialog {
     private void initTelnetSourcePanel() {
 	telnetSourcePanel = new JPanel();
 	JLabel lTelnetUrl = new JLabel(rb.getString("ssd.10") + ":");
-	JLabel lTelnetPort = new JLabel(rb.getString("ssd.11") + ":");
+	JLabel lTelnetPortIPv4 = new JLabel(rb.getString("ssd.11") + " IPv4:");
+	JLabel lTelnetPortIPv6 = new JLabel(rb.getString("ssd.11") + " IPv6:");
 	JLabel lTelnetPassword = new JLabel(rb.getString("ssd.12") + ":");
 	JLabel lTelnetTimeout = new JLabel(rb.getString("ssd.16") + ":");
 	JLabel lTelnetRDNS = new JLabel(rb.getString("ssd.15") + ":");
 	tfTelnetUrl.setMaximumSize(new Dimension(350, 25));
-	tfTelnetPort.setMaximumSize(new Dimension(100, 25));
+	tfTelnetPortIPv4.setMaximumSize(new Dimension(100, 25));
+	tfTelnetPortIPv6.setMaximumSize(new Dimension(100, 25));
 	tfTelnetPassword.setMaximumSize(new Dimension(350, 25));
 	tfTelnetTimeout.setMaximumSize(new Dimension(100, 25));
 	tfTelnetRDNSServer.setMaximumSize(new Dimension(350, 25));
-	JRadioButton rbIPv4 = new JRadioButton();
-	JRadioButton rbIPv6 = new JRadioButton();
-	rbIPv4.setActionCommand(AppSettings.IP_V4);
-	rbIPv6.setActionCommand(AppSettings.IP_V6);
-	rbIPv4.setText(rb.getString("ssd.22"));
-	rbIPv6.setText(rb.getString("ssd.23"));
-	rbIPv4.setSelected(settings.ipv.equals(AppSettings.IP_V4));
-	rbIPv6.setSelected(settings.ipv.equals(AppSettings.IP_V6));
-	groupIP.add(rbIPv4);
-	groupIP.add(rbIPv6);
 	GroupLayout l3 = new GroupLayout(telnetSourcePanel);
 	telnetSourcePanel.setLayout(l3);
 	l3.setAutoCreateContainerGaps(true);
 	l3.setAutoCreateGaps(true);
 	l3.setHorizontalGroup(l3.createSequentialGroup()
 		.addGroup(l3.createParallelGroup(Alignment.TRAILING)
-			.addComponent(rbIPv4)
 			.addComponent(lTelnetUrl)
-			.addComponent(lTelnetPort)
+			.addComponent(lTelnetPortIPv4)
+			.addComponent(lTelnetPortIPv6)
 			.addComponent(lTelnetPassword)
 			.addComponent(lTelnetTimeout)
 			.addComponent(lTelnetRDNS))
 		.addGroup(l3.createParallelGroup()
-			.addComponent(rbIPv6)
 			.addComponent(tfTelnetUrl)
-			.addComponent(tfTelnetPort)
+			.addComponent(tfTelnetPortIPv4)
+			.addComponent(tfTelnetPortIPv6)
 			.addComponent(tfTelnetPassword)
 			.addComponent(tfTelnetTimeout)
 			.addComponent(tfTelnetRDNSServer)));
 	l3.setVerticalGroup(l3.createSequentialGroup()
 		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
-			.addComponent(rbIPv4)
-			.addComponent(rbIPv6))
-		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
 			.addComponent(lTelnetUrl)
 			.addComponent(tfTelnetUrl))
 		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
-			.addComponent(lTelnetPort)
-			.addComponent(tfTelnetPort))
+			.addComponent(lTelnetPortIPv4)
+			.addComponent(tfTelnetPortIPv4))
+		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(lTelnetPortIPv6)
+			.addComponent(tfTelnetPortIPv6))
 		.addGroup(l3.createParallelGroup(GroupLayout.Alignment.CENTER)
 			.addComponent(lTelnetPassword)
 			.addComponent(tfTelnetPassword))
@@ -669,9 +662,9 @@ public class ModelSourceDialog extends JDialog {
 	settings.clearFilePaths();
 	settings.addFilePath("ospf_data_network");
 	settings.telnetUrl = tfTelnetUrl.getText();
-	settings.ipv = groupIP.getSelection().getActionCommand();
 	try {
-	    settings.telnetPort = Integer.valueOf(tfTelnetPort.getText());
+	    settings.telnetPortIPv4 = Integer.valueOf(tfTelnetPortIPv4.getText());
+	    settings.telnetPortIPv6 = Integer.valueOf(tfTelnetPortIPv6.getText());
 	    settings.telnetTimeout = Integer.valueOf(tfTelnetTimeout.getText());
 	} catch (Exception e) {
 	    throw new Exception("telnet port parse error");

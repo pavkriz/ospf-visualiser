@@ -122,13 +122,13 @@ public class OspfWinManager {
 	((OspfWin) owner).getOspfWinActListener().getActionSaveToXML().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionSearchRouter().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionStartLayouting().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionAddVertexes().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionAsymetricLinksMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionTwoRoutersShortesPathMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionStartLayouting().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionStopLayouting().setEnabled(b);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartFR().setEnabled(b);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartSpring().setEnabled(b);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStopSpring().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionTransformingMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionPickingMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionLockMode().setEnabled(b);
@@ -139,8 +139,6 @@ public class OspfWinManager {
 	((OspfWin) owner).getOspfWinActListener().getActionShowNeighboursMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionFRLayout().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionSpringLayout().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModely.size() < 2 ? false : true);
 	if (!b) {
 	    ((OspfWin) owner).getStatusBar().clear();
@@ -675,10 +673,10 @@ public class OspfWinManager {
 	dialog.setVisible(true);
 	if (dialog.selectionConfirmed()) {
 	    if (dialog.wholeModelIsSelected()) {
-		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(true, null, 0, settings.layout);
+		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(true, null, 0);
 	    } else {
 		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(false, dialog.getSelectedRouter(),
-			dialog.getNeighboursDepth(), settings.layout);
+			dialog.getNeighboursDepth());
 	    }
 	    owner.repaint();
 	}

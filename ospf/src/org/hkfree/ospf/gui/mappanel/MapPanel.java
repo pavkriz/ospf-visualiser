@@ -2,7 +2,6 @@ package org.hkfree.ospf.gui.mappanel;
 
 import javax.swing.JPanel;
 
-import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
@@ -84,9 +83,9 @@ public class MapPanel extends JPanel {
      * @param processWholeModel
      * @param center
      * @param depth
-     * @param layout 
+     * @param layout
      */
-    public void processModelsAfterStart(boolean processWholeModel, Router center, int depth, LAYOUT layout) {
+    public void processModelsAfterStart(boolean processWholeModel, Router center, int depth) {
 	manager.setLoadSettings(processWholeModel, center, depth);
 	manager.loadMapModel();
 	this.repaint();

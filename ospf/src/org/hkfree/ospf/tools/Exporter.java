@@ -63,8 +63,8 @@ public class Exporter {
 	out.write("</graph>");
 	out.close();
     }
-    
-    
+
+
     /**
      * Export modelu do SVG formatu
      * @param file
@@ -79,39 +79,44 @@ public class Exporter {
 	Map<RouterVertex, Point2D> routers = graph.getRouterVertexPositions();
 	List<LinkEdge> edges = model.getLinkEdges();
 	for (LinkEdge le : edges) {
-	    out.write("<line x1=\"" + routers.get(le.getRVertex1()).getX() + "\" " + 
-		    "y1=\"" + routers.get(le.getRVertex1()).getY() + "\" " + 
-		    "x2=\"" + routers.get(le.getRVertex2()).getX() + "\" " + 
-		    "y2=\"" + routers.get(le.getRVertex2()).getY() + "\" " + 
-		    "stroke=\"#"+Integer.toHexString(((Color)le.getLineColor(1)).getRGB()).substring(2)+"\" " +
+	    out.write("<line x1=\"" + routers.get(le.getRVertex1()).getX() + "\" " +
+		    "y1=\"" + routers.get(le.getRVertex1()).getY() + "\" " +
+		    "x2=\"" + routers.get(le.getRVertex2()).getX() + "\" " +
+		    "y2=\"" + routers.get(le.getRVertex2()).getY() + "\" " +
+		    "stroke=\"#" + Integer.toHexString(((Color) le.getLineColor(1)).getRGB()).substring(2) + "\" " +
 		    "stroke-width=\"1\"/>\n");
+	    // linkEdge text
+	    out.write("<text " +
+		    "x=\"" + (routers.get(le.getRVertex1()).getX() + routers.get(le.getRVertex2()).getX()) / 2 + "\" " +
+		    "y=\"" + +(routers.get(le.getRVertex1()).getY() + routers.get(le.getRVertex2()).getY()) / 2 + "\" " +
+		    "fill=\"black\" " +
+		    "font-size=\"8\">" + le.getCost1() + "-" + le.getCost2() + "</text>\n");
 	}
 	for (RouterVertex rv : routers.keySet()) {
 	    if (rv.isMultilink()) {
-		//multilink
-		out.write("<rect width=\"10\" height=\"10\" " +  
+		// multilink
+		out.write("<rect width=\"10\" height=\"10\" " +
 			"fill=\"#" + Integer.toHexString(rv.getColorFill().getRGB()).substring(2) + "\" " +
 			"stroke=\"#000000\" " +
 			"stroke-width=\"1\" " +
-	    		"x=\"" + (routers.get(rv).getX()-5) + "\" " +
-	    		"y=\"" + (routers.get(rv).getY()-5) + "\"/>\n");
+			"x=\"" + (routers.get(rv).getX() - 5) + "\" " +
+			"y=\"" + (routers.get(rv).getY() - 5) + "\"/>\n");
 	    } else {
-		//router symbol
+		// router symbol
 		out.write("<circle r=\"10\" " +
-	    		"fill=\"#" + Integer.toHexString(rv.getColorFill().getRGB()).substring(2) + "\" " +
-	    		"stroke=\"#"+ Integer.toHexString(rv.getColorStroke().getRGB()).substring(2) + "\" " +
-	    		"stroke-width=\"1\" " +
-	    		"cx=\"" + routers.get(rv).getX() + "\" " +
-	    		"cy=\"" + routers.get(rv).getY() + "\"/>\n");
-		//router text
+			"fill=\"#" + Integer.toHexString(rv.getColorFill().getRGB()).substring(2) + "\" " +
+			"stroke=\"#" + Integer.toHexString(rv.getColorStroke().getRGB()).substring(2) + "\" " +
+			"stroke-width=\"1\" " +
+			"cx=\"" + routers.get(rv).getX() + "\" " +
+			"cy=\"" + routers.get(rv).getY() + "\"/>\n");
+		// router text
 		out.write("<text " +
-			"x=\""+ routers.get(rv).getX() + "\" " +
-			"y=\""+ routers.get(rv).getY() + "\" " +
-			"fill=\"black\">"+rv.getName()+"</text>\n");
-		
+			"x=\"" + (routers.get(rv).getX() + 12) + "\" " +
+			"y=\"" + (routers.get(rv).getY() + 12) + "\" " +
+			"fill=\"black\" " +
+			"font-size=\"9\">" + rv.getName() + "</text>\n");
 	    }
 	}
-	
 	out.write("</svg>");
 	out.close();
     }

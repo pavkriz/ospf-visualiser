@@ -35,13 +35,6 @@ public abstract class Constants {
     }
 
     /**
-     * Layout pouzity pro rozmistovani grafu
-     */
-    public enum LAYOUT {
-	FR, SPRING
-    }
-
-    /**
      * Enum pro nastavení pracovního režimu
      * Ord odpovídá hodnotě v lng 'mdwal.ORD'
      */
@@ -56,8 +49,9 @@ public abstract class Constants {
 	LOCK_VERTEX,
 	PICKING,
 	TRANSFORMING,
-	LAYOUTING_START,
-	LAYOUTING_STOP,
+	LAYOUT_FR_START,
+	LAYOUT_SPRING_START,
+	LAYOUT_SPRING_STOP,
 	ADD_VERTEXES,
 	ADD_EDGES,
 	ASYMETRIC_LINKS,

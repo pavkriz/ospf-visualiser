@@ -9,7 +9,6 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.hkfree.ospf.model.Constants;
-import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.tools.Factory;
 
@@ -26,10 +25,9 @@ public class OspfWinActionListener implements ActionListener {
     private Action actionCostChangingMode = null;
     private Action actionPickingMode = null;
     private Action actionTransformingMode = null;
-    private Action actionFRLayout = null;
-    private Action actionSpringLayout = null;
-    private Action actionStartLayouting = null;
-    private Action actionStopLayouting = null;
+    private Action actionLayoutStartFR = null;
+    private Action actionLayoutStartSpring = null;
+    private Action actionLayoutStopSpring = null;
     private Action actionZoom = null;
     private Action actionLockMode = null;
     private Action actionLockAll = null;
@@ -204,32 +202,47 @@ public class OspfWinActionListener implements ActionListener {
 	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION,
 		rb.getString("mode." + MODE.TRANSFORMING + ".title"));
 	actionTransformingMode.setEnabled(false);
-	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING_START), new ImageIcon(getClass()
-		.getResource(Constants.URL_IMG_GUI + "startlayout.png"))) {
+	actionLayoutStartFR = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_FR_START), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "layout_fr_start.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.LAYOUTING_START);
+		winManager.getActualMDManager().setMode(MODE.LAYOUT_FR_START);
 	    }
 	};
-	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUTING_START + ".title"));
-	actionStartLayouting.setEnabled(false);
-	actionStopLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING_STOP), new ImageIcon(getClass()
-		.getResource(Constants.URL_IMG_GUI + "stoplayout.png"))) {
+	actionLayoutStartFR.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUT_FR_START + ".title"));
+	actionLayoutStartFR.setEnabled(false);
+	actionLayoutStartSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_START), new ImageIcon(
+		getClass()
+			.getResource(Constants.URL_IMG_GUI + "layout_spring_start.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.LAYOUTING_STOP);
+		winManager.getActualMDManager().setMode(MODE.LAYOUT_SPRING_START);
 	    }
 	};
-	actionStopLayouting.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUTING_STOP + ".title"));
-	actionStopLayouting.setEnabled(false);
+	actionLayoutStartSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUT_SPRING_START + ".title"));
+	actionLayoutStartSpring.setEnabled(false);
+	actionLayoutStopSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_STOP), new ImageIcon(
+		getClass()
+			.getResource(Constants.URL_IMG_GUI + "layout_spring_stop.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().setMode(MODE.LAYOUT_SPRING_STOP);
+	    }
+	};
+	actionLayoutStopSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUT_SPRING_STOP + ".title"));
+	actionLayoutStopSpring.setEnabled(false);
 	actionAddVertexes = new AbstractAction(rb.getString("mode." + MODE.ADD_VERTEXES), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "router_add.png"))) {
 
@@ -490,28 +503,28 @@ public class OspfWinActionListener implements ActionListener {
 	};
 	actionExportModelToSVG.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.map.exportSVG.title"));
 	actionExportModelToSVG.setEnabled(false);
-	actionFRLayout = new AbstractAction(rb.getString("menu.layout.fr")) {
-
-	    private static final long serialVersionUID = 1L;
-
-
-	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setLayout(LAYOUT.FR);
-	    }
-	};
-	actionFRLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.fr.title"));
-	actionFRLayout.setEnabled(false);
-	actionSpringLayout = new AbstractAction(rb.getString("menu.layout.spring")) {
-
-	    private static final long serialVersionUID = 1L;
-
-
-	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setLayout(LAYOUT.SPRING);
-	    }
-	};
-	actionSpringLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.spring.title"));
-	actionSpringLayout.setEnabled(false);
+	// actionFRLayout = new AbstractAction(rb.getString("menu.layout.fr")) {
+	//
+	// private static final long serialVersionUID = 1L;
+	//
+	//
+	// public void actionPerformed(ActionEvent e) {
+	// winManager.getActualMDManager().setLayout(LAYOUT.FR);
+	// }
+	// };
+	// actionFRLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.fr.title"));
+	// actionFRLayout.setEnabled(false);
+	// actionSpringLayout = new AbstractAction(rb.getString("menu.layout.spring")) {
+	//
+	// private static final long serialVersionUID = 1L;
+	//
+	//
+	// public void actionPerformed(ActionEvent e) {
+	// winManager.getActualMDManager().setLayout(LAYOUT.SPRING);
+	// }
+	// };
+	// actionSpringLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.spring.title"));
+	// actionSpringLayout.setEnabled(false);
     }
 
 
@@ -555,20 +568,18 @@ public class OspfWinActionListener implements ActionListener {
      * Vrací akci spuštění automatického rozvrhování
      * @return action
      */
-    public Action getActionStartLayouting() {
-	return actionStartLayouting;
-    }
-
-
-    /**
-     * Vrací akci zastavení automatického rozvrhování
-     * @return action
-     */
-    public Action getActionStopLayouting() {
-	return actionStopLayouting;
-    }
-
-
+    // public Action getActionStartLayouting() {
+    // return actionStartLayouting;
+    // }
+    //
+    //
+    // /**
+    // * Vrací akci zastavení automatického rozvrhování
+    // * @return action
+    // */
+    // public Action getActionStopLayouting() {
+    // return actionStopLayouting;
+    // }
     /**
      * Vrací akci nastavení režimu zobrazení nejkratších cest
      * @return action
@@ -824,12 +835,17 @@ public class OspfWinActionListener implements ActionListener {
     }
 
 
-    public Action getActionFRLayout() {
-	return actionFRLayout;
+    public Action getActionLayoutStartFR() {
+	return actionLayoutStartFR;
     }
 
 
-    public Action getActionSpringLayout() {
-	return actionSpringLayout;
+    public Action getActionLayoutStartSpring() {
+	return actionLayoutStartSpring;
+    }
+
+
+    public Action getActionLayoutStopSpring() {
+	return actionLayoutStopSpring;
     }
 }
