@@ -153,17 +153,17 @@ public class NetStatesWinActionListener implements ActionListener {
 	    }
 	};
 	actionZoom.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ZOOM + ".title"));
-	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING_START), new ImageIcon(getClass()
-		.getResource(Constants.URL_IMG_GUI + "startlayout.png"))) {
-
-	    private static final long serialVersionUID = 1L;
-
-
-	    public void actionPerformed(ActionEvent e) {
-		netStatesWinManager.getGraphComponent().startLayouting();
-	    }
-	};
-	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LAYOUTING_START + ".title"));
+//	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING_START), new ImageIcon(getClass()
+//		.getResource(Constants.URL_IMG_GUI + "startlayout.png"))) {
+//
+//	    private static final long serialVersionUID = 1L;
+//
+//
+//	    public void actionPerformed(ActionEvent e) {
+//		netStatesWinManager.getGraphComponent().startLayouting();
+//	    }
+//	};
+//	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LAYOUTING_START + ".title"));
 	actionLockAll = new AbstractAction(rb.getString("mode." + MODE.LOCK_ALL), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "lock_all.png"))) {
 

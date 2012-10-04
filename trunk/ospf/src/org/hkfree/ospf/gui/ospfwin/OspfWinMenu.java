@@ -3,11 +3,9 @@ package org.hkfree.ospf.gui.ospfwin;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
 
 import org.hkfree.ospf.tools.Factory;
 
@@ -81,14 +79,10 @@ public class OspfWinMenu extends JMenuBar {
 	// nabidka Pozice vrcholu
 	JMenu mLayouts = new JMenu(rb.getString("menu.layout"));
 	mLayouts.setToolTipText(rb.getString("menu.layout.title"));
-	mLayouts.add(new JRadioButtonMenuItem(((OspfWinActionListener) actionListener).getActionFRLayout()));
-	mLayouts.add(new JRadioButtonMenuItem(((OspfWinActionListener) actionListener).getActionSpringLayout()));
-	ButtonGroup group = new ButtonGroup();
-	group.add(mLayouts.getItem(0));
-	group.add(mLayouts.getItem(1));
+	mLayouts.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLayoutStartFR()));
+	mLayouts.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLayoutStartSpring()));
+	mLayouts.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLayoutStopSpring()));
 	mVertices.add(mLayouts);
-	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionStartLayouting()));
-	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionStopLayouting()));
 	mVertices.addSeparator();
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionGPS()));
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionGPSAll()));

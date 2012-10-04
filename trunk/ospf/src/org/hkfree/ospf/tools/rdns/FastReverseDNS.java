@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * performs DNS lookups avoiding idle blocking by using multiple threads
- * upravil Jan Schovánek
+ * pro potreby OSPF visualiseru upravil Jan Schovánek
  */
 public class FastReverseDNS implements Runnable {
 

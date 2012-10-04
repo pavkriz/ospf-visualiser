@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Properties;
 
 import org.hkfree.ospf.model.Constants;
-import org.hkfree.ospf.model.Constants.LAYOUT;
 
 /**
  * Manažer pro načítání a ukládání nastavení aplikace a nastavení načítaných dat
@@ -90,8 +89,11 @@ public class SettingsManager {
 	if (propUser.getProperty("telnetUrl") == null) {
 	    propUser.setProperty("telnetUrl", propDef.getProperty("telnetUrl"));
 	}
-	if (propUser.getProperty("telnetPort") == null) {
-	    propUser.setProperty("telnetPort", propDef.getProperty("telnetPort"));
+	if (propUser.getProperty("telnetPortIPv4") == null) {
+	    propUser.setProperty("telnetPortIPv4", propDef.getProperty("telnetPortIPv4"));
+	}
+	if (propUser.getProperty("telnetPortIPv6") == null) {
+	    propUser.setProperty("telnetPortIPv6", propDef.getProperty("telnetPortIPv6"));
 	}
 	if (propUser.getProperty("telnetPassword") == null) {
 	    propUser.setProperty("telnetPassword", propDef.getProperty("telnetPassword"));
@@ -126,17 +128,11 @@ public class SettingsManager {
 	if (propUser.getProperty("countDaysBack") == null) {
 	    propUser.setProperty("countDaysBack", propDef.getProperty("countDaysBack"));
 	}
-	if (propUser.getProperty("ipv") == null) {
-	    propUser.setProperty("ipv", propDef.getProperty("ipv"));
-	}
 	if (propUser.getProperty("fromDateToDateLoadTo") == null) {
 	    propUser.setProperty("fromDateToDateLoadTo", propDef.getProperty("fromDateToDateLoadTo"));
 	}
 	if (propUser.getProperty("closeLogDialog") == null) {
 	    propUser.setProperty("closeLogDialog", propDef.getProperty("closeLogDialog"));
-	}
-	if (propUser.getProperty("layout") == null) {
-	    propUser.setProperty("layout", propDef.getProperty("layout"));
 	}
 	propUser.setProperty("appVersion", Constants.APP_VERSION);
 	propUser.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
@@ -186,7 +182,8 @@ public class SettingsManager {
 	settings.modelSingleLocalPath = prop.getProperty("modelSingleLocalPath");
 	settings.modelZipLocalPath = prop.getProperty("modelZipLocalPath");
 	settings.telnetUrl = prop.getProperty("telnetUrl");
-	settings.telnetPort = Integer.valueOf(prop.getProperty("telnetPort"));
+	settings.telnetPortIPv4 = Integer.valueOf(prop.getProperty("telnetPortIPv4"));
+	settings.telnetPortIPv6 = Integer.valueOf(prop.getProperty("telnetPortIPv6"));
 	settings.telnetPassword = prop.getProperty("telnetPassword");
 	settings.telnetTimeout = Integer.valueOf(prop.getProperty("telnetTimeout"));
 	settings.rdnsServer = prop.getProperty("rdnsServer");
@@ -198,10 +195,8 @@ public class SettingsManager {
 	settings.modelZipRemotePathBetween = prop.getProperty("modelZipRemotePathBetween");
 	settings.modelTimeBetween = prop.getProperty("modelTimeBetween");
 	settings.countDaysBack = Integer.valueOf(prop.getProperty("countDaysBack"));
-	settings.ipv = prop.getProperty("ipv");
 	settings.fromDateToDateLoadTo = prop.getProperty("fromDateToDateLoadTo");
 	settings.closeLogDialog = Boolean.parseBoolean(prop.getProperty("closeLogDialog"));
-	settings.layout = LAYOUT.valueOf(prop.getProperty("layout"));
     }
 
 
@@ -222,7 +217,8 @@ public class SettingsManager {
 	prop.setProperty("modelSingleLocalPath", settings.modelSingleLocalPath);
 	prop.setProperty("modelZipLocalPath", settings.modelZipLocalPath);
 	prop.setProperty("telnetUrl", settings.telnetUrl);
-	prop.setProperty("telnetPort", String.valueOf(settings.telnetPort));
+	prop.setProperty("telnetPortIPv4", String.valueOf(settings.telnetPortIPv4));
+	prop.setProperty("telnetPortIPv6", String.valueOf(settings.telnetPortIPv6));
 	prop.setProperty("telnetPassword", settings.telnetPassword);
 	prop.setProperty("telnetTimeout", String.valueOf(settings.telnetTimeout));
 	prop.setProperty("rdnsServer", settings.rdnsServer);
@@ -234,8 +230,6 @@ public class SettingsManager {
 	prop.setProperty("modelZipRemotePathBetween", settings.modelZipRemotePathBetween);
 	prop.setProperty("modelTimeBetween", settings.modelTimeBetween);
 	prop.setProperty("countDaysBack", String.valueOf(settings.countDaysBack));
-	prop.setProperty("ipv", settings.ipv);
-	prop.setProperty("layout", settings.layout.toString());
 	prop.setProperty("fromDateToDateLoadTo", settings.fromDateToDateLoadTo);
 	prop.setProperty("closeLogDialog", String.valueOf(settings.closeLogDialog));
 	prop.setProperty("appVersion", Constants.APP_VERSION);

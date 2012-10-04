@@ -195,7 +195,7 @@ public class OspfWin extends JFrame {
      * @param mapPanel panel s grafem
      */
     private void addMapPanel(String name, MapPanel mapPanel) {
-	mapPanel.processModelsAfterStart(true, null, 0, manager.getSettings().layout);
+	mapPanel.processModelsAfterStart(true, null, 0);
 	// pokud je jiz vlozen model se stejnym nazvem, upravi se nazev
 	int i = 1;
 	while (true) {

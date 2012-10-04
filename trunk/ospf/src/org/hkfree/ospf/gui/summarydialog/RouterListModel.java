@@ -13,6 +13,7 @@ import org.hkfree.ospf.model.ospf.Router;
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
+@SuppressWarnings("rawtypes")
 public class RouterListModel implements ListModel {
 
     private List<Router> routerList = null;
@@ -73,9 +74,9 @@ public class RouterListModel implements ListModel {
      */
     public void setSelectedRouter(Router router) {
 	if (router.getRouterName() != null && !router.getRouterName().isEmpty())
-	    selected = (String) router.getRouterID() + "   -   " + router.getRouterName();
+	    selected = router.getRouterID() + "   -   " + router.getRouterName();
 	else
-	    selected = (String) router.getRouterID();
+	    selected = router.getRouterID();
     }
 
 

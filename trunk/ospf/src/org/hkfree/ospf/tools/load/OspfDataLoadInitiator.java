@@ -2,14 +2,11 @@ package org.hkfree.ospf.tools.load;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -342,17 +339,20 @@ public class OspfDataLoadInitiator {
      * @throws Exception
      */
     private void loadDataViaTelnet(OspfModel ospfModel, String sourcePath) throws Exception {
-	TelnetClient tc = new TelnetClient(settings.telnetUrl, settings.telnetPort, settings.telnetPassword,
+	TelnetClient tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv4, settings.telnetPassword,
 		settings.telnetTimeout);
 	tc.initConnection();
+	// TODO tady pokracovat, dodelat telnet
+	// stahnout IPv4 - celou sit
+	// stahnout IPv4 - spolu s maskama
+	// stahnout IPv6
 	loadTopologyDataFromTelnet(ospfModel, tc);
 	loadNonTopologyDataFromTelnet(ospfModel, tc);
 	tc.close();
 	// nazev noveho tabbu
 	Date date = new Date(System.currentTimeMillis());
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm");
-	ospfModel.setModelName(formatter.format(date) + "_telnet" + (settings.isIPv4() ? "IPv4" : "IPv6")); // pro rozliseni
-													    // verze IP
+	ospfModel.setModelName(formatter.format(date) + "_telnet");
     }
 
 
@@ -365,25 +365,24 @@ public class OspfDataLoadInitiator {
      */
     private void loadTopologyDataFromTelnet(OspfModel ospfModel, TelnetClient tc) throws IOException, InterruptedException {
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.0"));
-	StringBuilder data = null;
-	if (settings.isIPv4()) {
-	    data = tc.getTopologyData();
-	} else {
-	    data = tc.getTopologyDataIPv6();
-	}
-	
-//	 FileWriter fstream = new FileWriter("out_new.txt");
-//	  BufferedWriter out = new BufferedWriter(fstream);
-//	  out.write(data.toString());
-//	  out.close();
-	OspfLoader dataLoader = new OspfLoader();
+	// StringBuilder data = null;
+	// if (settings.isIPv4()) {
+	// data = tc.getTopologyData();
+	// } else {
+	// data = tc.getTopologyDataIPv6();
+	// }
+	// FileWriter fstream = new FileWriter("out_new.txt");
+	// BufferedWriter out = new BufferedWriter(fstream);
+	// out.write(data.toString());
+	// out.close();
+	// OspfLoader dataLoader = new OspfLoader();
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
-	if (settings.isIPv4()) {
-//	    dataLoader.loadTopologyNEW(ospfModel, new BufferedReader(new StringReader(data.toString())));
-	} else {
-	    dataLoader.loadTopologyIPv6(ospfModel, new BufferedReader(new StringReader(data.toString())));
-	}
+	// if (settings.isIPv4()) {
+	// // dataLoader.loadTopologyNEW(ospfModel, new BufferedReader(new StringReader(data.toString())));
+	// } else {
+	// dataLoader.loadTopologyIPv6(ospfModel, new BufferedReader(new StringReader(data.toString())));
+	// }
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
     }
 
@@ -398,34 +397,33 @@ public class OspfDataLoadInitiator {
     private void loadNonTopologyDataFromTelnet(OspfModel ospfModel, TelnetClient tc) throws IOException,
 	    InterruptedException {
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.2"));
-	List<StringBuilder> nonTopData = null;
-	if (settings.isIPv4()) {
-	    nonTopData = tc.getNonTopologyData(ospfModel.getRouters());
-	} else {
-	    nonTopData = tc.getNonTopologyDataIPv6(ospfModel.getRouters());
-	}
-
-//	 FileWriter fstream = new FileWriter("out2.txt");
-//	  BufferedWriter out = new BufferedWriter(fstream);
-//	  out.write(nonTopData.toString());
-//	  out.close();
+	// List<StringBuilder> nonTopData = null;
+	// if (settings.isIPv4()) {
+	// nonTopData = tc.getNonTopologyData(ospfModel.getRouters());
+	// } else {
+	// nonTopData = tc.getNonTopologyDataIPv6(ospfModel.getRouters());
+	// }
+	// FileWriter fstream = new FileWriter("out2.txt");
+	// BufferedWriter out = new BufferedWriter(fstream);
+	// out.write(nonTopData.toString());
+	// out.close();
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
 	List<String> ips = new ArrayList<String>();
-	OspfLoader dataLoader = new OspfLoader();
-	for (int i = 0; i < ospfModel.getRouters().size(); i++) {
-	    Router r = ospfModel.getRouters().get(i);
-	    // cena
-	    if (settings.isIPv4()) {
-		dataLoader.loadCosts(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
-			.toString())));
-	    } else {
-		dataLoader.loadCostsIPv6(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
-			.toString())));
-	    }
-	    // pridani IP routeru do seznamu pro dohledani nazvu
-	    ips.add(r.getRouterID());
-	}
+	// OspfLoader dataLoader = new OspfLoader();
+	// for (int i = 0; i < ospfModel.getRouters().size(); i++) {
+	// Router r = ospfModel.getRouters().get(i);
+	// cena
+	// if (settings.isIPv4()) {
+	// dataLoader.loadCosts(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
+	// .toString())));
+	// } else {
+	// dataLoader.loadCostsIPv6(ospfModel, r.getRouterID(), new BufferedReader(new StringReader(nonTopData.get(i)
+	// .toString())));
+	// }
+	// pridani IP routeru do seznamu pro dohledani nazvu
+	// ips.add(r.getRouterID());
+	// }
 	// nazev
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.3"));
@@ -436,7 +434,7 @@ public class OspfDataLoadInitiator {
 	    Map<String, String> names = new HashMap<String, String>();
 	    Thread threads[] = new Thread[60];
 	    for (int i = 0; i < FastReverseDNS.DEFAULT_NUM_THREADS; i++) {
-		threads[i] = new Thread(new FastReverseDNS(rdns, ipe, names), "Thread"+i);
+		threads[i] = new Thread(new FastReverseDNS(rdns, ipe, names), "Thread" + i);
 		threads[i].start();
 	    }
 	    for (int i = 0; i < FastReverseDNS.DEFAULT_NUM_THREADS; i++) {
@@ -447,6 +445,7 @@ public class OspfDataLoadInitiator {
 	    }
 	} else {
 	    // pouziti defaultniho DNS serveru pro preklad ip na nazev
+	    // TODO predelat na vlakna, je to pomale
 	    for (Router r : ospfModel.getRouters()) {
 		r.setRouterName(InetAddress.getByName(r.getRouterID()).getHostName());
 	    }

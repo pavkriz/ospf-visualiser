@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.Constants.LANGUAGE;
-import org.hkfree.ospf.model.Constants.LAYOUT;
 
 /**
  * Třída představující vstupní nastavení aplikace pro načítání dat
@@ -34,7 +33,8 @@ public class AppSettings {
     public String modelSingleLocalPath;// =/home/schovjan/Desktop/2012-03-18--14-20
     public String modelZipLocalPath;// =d:/
     public String telnetUrl;// =89.248.243.69
-    public int telnetPort;// =8080
+    public int telnetPortIPv4;// =2604
+    public int telnetPortIPv6;// =2606
     public String telnetPassword;// =free
     public int telnetTimeout;// =5000
     public String rdnsServer;// =lab.hkfree.org
@@ -45,10 +45,8 @@ public class AppSettings {
     public String fileNameGeoPositions;// =geo
     public String modelTimeBetween;// =20-00
     public int countDaysBack; // =7
-    public String ipv;// =IPV4
     public String fromDateToDateLoadTo; // =MAP_PANEL
     public boolean closeLogDialog; // =true
-    public LAYOUT layout;// =FR
 
 
     /**
@@ -126,13 +124,5 @@ public class AppSettings {
      */
     public void addFilePath(String path) {
 	filePaths.add(path);
-    }
-
-
-    /**
-     * Vrací příznak zda je nastaven protokol IPv4 nebo IPv6
-     */
-    public boolean isIPv4() {
-	return this.ipv.equalsIgnoreCase("IPV4");
     }
 }
