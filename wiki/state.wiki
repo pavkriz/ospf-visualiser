@@ -1,6 +1,7 @@
 *4.10.2012*
   * layout - FR/Spring, kazdy ma sve tlacitko, defaultne FR
   * labely spoju, posunuty popisky routeru
+  * telnet nacitani dat - upraven dialog + appnastaveni
 
 *3.10.2012*
   * layout - moznost FR/Spring pres menu
