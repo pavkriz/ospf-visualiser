@@ -1,3 +1,7 @@
+*5.10.2012*
+  * telnet - defaultni rDNS taky pomoci vlaken
+  * telnet - ziskani dat tremi prikazy a jejich nacteni
+
 *4.10.2012*
   * layout - FR/Spring, kazdy ma sve tlacitko, defaultne FR
   * labely spoju, posunuty popisky routeru
