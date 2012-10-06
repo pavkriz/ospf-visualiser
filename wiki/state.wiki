@@ -1,3 +1,7 @@
+*6.10.2012*
+  * nacteni dat v novem tvaru
+  * uprava stavajicich kodu
+
 *5.10.2012*
   * telnet - defaultni rDNS taky pomoci vlaken
   * telnet - ziskani dat tremi prikazy a jejich nacteni
