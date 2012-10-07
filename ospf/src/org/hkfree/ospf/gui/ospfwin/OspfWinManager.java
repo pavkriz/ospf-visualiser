@@ -207,13 +207,13 @@ public class OspfWinManager {
 	    OspfModel actualModel = newModels.get(newModels.size() - 1);
 	    try {
 		loadInitiator.loadData(actualModel, sourcePath);
-		actualModel.removeNonCompletelyLoadLinksAndRouters();
+		actualModel.removeNonCompletelyLoadedLinksAndRouters();
 	    } catch (Exception e) {
 		((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
 		((OspfWin) getOwner()).getStateDialog().operationFailed();
 	    }
 	    // pokud model obsahuje spoje, provede v nem upravy
-	    if (actualModel.modelHasSomeLinks()) {
+	    if (!actualModel.getLinks().isEmpty()) {
 		actualModel.sortRoutersByIP();
 		actualModel.computeNetAddressesOfLinks();
 	    }

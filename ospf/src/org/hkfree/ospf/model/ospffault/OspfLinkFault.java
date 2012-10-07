@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.tools.DateUtil;
 
 /**
@@ -13,11 +13,11 @@ import org.hkfree.ospf.tools.DateUtil;
  */
 public class OspfLinkFault {
 
-    private OspfLink ospfLink = null;
+    private Link ospfLink = null;
     private List<IntervalFault> intervalFaults = new ArrayList<IntervalFault>();
 
 
-    public OspfLinkFault(OspfLink ospfLink) {
+    public OspfLinkFault(Link ospfLink) {
 	this.ospfLink = ospfLink;
     }
 
@@ -26,7 +26,7 @@ public class OspfLinkFault {
      * Vrací ospf link
      * @return ospfLink
      */
-    public OspfLink getOspfLink() {
+    public Link getOspfLink() {
 	return ospfLink;
     }
 
@@ -35,7 +35,7 @@ public class OspfLinkFault {
      * Nastaví ospf link
      * @param ospfLink
      */
-    public void setOspfLink(OspfLink ospfLink) {
+    public void setOspfLink(Link ospfLink) {
 	this.ospfLink = ospfLink;
     }
 

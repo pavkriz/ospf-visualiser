@@ -103,7 +103,7 @@ public class LinkImportanceTableModel extends AbstractTableModel {
 		+ rb.getString("litm.2")
 		+ ": <br>";
 	for (OspfLinkData old : linkImportances.get(rowIndex).getOspfLink().getOspfLinkData()) {
-	    toolTip += "<b>" + old.getRouter().getRouterID() + "</b> " + old.getRouter().getRouterName() + " <br>";
+	    toolTip += "<b>" + old.getRouter().getId() + "</b> " + old.getRouter().getName() + " <br>";
 	}
 	toolTip += "</html>";
 	return toolTip;

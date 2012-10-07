@@ -3,7 +3,7 @@ package org.hkfree.ospf.model.ospfchange;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.model.ospf.OspfLinkData;
 
 /**
@@ -12,7 +12,7 @@ import org.hkfree.ospf.model.ospf.OspfLinkData;
  */
 public class OspfLinkState {
 
-    private OspfLink ospfLink = null;
+    private Link ospfLink = null;
     private Map<OspfLinkData, Integer> routers = new HashMap<OspfLinkData, Integer>();
     private String linkID = "";
     private int mask = 0;
@@ -24,7 +24,7 @@ public class OspfLinkState {
      * @param linkID
      * @param subnetMask
      */
-    public OspfLinkState(OspfLink ospfLink, String linkID, int subnetMask) {
+    public OspfLinkState(Link ospfLink, String linkID, int subnetMask) {
 	this.ospfLink = ospfLink;
 	this.linkID = linkID;
 	this.mask = subnetMask;
@@ -45,7 +45,7 @@ public class OspfLinkState {
      * Vrací spoj
      * @return ospflink
      */
-    public OspfLink getOspfLink() {
+    public Link getOspfLink() {
 	return ospfLink;
     }
 
@@ -54,7 +54,7 @@ public class OspfLinkState {
      * Nastavuje spoj
      * @param link
      */
-    public void seOspfLink(OspfLink link) {
+    public void seOspfLink(Link link) {
 	this.ospfLink = link;
     }
 

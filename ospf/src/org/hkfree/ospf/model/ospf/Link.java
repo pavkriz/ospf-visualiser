@@ -13,13 +13,13 @@ import org.hkfree.ospf.tools.ip.IpSubnetCalculator;
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
-public class OspfLink {
+public class Link {
 
     private ResourceBundle rb = Factory.getRb();
     private String linkID = "";
     private int subnetMask = 0;
     private List<OspfLinkData> routersOfLink = new ArrayList<OspfLinkData>();
-    private List<String> subnetIps = new ArrayList<String>();
+//    private List<String> subnetIps = new ArrayList<String>();
     private String networkAddress = "0.0.0.0";
     private String broadcastAddress = "0.0.0.0";
 
@@ -27,7 +27,7 @@ public class OspfLink {
     /**
      * Konstruktor - vytvoří instanci třídy
      */
-    public OspfLink(String linkID, int subnetMask) {
+    public Link(String linkID, int subnetMask) {
 	this.linkID = linkID;
 	this.subnetMask = subnetMask;
 	computeSubnetIps();
@@ -50,11 +50,11 @@ public class OspfLink {
      * @param ip
      * @return boolean
      */
-    public boolean subnetContainsIP(String ip) {
-	if (subnetIps.contains(ip))
-	    return true;
-	return false;
-    }
+//    public boolean subnetContainsIP(String ip) {
+//	if (subnetIps.contains(ip))
+//	    return true;
+//	return false;
+//    }
 
 
     /**
@@ -70,7 +70,9 @@ public class OspfLink {
      * Metoda, která přidá do spoje účastnický router
      */
     public void addRouter(Router router) {
-	routersOfLink.add(new OspfLinkData(router));
+	OspfLinkData linkData = new OspfLinkData();
+	linkData.setRouter(router);
+	routersOfLink.add(linkData);
     }
 
 
@@ -80,8 +82,12 @@ public class OspfLink {
      * @param interfaceIp
      * @param cost
      */
-    public void addRouter(Router router, String interfaceIp, int cost) {
-	routersOfLink.add(new OspfLinkData(router, interfaceIp, cost));
+    public void addRouter(Router router, String interfaceIp, int costIPv4) {
+	OspfLinkData linkData = new OspfLinkData();
+	linkData.setRouter(router);
+	linkData.setInterfaceIp(interfaceIp);
+	linkData.setCostIPv4(costIPv4);
+	routersOfLink.add(linkData);
     }
 
 
@@ -108,8 +114,8 @@ public class OspfLink {
 	String vzor = "%5$10s %1$-20s %2$-20s %5$10s %3$s: %4$d\n";
 	String text = "";
 	for (OspfLinkData old : routersOfLink) {
-	    text += String.format(vzor, old.getRouter().getRouterID(), "(" + old.getInterfaceIp() + ")",
-		    rb.getString("ol.0"), old.getCost(), "");
+	    text += String.format(vzor, old.getRouter().getId(), "(" + old.getInterfaceIp() + ")",
+		    rb.getString("ol.0"), old.getCostIPv4(), "");
 	}
 	return text;
     }
@@ -135,7 +141,7 @@ public class OspfLink {
     public void updateLinkData(Router router, String interfaceIp, int cost) {
 	for (OspfLinkData old : routersOfLink) {
 	    if (old.getRouter().equals(router)) {
-		old.setCost(cost);
+		old.setCostIPv4(cost);
 		old.setInterfaceIp(interfaceIp);
 	    }
 	}
@@ -205,11 +211,11 @@ public class OspfLink {
 	for (OspfLinkData old : routersOfLink) {
 	    // standard link
 	    if (routersOfLink.size() == 2) {
-		if (old.getCost() == -1) {
+		if (old.getCostIPv4() == -1) {
 		    return true; // smazat link
 		}
 	    } else { // multilink
-		if (old.getCost() == -1) {
+		if (old.getCostIPv4() == -1) {
 		    if (actualMultilinkRemData == null) {
 			actualMultilinkRemData = new ArrayList<OspfLinkData>();
 		    }

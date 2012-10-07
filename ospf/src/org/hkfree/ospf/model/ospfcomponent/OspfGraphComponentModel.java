@@ -3,7 +3,7 @@ package org.hkfree.ospf.model.ospfcomponent;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.model.ospf.OspfLinkData;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
@@ -89,7 +89,7 @@ public class OspfGraphComponentModel {
 	for (Router r : ospfModel.getRouters()) {
 	    vertices.add(new OspfGraphVertex(r));
 	}
-	for (OspfLink ol : ospfModel.getOspfLinks()) {
+	for (Link ol : ospfModel.getLinks()) {
 	    if (ol.getRoutersCount() == 2) {
 		edges.add(new OspfGraphEdge(ol, getVertex(ol.getOspfLinkData().get(0).getRouter()), getVertex(ol
 			.getOspfLinkData().get(1).getRouter())));
@@ -264,7 +264,7 @@ public class OspfGraphComponentModel {
      * @return importances
      */
     public List<LinkImportance> getLinkImportances() {
-	List<OspfLink> addedOLinks = new ArrayList<OspfLink>();
+	List<Link> addedOLinks = new ArrayList<Link>();
 	List<LinkImportance> linkImportances = new ArrayList<LinkImportance>();
 	for (OspfGraphEdge e : edges) {
 	    if (e.getGraphComponentCountAfterDisable() > 1) {

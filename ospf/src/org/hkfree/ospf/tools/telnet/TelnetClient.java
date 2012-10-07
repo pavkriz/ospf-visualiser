@@ -6,10 +6,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hkfree.ospf.model.ospf.Router;
 
 /**
  * Třída představující telnet klienta pro připojení na router a práci s ním.
@@ -60,12 +56,12 @@ public class TelnetClient {
 	_os = _socket.getOutputStream();
 	_is = _socket.getInputStream();
 	while (!_sb.toString().endsWith("Password: ")) {
-	    send("");// odeslu enter, kvuli srovnani prijatych/odeslanych dat
+	    sendRecive("");// odeslu enter, kvuli srovnani prijatych/odeslanych dat
 	}
 	if (password != null) { // nemelo by byt nikdy nullove
-	    send(this.password);
+	    sendRecive(this.password);
 	}
-	send("terminal length 0");
+	sendRecive("terminal length 0");
 	// podruhe jiz prijata data nesmi koncit zadosti o heslo
 	if (getSb().toString().endsWith("Password: ")) {
 	    throw new Exception("Telnet connection error.");
@@ -81,78 +77,23 @@ public class TelnetClient {
      */
     public void close() {
 	setSb(new StringBuilder());
-	send("exit");
+	sendRecive("exit");
     }
 
 
-    /**
-     * Vrací tologickou mapu routerů pro IPv4
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public StringBuilder getTopologyData() throws IOException, InterruptedException {
+    public StringBuilder getDataIPv4() {
 	setSb(new StringBuilder());
-//	send("sh ip os da ne");
-	send("show ip ospf database router");
+	sendRecive("show ip ospf database network");
+	sendRecive("show ip ospf database router");
 	return getSb();
     }
 
 
-    /**
-     * Vrací data o jednotlivých routerech
-     * @param nonTopData
-     * @param ospfModel
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    @Deprecated
-    public List<StringBuilder> getNonTopologyData(List<Router> routers) throws IOException, InterruptedException {
-	List<StringBuilder> result = new ArrayList<StringBuilder>();
-	String prikaz = null;
-	for (Router r : routers) {
-	    prikaz = "sh ip os da ro " + r.getRouterID();
-	    setSb(new StringBuilder());
-	    send(prikaz);
-	    result.add(getSb());
-	}
-	return result;
-    }
-
-
-    /**
-     * Vrací tologickou mapu routerů pro IPv6
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public StringBuilder getTopologyDataIPv6() {
+    public StringBuilder getDataIPv6() {
 	setSb(new StringBuilder());
-	send("show ipv6 ospf6 database network detail");
-//	send("show ipv6 ospf6 database router detail");
-	
+	// send("show ipv6 ospf6 database network detail");
+	sendRecive("show ipv6 ospf6 database router detail");
 	return getSb();
-    }
-
-
-    /**
-     * Vrací data o jednotlivých routerech pro IPv6
-     * @param nonTopData
-     * @param ospfModel
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    @Deprecated
-    public List<StringBuilder> getNonTopologyDataIPv6(List<Router> routers) {
-	List<StringBuilder> result = new ArrayList<StringBuilder>();
-	String prikaz = null;
-	for (Router r : routers) {
-	    prikaz = "show ipv6 ospf6 database router adv-router " + r.getRouterID() + " detail";
-	    setSb(new StringBuilder());
-	    send(prikaz);
-	    result.add(getSb());
-	}
-	return result;
     }
 
 
@@ -163,13 +104,12 @@ public class TelnetClient {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void send(String msg) {
+    private void sendRecive(String msg) {
 	try {
 	    // odeslu prikaz
 	    _os.write(msg.getBytes());
-	    _os.write('\n');
+	    _os.write("\n".getBytes());
 	    _os.flush();
-	    // prijmu data
 	    receiveData();
 	} catch (IOException e) {
 	    e.printStackTrace();

@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
@@ -84,8 +85,8 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
      */
     public void loadModelsListItems(List<OspfModel> ospfModels) {
 	for (OspfModel model : ospfModels) {
-	    ((DefaultListModel) ospfModelsList.getModel()).addElement(new ModelCheckBoxItem(model.getModelName(), false,
-		    model));
+	    ((DefaultListModel<JCheckBox>) ospfModelsList.getModel()).addElement(new ModelCheckBoxItem(model.getModelName(),
+		    false, model));
 	}
     }
 

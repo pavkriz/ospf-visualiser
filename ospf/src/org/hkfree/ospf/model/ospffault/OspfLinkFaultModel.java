@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.setting.LinkFaultMode;
 
 /**
@@ -61,7 +61,7 @@ public class OspfLinkFaultModel {
      * @param date
      * @param faultCount
      */
-    public void addOspfLinkFault(OspfLink ospfLink, Date date, int faultCount) {
+    public void addOspfLinkFault(Link ospfLink, Date date, int faultCount) {
 	OspfLinkFault actualLinkFault = null;
 	for (OspfLinkFault olf : ospfLinkFaults) {
 	    if (olf.getOspfLink().equals(ospfLink)) {
@@ -86,7 +86,7 @@ public class OspfLinkFaultModel {
      * @param ospfLink
      * @return ospflinkfaults
      */
-    public OspfLinkFault getOspfLinkFaultOfLink(OspfLink ospfLink) {
+    public OspfLinkFault getOspfLinkFaultOfLink(Link ospfLink) {
 	for (OspfLinkFault olf : ospfLinkFaults) {
 	    if (olf.getOspfLink().equals(ospfLink)) {
 		return olf;
