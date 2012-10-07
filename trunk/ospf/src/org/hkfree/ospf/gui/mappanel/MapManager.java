@@ -110,7 +110,7 @@ public class MapManager {
 	graphComponent.setMapModel(mapModel);
 	if (!processWholeModel && centerRouter != null) {
 	    for (RouterVertex rv : mapModel.getRouterVertices()) {
-		if (rv.getDescription().equals(centerRouter.getRouterID())) {
+		if (rv.getDescription().equals(centerRouter.getId())) {
 		    graphComponent.createGraphFromCenter(rv, neighboursDepth);
 		    break;
 		}

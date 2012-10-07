@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.model.ospf.Router;
 
 /**
@@ -36,7 +36,7 @@ public class OspfState {
      * @param linkID
      * @param subnetMask
      */
-    public void addOspfLinkState(OspfLink ospfLink, String linkID, int subnetMask) {
+    public void addOspfLinkState(Link ospfLink, String linkID, int subnetMask) {
 	stateLinks.add(new OspfLinkState(ospfLink, linkID, subnetMask));
     }
 

@@ -14,7 +14,7 @@ import org.hkfree.ospf.gui.mappanel.MapGraphComponent;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
 
@@ -40,23 +40,23 @@ public class Exporter {
 	out.write("\n");
 	for (Router r : model.getRouters()) {
 	    out.write("<node label=");
-	    out.write("\"" + r.getRouterID() + "\"");
+	    out.write("\"" + r.getId() + "\"");
 	    out.write(" id=");
-	    out.write("\"" + r.getRouterID() + "\">");
+	    out.write("\"" + r.getId() + "\">");
 	    out.write("<att name=\"NODE_TYPE\" value=\"DefaultNode\"/>");
-	    out.write("<att name=\"ip\" value=\"" + r.getRouterID() + "\"/>");
-	    out.write("<att name=\"name\" value=\"" + r.getRouterName() + "\"/>");
+	    out.write("<att name=\"ip\" value=\"" + r.getId() + "\"/>");
+	    out.write("<att name=\"name\" value=\"" + r.getName() + "\"/>");
 	    out.write("<graphics type=\"ELLIPSE\" h=\"40.0\" w=\"40.0\"/>");
 	    out.write("</node>");
 	    out.write("\n");
 	}
-	for (OspfLink ol : model.getOspfLinks()) {
+	for (Link ol : model.getLinks()) {
 	    out.write("<edge label=");
 	    out.write("\"" + ol.getLinkID() + "\"");
 	    out.write(" source=");
-	    out.write("\"" + ol.getOspfLinkData().get(0).getRouter().getRouterID() + "\"");
+	    out.write("\"" + ol.getOspfLinkData().get(0).getRouter().getId() + "\"");
 	    out.write(" target=");
-	    out.write("\"" + ol.getOspfLinkData().get(1).getRouter().getRouterID() + "\"");
+	    out.write("\"" + ol.getOspfLinkData().get(1).getRouter().getId() + "\"");
 	    out.write("></edge>");
 	    out.write("\n");
 	}

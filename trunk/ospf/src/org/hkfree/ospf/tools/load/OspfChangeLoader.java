@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospfchange.OspfChangeModel;
 
@@ -50,7 +50,7 @@ public class OspfChangeLoader {
 		ospfChangeModel.createNewOspfState(inputDateFormater.parse(dateMatcher.group(1)), oModel.getModelName());
 	    else
 		ospfChangeModel.createNewOspfState(new Date(), oModel.getModelName());
-	    for (OspfLink ospfLink : oModel.getOspfLinks()) {
+	    for (Link ospfLink : oModel.getLinks()) {
 		ospfChangeModel.addOspfLink(ospfLink);
 	    }
 	}

@@ -2,10 +2,10 @@ package org.hkfree.ospf.model.map;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import org.hkfree.ospf.model.AbstractMapModel;
-import org.hkfree.ospf.tools.Factory;
+import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.ospf.OspfLinkData;
 import org.hkfree.ospf.tools.NeighbourCostAndLink;
 import org.hkfree.ospf.tools.geo.GPSPoint;
 
@@ -17,12 +17,10 @@ import org.hkfree.ospf.tools.geo.GPSPoint;
  */
 public class MapModel implements AbstractMapModel {
 
-    private ResourceBundle rb = Factory.getRb();
     private List<LinkEdge> linkEdges = new ArrayList<LinkEdge>();
     private List<RouterVertex> routerVertices = new ArrayList<RouterVertex>();
 
 
-    // private boolean castSite = false;
     /**
      * Konstruktor - vytvoří instanci třídy
      */
@@ -31,64 +29,51 @@ public class MapModel implements AbstractMapModel {
 
     /**
      * Metoda, která vytvoří instanci hrany dle na základě zadaných parametrů
-     * (IP, název obou vrcholů a ceny z nich, ID )
-     * @param ip1
-     * @param ip2
+     * @param id1
+     * @param id2
      * @param name1
      * @param name2
-     * @param cena1
-     * @param cena2
+     * @param cost1
+     * @param cost2
      * @param gpsP1
      * @param gpsP2
      * @param linkID
+     * @param ospfLinksData
      */
-    public void addLinkEdge(String ip1, String ip2, String name1, String name2, int cena1, int cena2, GPSPoint gpsP1,
-	    GPSPoint gpsP2, String linkID) {
-	boolean existV1 = false, existV2 = false;
-	int positionV1 = 0, positionV2 = 0;
-	// ZJISTENI EXISTENCE VRCHOLU
-	for (int i = 0; i < routerVertices.size(); i++) {
-	    if (routerVertices.get(i).getDescription().equals(ip1)) {
-		existV1 = true;
-		positionV1 = i;
+    public void addLinkEdge(String id1, String id2, String name1, String name2, int cost1, int cost2, GPSPoint gpsP1,
+	    GPSPoint gpsP2, String linkID, List<OspfLinkData> ospfLinksData) {
+	RouterVertex rv1 = getRouterVertexById(id1);
+	RouterVertex rv2 = getRouterVertexById(id2);
+	if (rv1 == null) {
+	    routerVertices.add(new RouterVertex(id1, name1, gpsP1));
+	    rv1 = routerVertices.get(routerVertices.size() - 1);
+	    if (id1.contains(Constants.MULTILINK)) {
+		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
 	    }
 	}
-	for (int i = 0; i < routerVertices.size(); i++) {
-	    if (routerVertices.get(i).getDescription().equals(ip2)) {
-		existV2 = true;
-		positionV2 = i;
+	if (rv2 == null) {
+	    routerVertices.add(new RouterVertex(id2, name2, gpsP2));
+	    rv2 = routerVertices.get(routerVertices.size() - 1);
+	    if (id2.contains(Constants.MULTILINK)) {
+		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
 	    }
 	}
-	// VYTVORENI HRAN
-	if (!existV1 && !existV2) {
-	    routerVertices.add(new RouterVertex(ip1, name1, gpsP1));
-	    if (ip1.contains(rb.getString("mm.0"))) // TODO JS tohle neni jisty, bylo tu Multispoj, nevim jestli je to neco
-						    // konstantniho nebo ne
-		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
-	    routerVertices.add(new RouterVertex(ip2, name2, gpsP2));
-	    if (ip2.contains(rb.getString("mm.0")))
-		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
-	    linkEdges.add(new LinkEdge(routerVertices.get(routerVertices.size() - 2), cena1, routerVertices
-		    .get(routerVertices.size() - 1), cena2, linkID));
+	linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
+    }
+
+
+    /**
+     * Nalezne routerVertex dle id a vrati ho
+     * @param id
+     * @return pokud nenalezne, vraci null
+     */
+    private RouterVertex getRouterVertexById(String id) {
+	for (RouterVertex rv : routerVertices) {
+	    if (rv.getDescription().equals(id)) {
+		return rv;
+	    }
 	}
-	if (existV1 && !existV2) {
-	    routerVertices.add(new RouterVertex(ip2, name2, gpsP2));
-	    if (ip2.contains(rb.getString("mm.0")))
-		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
-	    linkEdges.add(new LinkEdge(routerVertices.get(positionV1), cena1, routerVertices.get(routerVertices.size() - 1),
-		    cena2, linkID));
-	}
-	if (!existV1 && existV2) {
-	    routerVertices.add(new RouterVertex(ip1, name1, gpsP1));
-	    if (ip1.contains(rb.getString("mm.0")))
-		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
-	    linkEdges.add(new LinkEdge(routerVertices.get(routerVertices.size() - 1), cena1, routerVertices.get(positionV2),
-		    cena2, linkID));
-	}
-	if (existV1 && existV2) {
-	    linkEdges
-		    .add(new LinkEdge(routerVertices.get(positionV1), cena1, routerVertices.get(positionV2), cena2, linkID));
-	}
+	return null;
     }
 
 
@@ -191,21 +176,6 @@ public class MapModel implements AbstractMapModel {
     }
 
 
-    // /**
-    // * Metoda, která vtátí true, pokud se jedná o model části sítě
-    // * @return boolean
-    // */
-    // public boolean isCastSite() {
-    // return castSite;
-    // }
-    //
-    //
-    // /**
-    // * Metoda, která nastaví atribut určující zda se jedná o model části sítě
-    // */
-    // public void setCastSite(boolean castSite) {
-    // this.castSite = castSite;
-    // }
     /**
      * Vrací maximální hodnotu zeměpisné šířky
      * @return double

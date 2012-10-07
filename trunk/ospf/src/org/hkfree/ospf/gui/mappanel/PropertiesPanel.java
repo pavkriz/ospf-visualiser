@@ -56,7 +56,7 @@ public class PropertiesPanel extends JPanel {
     private void createComponents() {
 	DefaultMutableTreeNode root = new DefaultMutableTreeNode(model.getModelName());
 	for (Router r : model.getRouters()) {
-	    root.add(new DefaultMutableTreeNode(r.getRouterID() + " - " + r.getRouterName()));
+	    root.add(new DefaultMutableTreeNode(r.getId() + " - " + r.getName()));
 	}
 	tree = new JTree(root);
 	tree.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
@@ -69,7 +69,6 @@ public class PropertiesPanel extends JPanel {
 		    // klik - zobrazení informací v properties okně
 		    actualizeValues(model.getRouterByIp(text.substring(0, text.indexOf("-") - 1)));
 		} else if (me.getClickCount() == 2) {
-		    
 		    // double klik - vyhledání routeru
 		    // String text = ((DefaultMutableTreeNode)
 		    // tree.getLastSelectedPathComponent()).getUserObject().toString();
@@ -124,22 +123,22 @@ public class PropertiesPanel extends JPanel {
 	    pInfo.add(new JLabel(rb.getString("pw.0") + ":"), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(0, 30, 0, 0);
-	    pInfo.add(new JLabel(r.getRouterID()), c);
+	    pInfo.add(new JLabel(r.getId()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
 	    pInfo.add(new JLabel(rb.getString("pw.2") + ":"), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(0, 30, 0, 0);
-	    pInfo.add(new JLabel(r.getRouterName()), c);
+	    pInfo.add(new JLabel(r.getName()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
 	    pInfo.add(new JLabel(rb.getString("pw.3") + ":"), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(0, 30, 0, 0);
-	    pInfo.add(new JLabel(r.getNameSuffix()), c);
+	    pInfo.add(new JLabel(r.getSuffix()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
-	    pInfo.add(new JLabel(rb.getString("pw.4") + ": " + String.valueOf(model.getRouterLinksCount(r))), c);
+	    pInfo.add(new JLabel(rb.getString("pw.4") + ": " + String.valueOf(model.getCountOfLinksContainingRouter(r))), c);
 	    c.gridy = c.gridy + 1;
 	    c.gridwidth = 1;
 	    c.insets = new Insets(20, 6, 0, 0);
@@ -200,13 +199,13 @@ public class PropertiesPanel extends JPanel {
 	    pInfo.add(new JLabel(rb.getString("pw.15") + " 1"), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
-	    pInfo.add(new JLabel(rb.getString("pw.0") + ": " + r.getRouterID()), c);
+	    pInfo.add(new JLabel(rb.getString("pw.0") + ": " + r.getId()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
 	    pInfo.add(new JLabel(rb.getString("pw.2") + ":"), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(0, 30, 0, 0);
-	    pInfo.add(new JLabel(r.getRouterName()), c);
+	    pInfo.add(new JLabel(r.getName()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
 	    pInfo.add(new JLabel(rb.getString("pw.11") + ": " + String.valueOf(le.getCost1())), c);
@@ -218,13 +217,13 @@ public class PropertiesPanel extends JPanel {
 	    pInfo.add(new JLabel(rb.getString("pw.15") + " 2"), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
-	    pInfo.add(new JLabel(rb.getString("pw.0") + ": " + r2.getRouterID()), c);
+	    pInfo.add(new JLabel(rb.getString("pw.0") + ": " + r2.getId()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
 	    pInfo.add(new JLabel(rb.getString("pw.2") + ":"), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(0, 30, 0, 0);
-	    pInfo.add(new JLabel(r2.getRouterName()), c);
+	    pInfo.add(new JLabel(r2.getName()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
 	    pInfo.add(new JLabel(rb.getString("pw.11") + ": " + String.valueOf(le.getCost2())), c);

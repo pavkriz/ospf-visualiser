@@ -29,7 +29,7 @@ public class RouterListModel implements ListModel {
 	this.routerList = new ArrayList<Router>(routerList);
 	this.allRouters = routerList;
 	//selected = (String) this.getElementAt(0);
-	selected = routerList.get(0).getRouterID();
+	selected = routerList.get(0).getId();
     }
 
 
@@ -61,10 +61,10 @@ public class RouterListModel implements ListModel {
      * @return Object
      */
     public Object getElementAt(int i) {
-	if (routerList.get(i).getRouterName() != null && !routerList.get(i).getRouterName().isEmpty())
-	    return routerList.get(i).getRouterID() + "   -   " + routerList.get(i).getRouterName();
+	if (routerList.get(i).getName() != null && !routerList.get(i).getName().isEmpty())
+	    return routerList.get(i).getId() + "   -   " + routerList.get(i).getName();
 	else
-	    return routerList.get(i).getRouterID();
+	    return routerList.get(i).getId();
     }
 
 
@@ -73,10 +73,10 @@ public class RouterListModel implements ListModel {
      * @param router
      */
     public void setSelectedRouter(Router router) {
-	if (router.getRouterName() != null && !router.getRouterName().isEmpty())
-	    selected = router.getRouterID() + "   -   " + router.getRouterName();
+	if (router.getName() != null && !router.getName().isEmpty())
+	    selected = router.getId() + "   -   " + router.getName();
 	else
-	    selected = router.getRouterID();
+	    selected = router.getId();
     }
 
 
@@ -116,24 +116,24 @@ public class RouterListModel implements ListModel {
 	switch (mode) {
 	    case OspfRoutersPanel.START_WITH_STEXT:
 		for (Router r : allRouters) {
-		    if (r.getRouterID().startsWith(searchText)
-			    || r.getRouterName().toLowerCase().startsWith(searchText.toLowerCase())) {
+		    if (r.getId().startsWith(searchText)
+			    || r.getName().toLowerCase().startsWith(searchText.toLowerCase())) {
 			routerList.add(r);
 		    }
 		}
 		break;
 	    case OspfRoutersPanel.ENDS_WITH_STEXT:
 		for (Router r : allRouters) {
-		    if (r.getRouterID().endsWith(searchText)
-			    || r.getRouterName().toLowerCase().endsWith(searchText.toLowerCase())) {
+		    if (r.getId().endsWith(searchText)
+			    || r.getName().toLowerCase().endsWith(searchText.toLowerCase())) {
 			routerList.add(r);
 		    }
 		}
 		break;
 	    default:
 		for (Router r : allRouters) {
-		    if (r.getRouterID().contains(searchText)
-			    || r.getRouterName().toLowerCase().contains(searchText.toLowerCase())) {
+		    if (r.getId().contains(searchText)
+			    || r.getName().toLowerCase().contains(searchText.toLowerCase())) {
 			routerList.add(r);
 		    }
 		}

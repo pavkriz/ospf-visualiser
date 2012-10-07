@@ -14,6 +14,10 @@ public abstract class Constants {
     public static final String SETTINGS_FILE = "settings.properties";
     /** komentář do properties souboru s nastavením aplikace */
     public static final String SETTINGS_COMMENT = "OSPF VISUALISER SETTINGS";
+    /** multilink, multispoj */
+    public static final String MULTILINK = "MULTILINK";
+    /** symetricky spoj */
+    public static final String SYMETRIC = "SYMETRIC";
     /** verze aplikace */
     public static final String APP_VERSION = "3.0.3";
     // konstanty pro vyber zdroje pro nacteni dat

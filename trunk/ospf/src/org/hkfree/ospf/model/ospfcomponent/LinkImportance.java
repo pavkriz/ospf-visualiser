@@ -1,6 +1,6 @@
 package org.hkfree.ospf.model.ospfcomponent;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 
 /**
  * Třída představující záznam o tom, na kolik částí se výpadkem spoje síť rozpadne
@@ -8,7 +8,7 @@ import org.hkfree.ospf.model.ospf.OspfLink;
  */
 public class LinkImportance {
 
-    private OspfLink ospfLink = null;
+    private Link ospfLink = null;
     private int afterDisableNetPartsCount = 1;
 
 
@@ -17,7 +17,7 @@ public class LinkImportance {
      * @param ospfLink
      * @param partsCount
      */
-    public LinkImportance(OspfLink ospfLink, int partsCount) {
+    public LinkImportance(Link ospfLink, int partsCount) {
 	this.ospfLink = ospfLink;
 	this.afterDisableNetPartsCount = partsCount;
     }
@@ -27,7 +27,7 @@ public class LinkImportance {
      * Vrací ospfLink
      * @return ospfLink
      */
-    public OspfLink getOspfLink() {
+    public Link getOspfLink() {
 	return ospfLink;
     }
 
@@ -36,7 +36,7 @@ public class LinkImportance {
      * Nastavuje ospfLink
      * @param ospfLink
      */
-    public void setOspfLink(OspfLink ospfLink) {
+    public void setOspfLink(Link ospfLink) {
 	this.ospfLink = ospfLink;
     }
 

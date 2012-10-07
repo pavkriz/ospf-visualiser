@@ -34,7 +34,7 @@ public class OspfModelSummaryDialog extends JDialog {
 	 */
 	public OspfModelSummaryDialog(JFrame owner, OspfWinModelTabbedPane tabbedPane, OspfModel model) {
 		int routerCount = model.getRouters().size();
-		int linkCount = model.getOspfLinks().size();
+		int linkCount = model.getLinks().size();
 		this.ospfModelTabbedPane = tabbedPane;
 		this.setLayout(new BorderLayout());
 		JLabel lInfo = new JLabel(String.format("%1$s: %2$d              %3$s: %4$d", rb.getString("owmp.1"), routerCount,

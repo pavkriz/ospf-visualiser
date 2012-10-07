@@ -21,8 +21,8 @@ public class IpComparator implements Comparator<Router> {
      * @return int
      */
     public int compare(Router u1, Router u2) {
-	String ip1 = u1.getRouterID();
-	String ip2 = u2.getRouterID();
+	String ip1 = u1.getId();
+	String ip2 = u2.getId();
 	return compareIps(ip1, ip2);
     }
 

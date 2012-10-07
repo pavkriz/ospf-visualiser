@@ -6,6 +6,7 @@ import java.awt.Paint;
 import java.awt.Stroke;
 import java.util.ResourceBundle;
 
+import org.hkfree.ospf.gui.mappanel.MapGraphComponent;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.Factory;
 
@@ -20,21 +21,22 @@ import edu.uci.ics.jung.visualization.RenderContext;
 public class LinkEdge {
 
     private ResourceBundle rb = Factory.getRb();
+    private MapGraphComponent graphComponent = null;
     private RouterVertex routerVertex1 = new RouterVertex();
     private int cost1 = 0;
     private RouterVertex routerVertex2 = new RouterVertex();
     private int cost2 = 0;
     private String linkEdgeID = "";
-    private boolean isEnabled = true;
-    private boolean isEdgeOfShortestPath = false;
-    private boolean isActuallyLive = false;
-    private boolean isActuallyDead = false;
-    private boolean isExtraAddedEdge = false;
+    private boolean enabled = true;
+    private boolean edgeOfShortestPath = false;
+    private boolean actuallyLive = false;
+    private boolean actuallyDead = false;
+    private boolean extraAddedEdge = false;
     private int faultCount = 0;
     private float faultIntensity = 0.0f;
-    private boolean isEdgeOfFirstPath = false;
-    private boolean isEdgeOfSecondPath = false;
-    private boolean isHover = false;
+    private boolean edgeOfFirstPath = false;
+    private boolean edgeOfSecondPath = false;
+    private boolean hover = false;
 
 
     /**
@@ -51,6 +53,7 @@ public class LinkEdge {
      * @param routerVertex2
      * @param cost2
      * @param linkID
+     * @param ospfLinksData
      */
     public LinkEdge(RouterVertex routerVertex1, int cost1, RouterVertex routerVertex2, int cost2, String linkID) {
 	this.routerVertex1 = routerVertex1;
@@ -58,6 +61,16 @@ public class LinkEdge {
 	this.routerVertex2 = routerVertex2;
 	this.cost2 = cost2;
 	this.linkEdgeID = linkID;
+    }
+
+
+    public void setGraphComponent(MapGraphComponent graphComponent) {
+	this.graphComponent = graphComponent;
+    }
+
+
+    public MapGraphComponent getGraphComponent() {
+	return graphComponent;
     }
 
 
@@ -134,24 +147,6 @@ public class LinkEdge {
 
 
     /**
-     * Metoda, která vrátí true pokud se jedná o hranu se stejnými cenami na obou
-     * stranách, nebo se jedná o hranu multispoje
-     * @return boolean
-     */
-    public boolean isSymetric() {
-	//TODO opravit symetricnost
-	if (routerVertex2.isMultilink()) {
-	    
-	}
-	if (cost1 == cost2 || routerVertex2.isMultilink()) {
-	    return true;
-	} else {
-	    return false;
-	}
-    }
-
-
-    /**
      * Metoda, která vrátí příznak, zda je hrana součástí multispoje
      * @return boolean
      */
@@ -188,7 +183,7 @@ public class LinkEdge {
      * @return boolean
      */
     public boolean isEnabled() {
-	return isEnabled;
+	return enabled;
     }
 
 
@@ -197,7 +192,7 @@ public class LinkEdge {
      * @param value
      */
     public void setEnabled(boolean value) {
-	isEnabled = value;
+	enabled = value;
     }
 
 
@@ -224,7 +219,7 @@ public class LinkEdge {
      * @param isEdgeOfShortestPath
      */
     public void setEdgeOfShortestPath(boolean isEdgeOfShortestPath) {
-	this.isEdgeOfShortestPath = isEdgeOfShortestPath;
+	this.edgeOfShortestPath = isEdgeOfShortestPath;
     }
 
 
@@ -233,7 +228,7 @@ public class LinkEdge {
      * @return boolean
      */
     public boolean isEdgeOfShortestPath() {
-	return isEdgeOfShortestPath;
+	return edgeOfShortestPath;
     }
 
 
@@ -242,7 +237,7 @@ public class LinkEdge {
      * @return boolean
      */
     public boolean isActuallyLive() {
-	return isActuallyLive;
+	return actuallyLive;
     }
 
 
@@ -251,7 +246,7 @@ public class LinkEdge {
      * @param isActuallyLive
      */
     public void setActuallyLive(boolean isActuallyLive) {
-	this.isActuallyLive = isActuallyLive;
+	this.actuallyLive = isActuallyLive;
     }
 
 
@@ -260,7 +255,7 @@ public class LinkEdge {
      * @return boolean
      */
     public boolean isActuallyDead() {
-	return isActuallyDead;
+	return actuallyDead;
     }
 
 
@@ -269,7 +264,7 @@ public class LinkEdge {
      * @param isActuallyDead
      */
     public void setActuallyDead(boolean isActuallyDead) {
-	this.isActuallyDead = isActuallyDead;
+	this.actuallyDead = isActuallyDead;
     }
 
 
@@ -336,7 +331,7 @@ public class LinkEdge {
      * @return boolean
      */
     public boolean isExtraAddedEdge() {
-	return isExtraAddedEdge;
+	return extraAddedEdge;
     }
 
 
@@ -345,7 +340,7 @@ public class LinkEdge {
      * @param isExtraAddedEdge
      */
     public void setExtraAddedEdge(boolean isExtraAddedEdge) {
-	this.isExtraAddedEdge = isExtraAddedEdge;
+	this.extraAddedEdge = isExtraAddedEdge;
     }
 
 
@@ -390,7 +385,7 @@ public class LinkEdge {
      * @return the isEdgeOfFirstPath
      */
     public boolean isEdgeOfFirstPath() {
-	return isEdgeOfFirstPath;
+	return edgeOfFirstPath;
     }
 
 
@@ -399,7 +394,7 @@ public class LinkEdge {
      * @param isEdgeOfFirstPath the isEdgeOfFirstPath to set
      */
     public void setEdgeOfFirstPath(boolean isEdgeOfFirstPath) {
-	this.isEdgeOfFirstPath = isEdgeOfFirstPath;
+	this.edgeOfFirstPath = isEdgeOfFirstPath;
     }
 
 
@@ -408,7 +403,7 @@ public class LinkEdge {
      * @return the isEdgeOfSecondPath
      */
     public boolean isEdgeOfSecondPath() {
-	return isEdgeOfSecondPath;
+	return edgeOfSecondPath;
     }
 
 
@@ -417,7 +412,7 @@ public class LinkEdge {
      * @param isEdgeOfSecondPath the isEdgeOfSecondPath to set
      */
     public void setEdgeOfSecondPath(boolean isEdgeOfSecondPath) {
-	this.isEdgeOfSecondPath = isEdgeOfSecondPath;
+	this.edgeOfSecondPath = isEdgeOfSecondPath;
     }
 
 
@@ -426,7 +421,7 @@ public class LinkEdge {
      * @param b
      */
     public void setHover(boolean b) {
-	this.isHover = b;
+	this.hover = b;
     }
 
 
@@ -435,6 +430,25 @@ public class LinkEdge {
      * @return
      */
     public boolean isHover() {
-	return isHover;
+	return hover;
+    }
+
+
+    /**
+     * Vrací příznak zda se jedná o symetrický spoj
+     * @return
+     */
+    public boolean isSymetric() {
+	if (isEdgeOfMultilink()) {
+	    for (LinkEdge le : graphComponent.getMapModel().getLinkEdges()) {
+		if (le.getRVertex2() == routerVertex2) {
+		    if (le.getCost1() != cost1) {
+			return false;
+		    }
+		}
+	    }
+	    return true;
+	}
+	return cost1 == cost2;
     }
 }

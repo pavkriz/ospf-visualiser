@@ -60,9 +60,9 @@ public class RouterImportanceTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int column) {
 	switch (column) {
 	    case 0:
-		return routerImportances.get(row).getRouter().getRouterID();
+		return routerImportances.get(row).getRouter().getId();
 	    case 1:
-		return routerImportances.get(row).getRouter().getRouterName();
+		return routerImportances.get(row).getRouter().getName();
 	    case 2:
 		return routerImportances.get(row).getAfterDisableNetPartsCount();
 	}

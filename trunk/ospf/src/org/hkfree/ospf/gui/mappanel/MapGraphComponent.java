@@ -145,6 +145,7 @@ public class MapGraphComponent extends JComponent {
 	    routerVertex.setPermanentlyDisplayed(true);
 	}
 	for (LinkEdge linkEdge : mapModel.getLinkEdges()) {
+	    linkEdge.setGraphComponent(this);
 	    graph.addEdge(linkEdge, linkEdge.getRVertex1(), linkEdge.getRVertex2());
 	}
 	vv.repaint();
@@ -214,6 +215,7 @@ public class MapGraphComponent extends JComponent {
 	}
 	for (LinkEdge linkEdge : mapModel.getLinkEdges()) {
 	    if (graph.containsVertex(linkEdge.getRVertex1()) && graph.containsVertex(linkEdge.getRVertex2())) {
+		linkEdge.setGraphComponent(this);
 		graph.addEdge(linkEdge, linkEdge.getRVertex1(), linkEdge.getRVertex2());
 	    }
 	}
@@ -245,6 +247,7 @@ public class MapGraphComponent extends JComponent {
      */
     public void addNeighborsRouterVertexes(RouterVertex routerVertex) {
 	for (LinkEdge linkEdge : mapModel.getIncidentEdges(routerVertex)) {
+	    linkEdge.setGraphComponent(this);
 	    if (!routerVertex.equals(linkEdge.getRVertex1())) {
 		addRouterVertexToGraph(linkEdge.getRVertex1());
 		if (linkEdge.getRVertex1().isMultilink()) {
@@ -264,6 +267,7 @@ public class MapGraphComponent extends JComponent {
 	    }
 	}
 	for (LinkEdge linkEdge : mapModel.getLinkEdges()) {
+	    linkEdge.setGraphComponent(this);
 	    if (!graph.containsEdge(linkEdge)) {
 		if (graph.containsVertex(linkEdge.getRVertex1()) && graph.containsVertex(linkEdge.getRVertex2())) {
 		    graph.addEdge(linkEdge, linkEdge.getRVertex1(), linkEdge.getRVertex2());
@@ -833,6 +837,7 @@ public class MapGraphComponent extends JComponent {
 		    LinkEdge le = mapModel.addLinkEdge(dialog.getRouterV1(), dialog.getRouterV2(), dialog.getCost1(),
 			    dialog.getCost2(), dialog.getEnteredName());
 		    le.setExtraAddedEdge(true);
+		    le.setGraphComponent(this);
 		    graph.addEdge(le, le.getRVertex1(), le.getRVertex2());
 		    firstRVertexToMakeEdge = null;
 		}
@@ -915,8 +920,14 @@ public class MapGraphComponent extends JComponent {
     public MapPanel getOwner() {
 	return owner;
     }
+    
+    
+    public MapModel getMapModel() {
+	return mapModel;
+    }
 
 
+    @SuppressWarnings("unchecked")
     public void layouting(MODE mode) {
 	try {
 	    Object[] constructorArgs = { graph };
@@ -935,8 +946,7 @@ public class MapGraphComponent extends JComponent {
 		    l = (Layout<RouterVertex, LinkEdge>) o;
 		    l.setInitializer(vv.getGraphLayout());
 		    ((FRLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-		    ((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k
-											  // sobe
+		    ((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
 		    ((FRLayout<RouterVertex, LinkEdge>) l).setMaxIterations(800); // default
 		    l.setSize(new Dimension(2200, 2200));
 		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);

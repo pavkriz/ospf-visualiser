@@ -55,8 +55,9 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
      * @param routerList
      * @param preselectedRouter
      */
+    @SuppressWarnings("unchecked")
     public MapStartStateDialog(List<Router> routerList, Router preselectedRouter) {
-	this.routerListModel = new RouterListModel(routerList);
+	routerListModel = new RouterListModel(routerList);
 	radioGroup.add(wholeModelRB);
 	wholeModelRB.setText(rb.getString("mdssd.0"));
 	wholeModelRB.addActionListener(this);
@@ -68,7 +69,7 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 	panel1.setBorder(BorderFactory.createTitledBorder(rb.getString("mdssd.4") + ":"));
 	rSearchLabel.setText(rb.getString("mdssd.3") + ":");
 	rSearchTxt.addActionListener(this);
-	routersJList = new JList<RouterListModel>(this.routerListModel);
+	routersJList = new JList<RouterListModel>(routerListModel);
 	routerScrollPane = new JScrollPane(routersJList);
 	depthLabel.setText(rb.getString("mdssd.2") + ":");
 	btnOk.setText(rb.getString("ok"));

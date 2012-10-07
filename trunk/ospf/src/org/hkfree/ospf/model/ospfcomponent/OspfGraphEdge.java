@@ -1,6 +1,6 @@
 package org.hkfree.ospf.model.ospfcomponent;
 
-import org.hkfree.ospf.model.ospf.OspfLink;
+import org.hkfree.ospf.model.ospf.Link;
 
 /**
  * Třída představující spoj jako hranu modelu, kde je počítán počet komponent
@@ -8,7 +8,7 @@ import org.hkfree.ospf.model.ospf.OspfLink;
  */
 public class OspfGraphEdge {
 
-    private OspfLink ospfLink = null;
+    private Link ospfLink = null;
     private boolean enabled = true;
     private int graphComponentCountAfterDisable = 1;
     private OspfGraphVertex vertex1 = null;
@@ -19,7 +19,7 @@ public class OspfGraphEdge {
      * Konstruktor
      * @param ospfLink
      */
-    public OspfGraphEdge(OspfLink ospfLink, OspfGraphVertex v1, OspfGraphVertex v2) {
+    public OspfGraphEdge(Link ospfLink, OspfGraphVertex v1, OspfGraphVertex v2) {
 	this.ospfLink = ospfLink;
 	this.vertex1 = v1;
 	this.vertex2 = v2;
@@ -30,7 +30,7 @@ public class OspfGraphEdge {
      * Vrací ospfLink
      * @return link
      */
-    public OspfLink getOspfLink() {
+    public Link getOspfLink() {
 	return ospfLink;
     }
 
@@ -39,7 +39,7 @@ public class OspfGraphEdge {
      * Nastavuje ospfLink
      * @param ospfLink
      */
-    public void setOspfLink(OspfLink ospfLink) {
+    public void setOspfLink(Link ospfLink) {
 	this.ospfLink = ospfLink;
     }
 

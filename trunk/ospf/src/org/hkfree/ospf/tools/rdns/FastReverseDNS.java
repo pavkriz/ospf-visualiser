@@ -18,6 +18,8 @@
  */
 package org.hkfree.ospf.tools.rdns;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
@@ -65,7 +67,17 @@ public class FastReverseDNS implements Runnable {
 		}
 	    }
 	    // get the hostname for this IP
-	    String hostname = dns.doReverseLookup(currentIP);
+	    String hostname = null;
+	    if (dns != null) {
+		hostname = dns.doReverseLookup(currentIP);
+	    } else {
+		try {
+		    hostname = InetAddress.getByName(currentIP).getHostName();
+		} catch (UnknownHostException e) {
+		    e.printStackTrace();
+		}
+	    }
+	    
 	    // don't display hostnames that are null
 	    if (hostname != null) { // display this hostname to system.out
 		synchronized (names) {
