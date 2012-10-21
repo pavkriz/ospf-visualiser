@@ -130,7 +130,7 @@ public class MapModelShortestPathFinder {
 		if (!treeGraph.containsVertex(rcpb.getValue().getPredecessor())) {
 		    treeGraph.addVertex(rcpb.getValue().getPredecessor());
 		}
-		treeGraph.addEdge(new EdgeOfSPT(rcpb.getValue().getCost(), rcpb.getValue().getLinkEdge().getLinkID()), rcpb
+		treeGraph.addEdge(new EdgeOfSPT(rcpb.getValue().getCost(), rcpb.getValue().getLinkEdge().getLinkIDv4()), rcpb
 			.getValue().getPredecessor(), rcpb.getKey());
 	    }
 	}

@@ -56,6 +56,8 @@ public class OspfWinActionListener implements ActionListener {
     private Action actionExportModelToSVG = null;
     private Action actionShowInfoTable = null;
     private Action actionTips = null;
+    private Action actionIPv6Show = null;
+    private Action actionIPv6Hide = null;
 
 
     /**
@@ -297,6 +299,32 @@ public class OspfWinActionListener implements ActionListener {
 	actionTwoRoutersShortesPathMode.putValue(AbstractAction.SHORT_DESCRIPTION,
 		rb.getString("mode." + MODE.SHORTEST_PATH_TWO_ROUTERS + ".title"));
 	actionTwoRoutersShortesPathMode.setEnabled(false);
+	actionIPv6Show = new AbstractAction(rb.getString("mode." + MODE.IPV6_SHOW), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "ip_v6_show.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().setMode(MODE.IPV6_SHOW);
+	    }
+	};
+	actionIPv6Show.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.IPV6_SHOW + ".title"));
+	actionIPv6Show.setEnabled(false);
+	actionIPv6Hide = new AbstractAction(rb.getString("mode." + MODE.IPV6_HIDE), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "ip_v6_hide.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().setMode(MODE.IPV6_HIDE);
+	    }
+	};
+	actionIPv6Hide.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.IPV6_HIDE + ".title"));
+	actionIPv6Hide.setEnabled(false);
 	actionCloseWin = new AbstractAction(rb.getString("menu.program.close"), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "exit.png"))) {
 
@@ -847,5 +875,15 @@ public class OspfWinActionListener implements ActionListener {
 
     public Action getActionLayoutStopSpring() {
 	return actionLayoutStopSpring;
+    }
+
+
+    public Action getActionIPv6Hide() {
+	return actionIPv6Hide;
+    }
+
+
+    public Action getActionIPv6Show() {
+	return actionIPv6Show;
     }
 }

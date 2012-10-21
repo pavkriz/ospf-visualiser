@@ -79,6 +79,8 @@ public class OspfWinToolBar extends JToolBar {
 	this.add(((OspfWinActionListener) actionListener).getActionAddVertexes());
 	this.add(((OspfWinActionListener) actionListener).getActionAddEdges());
 	this.addSeparator();
+	this.add(((OspfWinActionListener) actionListener).getActionIPv6Show());
+	this.add(((OspfWinActionListener) actionListener).getActionIPv6Hide());
 	this.add(getSearchPanel());
     }
 

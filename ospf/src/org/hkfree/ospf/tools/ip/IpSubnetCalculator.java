@@ -16,6 +16,11 @@ public class IpSubnetCalculator {
      * @param subnetMask
      */
     public void computeAddresses(String ip, int subnetMask) {
+	
+	if (ip == null || ip.isEmpty()) {
+	    return;
+	}
+	
 	int ip_1, ip_2, ip_3, ip_4;
 	String[] octets1 = ip.split("\\.");
 	ip_1 = Integer.valueOf(octets1[0]);

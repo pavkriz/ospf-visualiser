@@ -178,12 +178,6 @@ public class MapManager {
 	    case TRANSFORMING:
 		graphComponent.setTransformingMode();
 		break;
-	    // case LAYOUTING_START:
-	    // graphComponent.startLayouting();
-	    // break;
-	    // case LAYOUTING_STOP:
-	    // graphComponent.stopLayouting();
-	    // break;
 	    case LAYOUT_FR_START:
 	    case LAYOUT_SPRING_START:
 	    case LAYOUT_SPRING_STOP:
@@ -218,6 +212,12 @@ public class MapManager {
 		break;
 	    case SHORTEST_PATH_TWO_ROUTERS:
 		graphComponent.setTwoRoutersShortesPathMode();
+		break;
+	    case IPV6_SHOW:
+		graphComponent.setShowIPv6(true);
+		break;
+	    case IPV6_HIDE:
+		graphComponent.setShowIPv6(false);
 		break;
 	    default:
 		break;

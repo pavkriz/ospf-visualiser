@@ -49,9 +49,9 @@ public class ChangeLinkCostDialog extends JDialog {
 	if (linkEdge.isEdgeOfMultilink()) {
 	    loadStandardGUI = false;
 	}
-	cost1Input.setText(Integer.toString(linkEdge.getCost1()));
-	cost2Input.setText(Integer.toString(linkEdge.getCost2()));
-	linkNameLabel.setText(linkEdge.getLinkID());
+	cost1Input.setText(Integer.toString(linkEdge.getCost1v4()));
+	cost2Input.setText(Integer.toString(linkEdge.getCost2v4()));
+	linkNameLabel.setText(linkEdge.getLinkIDv4());
 	vertex1Name.setText(linkEdge.getRVertex1().getName());
 	vertex1IP.setText(linkEdge.getRVertex1().getDescription());
 	vertex2Name.setText(linkEdge.getRVertex2().getName());

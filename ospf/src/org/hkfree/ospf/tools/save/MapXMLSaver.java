@@ -157,7 +157,7 @@ public class MapXMLSaver {
 		Element ELMlinkEdge = doc.createElement("link-edge");
 		ELMlinkEdges.appendChild(ELMlinkEdge);
 		Element ELMlId = doc.createElement("l-id");
-		ELMlId.appendChild(doc.createTextNode(le.getLinkID()));
+		ELMlId.appendChild(doc.createTextNode(le.getLinkIDv4()));
 		ELMlinkEdge.appendChild(ELMlId);
 		Element ELMlRvId1 = doc.createElement("l-r1-id");
 		ELMlRvId1.appendChild(doc.createTextNode(rvertexIdentificators.get(le.getRVertex1())));
@@ -166,10 +166,10 @@ public class MapXMLSaver {
 		ELMlRvId2.appendChild(doc.createTextNode(rvertexIdentificators.get(le.getRVertex2())));
 		ELMlinkEdge.appendChild(ELMlRvId2);
 		Element ELMlRvcost1 = doc.createElement("l-r1-cost");
-		ELMlRvcost1.appendChild(doc.createTextNode(Integer.toString(le.getCost1())));
+		ELMlRvcost1.appendChild(doc.createTextNode(Integer.toString(le.getCost1v4())));
 		ELMlinkEdge.appendChild(ELMlRvcost1);
 		Element ELMlRvcost2 = doc.createElement("l-r2-cost");
-		ELMlRvcost2.appendChild(doc.createTextNode(Integer.toString(le.getCost2())));
+		ELMlRvcost2.appendChild(doc.createTextNode(Integer.toString(le.getCost2v4())));
 		ELMlinkEdge.appendChild(ELMlRvcost2);
 		Element ELMlIsEnabled = doc.createElement("l-is-enabled");
 		ELMlIsEnabled.appendChild(doc.createTextNode(Integer.toString(getValueOfBool(le.isEnabled()))));

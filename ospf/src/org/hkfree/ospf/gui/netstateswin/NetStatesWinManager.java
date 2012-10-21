@@ -235,7 +235,7 @@ public class NetStatesWinManager {
     public void showLinkFaultDialog(String linkID) {
 	List<IntervalFault> ifs = null;
 	for (OspfLinkFault olf : netChangeModel.getOspfLinkFaultModel().getOspfLinkFaults()) {
-	    if (olf.getOspfLink().getLinkID().equals(linkID)) {
+	    if (olf.getOspfLink().getLinkIDv4().equals(linkID)) {
 		ifs = olf.getIntervalFaults();
 		break;
 	    }

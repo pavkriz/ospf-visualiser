@@ -73,6 +73,9 @@ public class ModelSourceDialog extends JDialog {
     private JPanel localSingleSourcePanel = null;
     private JPanel telnetSourcePanel = null;
     private JPanel remoteDateToDatePanel = null;
+    private JPanel cgiSourcePanel = null;
+    private JTextField tfCgiUrl = new JTextField();
+    private JTextField tfCgiRDNS = new JTextField();
     private JTextField tfTelnetUrl = new JTextField();
     private JTextField tfTelnetPortIPv4 = new JTextField();
     private JTextField tfTelnetPortIPv6 = new JTextField();
@@ -110,10 +113,12 @@ public class ModelSourceDialog extends JDialog {
 	this.tfTelnetPortIPv4.setText(String.valueOf(settings.telnetPortIPv4));
 	this.tfTelnetPortIPv6.setText(String.valueOf(settings.telnetPortIPv6));
 	this.tfTelnetPassword.setText(settings.telnetPassword);
-	this.tfTelnetRDNSServer.setText(settings.rdnsServer);
+	this.tfTelnetRDNSServer.setText(settings.telnetRDNSServer);
 	this.tfTelnetTimeout.setText(String.valueOf(settings.telnetTimeout));
 	this.tfZIPRemoteAddressFieldPath.setText(settings.modelZipRemotePathBetween);
 	this.tfTime.setText(settings.modelTimeBetween);
+	this.tfCgiUrl.setText(settings.cgiUrl);
+	this.tfCgiRDNS.setText(settings.cgiRDNSServer);
 	this.countDays = settings.countDaysBack;
     }
 
@@ -149,11 +154,13 @@ public class ModelSourceDialog extends JDialog {
 	initLocalSourcesPanel();
 	initLocalSingleSourcePanel();
 	initTelnetSourcePanel();
+	initCgiSourcePanel();
 	sourceTypeTabs.add(rb.getString("ssd.17"), remoteDateToDatePanel);
 	sourceTypeTabs.add(rb.getString("ssd.4"), remoteSourcesPanel);
 	sourceTypeTabs.add(rb.getString("ssd.6"), localSourcesPanel);
 	sourceTypeTabs.add(rb.getString("ssd.9"), localSingleSourcePanel);
 	sourceTypeTabs.add(rb.getString("ssd.13"), telnetSourcePanel);
+	sourceTypeTabs.add(rb.getString("ssd.29"), cgiSourcePanel);
 	JButton btnOk = new JButton(actListener.getActionOk());
 	JButton btnStorno = new JButton(actListener.getActionStorno());
 	GroupLayout layout = new GroupLayout(this.getContentPane());
@@ -177,6 +184,30 @@ public class ModelSourceDialog extends JDialog {
 	this.pack();
 	this.setResizable(false);
 	this.setLocationRelativeTo(null);
+    }
+
+
+    private void initCgiSourcePanel() {
+	cgiSourcePanel = new JPanel();
+	JLabel lbl = new JLabel(rb.getString("ssd.1") + ":");
+	tfCgiUrl.setMaximumSize(new Dimension(500, 25));
+	JLabel lbl2 = new JLabel(rb.getString("ssd.15") + ":");
+	tfCgiRDNS.setMaximumSize(new Dimension(300, 25));
+	GroupLayout l = new GroupLayout(cgiSourcePanel);
+	cgiSourcePanel.setLayout(l);
+	l.setAutoCreateContainerGaps(true);
+	l.setAutoCreateGaps(true);
+	l.setHorizontalGroup(l.createSequentialGroup()
+		.addGroup(l.createParallelGroup()
+			.addComponent(lbl)
+			.addComponent(tfCgiUrl)
+			.addComponent(lbl2)
+			.addComponent(tfCgiRDNS)));
+	l.setVerticalGroup(l.createSequentialGroup()
+		.addComponent(lbl)
+		.addComponent(tfCgiUrl)
+		.addComponent(lbl2)
+		.addComponent(tfCgiRDNS));
     }
 
 
@@ -670,7 +701,7 @@ public class ModelSourceDialog extends JDialog {
 	    throw new Exception("telnet port parse error");
 	}
 	settings.telnetPassword = tfTelnetPassword.getText();
-	settings.rdnsServer = tfTelnetRDNSServer.getText();
+	settings.telnetRDNSServer = tfTelnetRDNSServer.getText();
 	settings.setDataSourceType(Constants.TELNET);
 	loadDialogConfirmed = true;
     }
@@ -696,6 +727,19 @@ public class ModelSourceDialog extends JDialog {
 
 
     /**
+     * Aplikuje nastavení pro načtení dat z výstupu CGI skriptu
+     */
+    private void applyCgiSettings() {
+	settings.clearFilePaths();
+	settings.addFilePath("ospf_data_network");
+	settings.cgiUrl = tfCgiUrl.getText();
+	settings.cgiRDNSServer = tfCgiRDNS.getText();
+	settings.setDataSourceType(Constants.CGI);
+	loadDialogConfirmed = true;
+    }
+
+
+    /**
      * Aplikuje nastaveni dle dialogoveho okna
      * @throws Exception vyjimka pri chybnem nastaveni zdroje
      */
@@ -715,6 +759,9 @@ public class ModelSourceDialog extends JDialog {
 		break;
 	    case Constants.TELNET:
 		applyTelnetSettings();
+		break;
+	    case Constants.CGI:
+		applyCgiSettings();
 		break;
 	}
 	settings.loadDataTypIndex = sourceTypeTabs.getSelectedIndex();

@@ -118,15 +118,15 @@ public class MapXMLLoader {
 		mapModel.getLinkEdges().add(new LinkEdge());
 		LinkEdge linkEdge = mapModel.getLinkEdges().get(mapModel.getLinkEdges().size() - 1);
 		NodeList id = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-id");
-		linkEdge.setLinkID(getTagStringData((Element) id.item(0)));
+		linkEdge.setLinkIDv4(getTagStringData((Element) id.item(0)));
 		NodeList rv1 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r1-id");
 		linkEdge.setRouterVertex1(rvertexIdentificators.get(getTagStringData((Element) rv1.item(0))));
 		NodeList rv2 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r2-id");
 		linkEdge.setRouterVertex2(rvertexIdentificators.get(getTagStringData((Element) rv2.item(0))));
 		NodeList cost1 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r1-cost");
-		linkEdge.setCost1(Integer.valueOf(getTagIntData((Element) cost1.item(0))));
+		linkEdge.setCost1v4(Integer.valueOf(getTagIntData((Element) cost1.item(0))));
 		NodeList cost2 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r2-cost");
-		linkEdge.setCost2(Integer.valueOf(getTagIntData((Element) cost2.item(0))));
+		linkEdge.setCost2v4(Integer.valueOf(getTagIntData((Element) cost2.item(0))));
 		NodeList isEnabled = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-is-enabled");
 		linkEdge.setEnabled(getBoolValue(Integer.valueOf(getTagIntData((Element) isEnabled.item(0)))));
 		NodeList isExtraAdded = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-is-extra-added");

@@ -185,7 +185,7 @@ public class PropertiesPanel extends JPanel {
 	pInfo.add(new JLabel(rb.getString("pw.0") + ":"), c);
 	c.gridy = c.gridy + 1;
 	c.insets = new Insets(0, 30, 0, 0);
-	pInfo.add(new JLabel(le.getLinkID()), c);
+	pInfo.add(new JLabel(le.getLinkIDv4()), c);
 	c.gridy = c.gridy + 1;
 	c.insets = new Insets(2, 6, 0, 0);
 	pInfo.add(new JLabel(rb.getString("pw.12") + ": " + String.valueOf(le.getFaultCount())), c);
@@ -208,7 +208,7 @@ public class PropertiesPanel extends JPanel {
 	    pInfo.add(new JLabel(r.getName()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
-	    pInfo.add(new JLabel(rb.getString("pw.11") + ": " + String.valueOf(le.getCost1())), c);
+	    pInfo.add(new JLabel(rb.getString("pw.11") + ": " + String.valueOf(le.getCost1v4())), c);
 	}
 	// router 2
 	if (r2 != null) {
@@ -226,7 +226,7 @@ public class PropertiesPanel extends JPanel {
 	    pInfo.add(new JLabel(r2.getName()), c);
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
-	    pInfo.add(new JLabel(rb.getString("pw.11") + ": " + String.valueOf(le.getCost2())), c);
+	    pInfo.add(new JLabel(rb.getString("pw.11") + ": " + String.valueOf(le.getCost2v4())), c);
 	}
 	c.gridx = 0;
 	c.gridy = c.gridy + 1;

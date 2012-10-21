@@ -44,7 +44,7 @@ public class OspfChangeModel {
     public void addOspfLink(Link ospfLink) {
 	Link actualLink = addOrUseOsfpLink(ospfLink);
 	// pridani linku take do aktuálního stavu sítě
-	actualOspfState.addOspfLinkState(actualLink, ospfLink.getLinkID(), ospfLink.getSubnetMask());
+	actualOspfState.addOspfLinkState(actualLink, ospfLink.getLinkIDv4(), ospfLink.getSubnetMask());
 	// zpracování routerů linku
 	for (OspfLinkData linkData : ospfLink.getOspfLinkData()) {
 	    Router actRouter = addOrUseRouter(linkData.getRouter());
@@ -70,7 +70,7 @@ public class OspfChangeModel {
     public Link addOrUseOsfpLink(Link ospfLink) {
 	for (Link chMLink : links) {
 	    // jestliže se je shodné linkID nebo link tvoří stejnou podsíť
-	    if (chMLink.getLinkID().equals(ospfLink.getLinkID())
+	    if (chMLink.getLinkIDv4().equals(ospfLink.getLinkIDv4())
 		    || (chMLink.getSubnetMask() == ospfLink.getSubnetMask()
 			    && chMLink.getNetworkAddress().equals(ospfLink.getNetworkAddress()) && chMLink
 			    .getBroadcastAddress().equals(ospfLink.getBroadcastAddress()))) {
@@ -78,7 +78,7 @@ public class OspfChangeModel {
 	    }
 	}
 	// jestli nebyl už nalezen, tak vytvořit
-	links.add(new Link(ospfLink.getLinkID(), ospfLink.getSubnetMask()));
+	links.add(new Link(ospfLink.getLinkIDv4(), ospfLink.getSubnetMask()));
 	return links.get(links.size() - 1);
     }
 
@@ -106,7 +106,7 @@ public class OspfChangeModel {
 	if (linkFaultModel != null) {
 	    IpComparator ipComparator = new IpComparator();
 	    for (LinkFault lf : linkFaultModel.getLinkFaults()) {
-		if (lf.getLinkID().equals(ospfLink.getLinkID())
+		if (lf.getLinkID().equals(ospfLink.getLinkIDv4())
 			|| (ipComparator.ipIsHigherOrEqualToMinIpValue(lf.getLinkID(), ospfLink.getNetworkAddress()) && ipComparator
 				.ipIsLowerOrEqualToMaxIpValue(lf.getLinkID(), ospfLink.getBroadcastAddress()))) {
 		    ospfLinkFaultModel.addOspfLinkFault(ospfLink, lf.getLinkFaultDate(), lf.getFaultCount());

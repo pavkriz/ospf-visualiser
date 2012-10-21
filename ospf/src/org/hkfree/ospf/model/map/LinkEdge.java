@@ -26,7 +26,10 @@ public class LinkEdge {
     private int cost1 = 0;
     private RouterVertex routerVertex2 = new RouterVertex();
     private int cost2 = 0;
-    private String linkEdgeID = "";
+    private int cost1IPv6 = 0;
+    private int cost2IPv6 = 0;
+    private String linkEdgeIDv4 = "";
+    private String linkEdgeIDv6 = "";
     private boolean enabled = true;
     private boolean edgeOfShortestPath = false;
     private boolean actuallyLive = false;
@@ -39,29 +42,11 @@ public class LinkEdge {
     private boolean hover = false;
 
 
+    // private boolean showIPv6 = false;
     /**
      * Konstruktor
      */
     public LinkEdge() {}
-
-
-    /**
-     * Konstruktor třídy
-     * - vytvoří instanci hrany dle zadaných parametrů (2 vrcholy + příslušné ceny)
-     * @param routerVertex1
-     * @param cost1
-     * @param routerVertex2
-     * @param cost2
-     * @param linkID
-     * @param ospfLinksData
-     */
-    public LinkEdge(RouterVertex routerVertex1, int cost1, RouterVertex routerVertex2, int cost2, String linkID) {
-	this.routerVertex1 = routerVertex1;
-	this.cost1 = cost1;
-	this.routerVertex2 = routerVertex2;
-	this.cost2 = cost2;
-	this.linkEdgeID = linkID;
-    }
 
 
     public void setGraphComponent(MapGraphComponent graphComponent) {
@@ -74,38 +59,42 @@ public class LinkEdge {
     }
 
 
-    /**
-     * Metoda, která vrátí cenu z prvního vrcholu
-     * @return cost
-     */
-    public int getCost1() {
+    public int getCost1v4() {
 	return cost1;
     }
 
 
-    /**
-     * Metoda, která vrátí cenu z druhého vrcholu
-     * @return cost
-     */
-    public int getCost2() {
+    public int getCost2v4() {
 	return cost2;
     }
 
 
-    /**
-     * Metoda, která nastaví cenu z prvního vrcholu
-     * @param cost
-     */
-    public void setCost1(int cost) {
+    public int getCost1v6() {
+	return cost1IPv6;
+    }
+
+
+    public int getCost2v6() {
+	return cost2IPv6;
+    }
+
+
+    public void setCost1v6(int cost1iPv6) {
+	cost1IPv6 = cost1iPv6;
+    }
+
+
+    public void setCost2v6(int cost2iPv6) {
+	cost2IPv6 = cost2iPv6;
+    }
+
+
+    public void setCost1v4(int cost) {
 	cost1 = cost;
     }
 
 
-    /**
-     * Metoda, která nastaví cenu z druhého vrcholu
-     * @param cost
-     */
-    public void setCost2(int cost) {
+    public void setCost2v4(int cost) {
 	cost2 = cost;
     }
 
@@ -146,38 +135,9 @@ public class LinkEdge {
     }
 
 
-    /**
-     * Metoda, která vrátí příznak, zda je hrana součástí multispoje
-     * @return boolean
-     */
-    public boolean isEdgeOfMultilink() {
-	if (routerVertex2 != null)
-	    return routerVertex2.isMultilink();
-	else
-	    return false;
-    }
-
-
-    /**
-     * Vrací sílu štětce - jeho tlouštku.<br>
-     * Používat pouze při pro MapPanel (ne v netstatepanel)
-     * @return síla štětce
-     */
-    public Stroke getStroker() {
-	if (isHover()) {
-	    return new BasicStroke(3);
-	}
-	if (isEnabled()) {
-	    if (isEdgeOfShortestPath() || isEdgeOfFirstPath() || isEdgeOfSecondPath())
-		return new BasicStroke(3);
-	    else
-		return new BasicStroke(1);
-	} else {
-	    return RenderContext.DASHED;
-	}
-    }
-
-
+    // public void setShowIPv6(boolean b) {
+    // this.showIPv6 = b;
+    // }
     /**
      * Metoda, která vrátí příznak, zda je spoj zapnut
      * @return boolean
@@ -197,20 +157,38 @@ public class LinkEdge {
 
 
     /**
-     * Metoda, která vrátí název spoje
+     * vrátí id spoje pro IPv4
      * @return linkId
      */
-    public String getLinkID() {
-	return linkEdgeID;
+    public String getLinkIDv4() {
+	return linkEdgeIDv4;
     }
 
 
     /**
-     * Metoda, která nastaví název spoje
+     * nastaví id spoje pro IPv4
      * @param linkEdgeID
      */
-    public void setLinkID(String linkEdgeID) {
-	this.linkEdgeID = linkEdgeID;
+    public void setLinkIDv4(String linkEdgeID) {
+	this.linkEdgeIDv4 = linkEdgeID;
+    }
+
+
+    /**
+     * vrátí id spoje pro IPv6
+     * @return linkId
+     */
+    public String getLinkIDv6() {
+	return linkEdgeIDv6;
+    }
+
+
+    /**
+     * nastaví id spoje pro IPv6
+     * @param linkEdgeID
+     */
+    public void setLinkIDv6(String linkEdgeID) {
+	this.linkEdgeIDv6 = linkEdgeID;
     }
 
 
@@ -269,60 +247,14 @@ public class LinkEdge {
 
 
     /**
-     * Metoda, která vrátí popis hrany reprezentující spoj
-     * @return string
+     * Metoda, která vrátí příznak, zda je hrana součástí multispoje
+     * @return boolean
      */
-    public String getLinkDescription() {
-	if (!routerVertex2.isMultilink()) {
-	    return "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + linkEdgeID + "</b><br><br>" + rb.getString("le.0")
-		    + ":<br> <b>" + routerVertex1.getName() + "</b>" + "(" + routerVertex1.getDescription() + "): <b>"
-		    + Integer.toString(cost1) + "</b><br><b>" + routerVertex2.getName() + "</b>" + "("
-		    + routerVertex2.getDescription() + "): <b>" + Integer.toString(cost2) + "</b></body></html>";
-	} else {
-	    return "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + linkEdgeID + "</b><br><br>"
-		    + rb.getString("clcd.1") + ":<br> <b>" + routerVertex1.getName() + "</b>" + "("
-		    + routerVertex1.getDescription() + "): <b>" + Integer.toString(cost1) + "</b></body></html>";
-	}
-    }
-
-
-    /**
-     * Vrací popisek s počtem výpadků spoje
-     * @return description
-     */
-    public String getLinkFaultDescription() {
-	return "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + linkEdgeID + "</b><br><br>"
-		+ rb.getString("lftm.col1") + ":<br> <b>" + faultCount + "</b></body></html>";
-    }
-
-
-    /**
-     * Vrací barvu spoje.<br>
-     * Používat pouze pro MapPanel (ne v netstatepanel)
-     * @param mode
-     * @return
-     */
-    public Paint getLineColor(int mode) {
-	if (isHover()) {
-	    return Color.ORANGE;
-	}
-	if (isEnabled()) {
-	    if (mode == MapGraphComponentMode.ASYMETRIC_LINK && !isSymetric()) {
-		return new Color(0, 150, 255);
-	    }
-	    if (isEdgeOfShortestPath() || (isEdgeOfFirstPath() && isEdgeOfSecondPath())) {
-		return Color.GREEN;
-	    }
-	    if (isEdgeOfFirstPath()) {
-		return new Color(0, 187, 227);
-	    }
-	    if (isEdgeOfSecondPath()) {
-		return new Color(255, 80, 80);
-	    }
-	    return Color.GRAY;
-	} else {
-	    return Color.LIGHT_GRAY;
-	}
+    public boolean isEdgeOfMultilink() {
+	if (routerVertex2 != null)
+	    return routerVertex2.isMultilink();
+	else
+	    return false;
     }
 
 
@@ -442,7 +374,7 @@ public class LinkEdge {
 	if (isEdgeOfMultilink()) {
 	    for (LinkEdge le : graphComponent.getMapModel().getLinkEdges()) {
 		if (le.getRVertex2() == routerVertex2) {
-		    if (le.getCost1() != cost1) {
+		    if (le.getCost1v4() != cost1) {
 			return false;
 		    }
 		}
@@ -450,5 +382,170 @@ public class LinkEdge {
 	    return true;
 	}
 	return cost1 == cost2;
+    }
+
+
+    /**
+     * Vraci zda je spoj obsazen v IPv4
+     * @return
+     */
+    public boolean isIPv4() {
+	return (cost1 != -1 || cost2 != -1);
+    }
+
+
+    /**
+     * Vraci zda je spoj obsazen v IPv6
+     * @return
+     */
+    public boolean isIPv6() {
+	return (cost1IPv6 != -1 || cost2IPv6 != -1);
+    }
+
+
+    /**
+     * Vraci popis (cenu/y) spoje
+     * @return
+     */
+    public String getLabel() {
+	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
+	    return null;
+	}
+	String result = "";
+	if (!isEnabled()) {
+	    return result;
+	}
+	if (!linkEdgeIDv4.isEmpty()) {
+	    result += "(" + Integer.toString(getCost1v4());
+	    if (!getRVertex2().isMultilink()) {
+		result += " - " + Integer.toString(getCost2v4());
+	    }
+	    result += ")v4";
+	}
+	if (!linkEdgeIDv4.isEmpty() && !linkEdgeIDv6.isEmpty() && graphComponent.isShowIPv6()) {
+	    result += " ";
+	}
+	if (!linkEdgeIDv6.isEmpty() && graphComponent.isShowIPv6()) {
+	    result += "(" + Integer.toString(getCost1v6());
+	    if (!getRVertex2().isMultilink()) {
+		result += " - " + Integer.toString(getCost2v6());
+	    }
+	    result += ")v6";
+	}
+	return result;
+    }
+
+
+    /**
+     * Vrátí popis hrany reprezentující spoj
+     * @return string
+     */
+    public String getLinkDescription() {
+	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
+	    return null;
+	}
+	String result = "<html><body>";
+	if (!linkEdgeIDv4.isEmpty()) {
+	    // popisek pro IPv4
+	    result += "IPv4 " + rb.getString("cdtm.col1");
+	    result += "<br><b>" + linkEdgeIDv4 + "</b>";
+	    result += "<br>" + rb.getString("le.0") + ":";
+	    result += "<br><i>" + routerVertex1.getName() + "(" + routerVertex1.getDescription() + "): </i>";
+	    result += "<b>" + Integer.toString(cost1) + "</b>";
+	    if (!routerVertex2.isMultilink()) {
+		result += "<br><i>" + routerVertex2.getName() + "(" + routerVertex2.getDescription() + "): </i>";
+		result += "<b>" + Integer.toString(cost2) + "</b>";
+	    }
+	}
+	if (!linkEdgeIDv4.isEmpty() && !linkEdgeIDv6.isEmpty()) {
+	    result += "<br><br>";
+	}
+	if (!linkEdgeIDv6.isEmpty()) {
+	    // popisek pro IPv6
+	    result += "IPv6 " + rb.getString("cdtm.col1");
+	    result += "<br><b>" + linkEdgeIDv6 + "</b>";
+	    result += "<br>" + rb.getString("le.0") + ":";
+	    result += "<br><i>" + routerVertex1.getName() + "(" + routerVertex1.getDescription() + "): </i>";
+	    result += "<b>" + Integer.toString(cost1IPv6) + "</b>";
+	    if (!routerVertex2.isMultilink()) {
+		result += "<br><i>" + routerVertex2.getName() + "(" + routerVertex2.getDescription() + "): </i>";
+		result += "<b>" + Integer.toString(cost2IPv6) + "</b>";
+	    }
+	}
+	result += "</body></html>";
+	return result;
+    }
+
+
+    /**
+     * Vrací popisek s počtem výpadků spoje
+     * @return description
+     */
+    public String getLinkFaultDescription() {
+	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
+	    return null;
+	}
+	return "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + linkEdgeIDv4 + "</b><br><br>"
+		+ rb.getString("lftm.col1") + ":<br> <b>" + faultCount + "</b></body></html>";
+    }
+
+
+    /**
+     * Vrací barvu spoje.<br>
+     * Používat pouze pro MapPanel (ne v netstatepanel)
+     * @param mode
+     * @return
+     */
+    public Paint getLineColor(int mode) {
+	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
+	    return null;
+	}
+	if (isHover()) {
+	    return Color.ORANGE;
+	}
+	if (isEnabled()) {
+	    if (isIPv6() && graphComponent.isShowIPv6()) {
+		return Color.GREEN;
+	    }
+	    if (mode == MapGraphComponentMode.ASYMETRIC_LINK && !isSymetric()) {
+		return new Color(0, 150, 255);// modra
+	    }
+	    if (isEdgeOfShortestPath() || (isEdgeOfFirstPath() && isEdgeOfSecondPath())) {
+		return Color.GREEN;
+	    }
+	    if (isEdgeOfFirstPath()) {
+		return new Color(0, 187, 227);// neco mezi modrou a zelenou
+	    }
+	    if (isEdgeOfSecondPath()) {
+		return new Color(255, 80, 80);// cervena
+	    }
+	    return new Color(0x666666);
+	} else {
+	    return new Color(0xcccccc);
+	}
+    }
+
+
+    /**
+     * Vrací sílu štětce - jeho tlouštku.<br>
+     * Používat pouze při pro MapPanel (ne v netstatepanel)
+     * @return síla štětce
+     */
+    public Stroke getStroker() {
+	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
+	    return null;
+	}
+	if (isHover()) {
+	    return new BasicStroke(3);
+	}
+	if (isEnabled()) {
+	    if (isEdgeOfShortestPath() || isEdgeOfFirstPath() || isEdgeOfSecondPath()) {
+		return new BasicStroke(3);
+	    } else {
+		return new BasicStroke(1);
+	    }
+	} else {
+	    return RenderContext.DASHED;
+	}
     }
 }

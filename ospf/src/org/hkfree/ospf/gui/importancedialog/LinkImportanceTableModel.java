@@ -61,7 +61,7 @@ public class LinkImportanceTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int column) {
 	switch (column) {
 	    case 0:
-		return linkImportances.get(row).getOspfLink().getLinkID();
+		return linkImportances.get(row).getOspfLink().getLinkIDv4();
 	    case 1:
 		return linkImportances.get(row).getOspfLink().getSubnetMask();
 	    case 2:
@@ -86,7 +86,7 @@ public class LinkImportanceTableModel extends AbstractTableModel {
 	String toolTip = "<html>" 
 		+ rb.getString("litm.col0") 
 		+ ": <b>"
-		+ linkImportances.get(rowIndex).getOspfLink().getLinkID() 
+		+ linkImportances.get(rowIndex).getOspfLink().getLinkIDv4() 
 		+ "</b> <br>" 
 		+ rb.getString("litm.col1")
 		+ ": <b>" 

@@ -52,7 +52,7 @@ public class Exporter {
 	}
 	for (Link ol : model.getLinks()) {
 	    out.write("<edge label=");
-	    out.write("\"" + ol.getLinkID() + "\"");
+	    out.write("\"" + ol.getLinkIDv4() + "\"");
 	    out.write(" source=");
 	    out.write("\"" + ol.getOspfLinkData().get(0).getRouter().getId() + "\"");
 	    out.write(" target=");
@@ -90,7 +90,7 @@ public class Exporter {
 		    "x=\"" + (routers.get(le.getRVertex1()).getX() + routers.get(le.getRVertex2()).getX()) / 2 + "\" " +
 		    "y=\"" + +(routers.get(le.getRVertex1()).getY() + routers.get(le.getRVertex2()).getY()) / 2 + "\" " +
 		    "fill=\"black\" " +
-		    "font-size=\"8\">" + le.getCost1() + "-" + le.getCost2() + "</text>\n");
+		    "font-size=\"8\">" + le.getCost1v4() + "-" + le.getCost2v4() + "</text>\n");
 	}
 	for (RouterVertex rv : routers.keySet()) {
 	    if (rv.isMultilink()) {
