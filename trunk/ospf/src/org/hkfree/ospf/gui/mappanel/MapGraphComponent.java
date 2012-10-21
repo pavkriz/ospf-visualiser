@@ -63,6 +63,7 @@ public class MapGraphComponent extends JComponent {
     private RouterVertex firstRVertexToMakeEdge = null;
     private RouterVertex firstShortestPathRV = null;
     private RouterVertex secondShortestPathRV = null;
+    private boolean showIPv6 = false;
 
 
     /**
@@ -920,8 +921,8 @@ public class MapGraphComponent extends JComponent {
     public MapPanel getOwner() {
 	return owner;
     }
-    
-    
+
+
     public MapModel getMapModel() {
 	return mapModel;
     }
@@ -946,7 +947,8 @@ public class MapGraphComponent extends JComponent {
 		    l = (Layout<RouterVertex, LinkEdge>) o;
 		    l.setInitializer(vv.getGraphLayout());
 		    ((FRLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-		    ((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
+		    ((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k
+											  // sobe
 		    ((FRLayout<RouterVertex, LinkEdge>) l).setMaxIterations(800); // default
 		    l.setSize(new Dimension(2200, 2200));
 		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
@@ -999,5 +1001,35 @@ public class MapGraphComponent extends JComponent {
 	} catch (InvocationTargetException e) {
 	    e.printStackTrace();
 	}
+    }
+
+
+    public boolean isShowIPv6() {
+	return showIPv6;
+    }
+
+
+    /**
+     * Nastavi zda v modelu zobrazovat IPv6
+     * @param b
+     */
+    public void setShowIPv6(boolean showIPv6) {
+	this.showIPv6 = showIPv6;
+	if (showIPv6) {
+	    for (RouterVertex rv : mapModel.getRouterVertices()) {
+		rv.setVisible(true);
+	    }
+	} else {
+	    for (RouterVertex rv : mapModel.getRouterVertices()) {
+		boolean bi = false;
+		for (LinkEdge le : mapModel.getLinkEdges()) {
+		    if ((rv == le.getRVertex1() || rv == le.getRVertex2()) && le.isIPv4()) {
+			bi = true;
+		    }
+		}
+		rv.setVisible(bi);
+	    }
+	}
+	vv.repaint();
     }
 }

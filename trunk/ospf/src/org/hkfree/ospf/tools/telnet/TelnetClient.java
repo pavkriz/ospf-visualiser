@@ -91,7 +91,7 @@ public class TelnetClient {
 
     public StringBuilder getDataIPv6() {
 	setSb(new StringBuilder());
-	// send("show ipv6 ospf6 database network detail");
+	sendRecive("show ipv6 ospf6 database network detail");
 	sendRecive("show ipv6 ospf6 database router detail");
 	return getSb();
     }

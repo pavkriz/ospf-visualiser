@@ -66,7 +66,7 @@ public class NSGraphMouseClickPlugin extends AbstractGraphMousePlugin implements
 		if (linkEdge != null) {
 		    if (owner.getMapGraphComponentMode() == MapGraphComponentMode.LINK_FAULT) {
 			if (linkEdge.getFaultCount() > 0) {
-			    ((NetStatesWin) owner.getOwner()).getManager().showLinkFaultDialog(linkEdge.getLinkID());
+			    ((NetStatesWin) owner.getOwner()).getManager().showLinkFaultDialog(linkEdge.getLinkIDv4());
 			}
 		    }
 		}

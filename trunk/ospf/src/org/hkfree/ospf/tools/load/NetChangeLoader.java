@@ -65,7 +65,7 @@ public class NetChangeLoader {
 		    RouterVertex rv2 = netChangeModel.getRouterVertexByRouterID(routerData2.getRouter().getId());
 		    if (rv1 != null && rv2 != null) {
 			LinkEdge actLinkEdge = netChangeModel.getStandardLinkEdge(rv1, rv2, ospfLinkState.getOspfLink()
-				.getLinkID());
+				.getLinkIDv4());
 			if (actLinkEdge != null) {
 			    actualNetState.addStateData(rv1, rv2, actLinkEdge, ospfLinkState.getLinkID(), ospfLinkState
 				    .getRouters().get(routerData1), ospfLinkState.getRouters().get(routerData2));
@@ -77,12 +77,12 @@ public class NetChangeLoader {
 		} else { // MULTILINK
 			 // celkově je to multilink, ale v aktuálním modelu to může být jen spoj ze 2 routerů, ale to nás
 			 // nezajímá - hledáme jako část multilinku
-		    if (netChangeModel.findAndSetActualMultilinkCenter(ospfLinkState.getOspfLink().getLinkID())) {
+		    if (netChangeModel.findAndSetActualMultilinkCenter(ospfLinkState.getOspfLink().getLinkIDv4())) {
 			for (OspfLinkData old : ospfLinkState.getRouters().keySet()) {
 			    RouterVertex rv = netChangeModel.getRouterVertexByRouterID(old.getRouter().getId());
 			    if (rv != null) {
 				LinkEdge actLinkEdge = netChangeModel.getMultilinkEdge(rv, ospfLinkState.getOspfLink()
-					.getLinkID());
+					.getLinkIDv4());
 				if (actLinkEdge != null)
 				    actualNetState.addStateData(rv, netChangeModel.getActualMultilinkCenter(), actLinkEdge,
 					    ospfLinkState.getLinkID(), old.getCostIPv4(), 0);
@@ -126,7 +126,7 @@ public class NetChangeLoader {
 	for (Link ol : ospfChangeModel.getLinks()) {
 	    if (ol.getRoutersCount() > 2) {
 		multilinkCnt++;
-		netChangeModel.addRouterVertex(Constants.MULTILINK + multilinkCnt, ol.getLinkID(), null, true);
+		netChangeModel.addRouterVertex(Constants.MULTILINK + multilinkCnt, ol.getLinkIDv4(), null, true);
 	    }
 	}
     }
@@ -143,12 +143,12 @@ public class NetChangeLoader {
 		OspfLinkData old1 = ol.getOspfLinkData().get(0);
 		OspfLinkData old2 = ol.getOspfLinkData().get(1);
 		netChangeModel.addStandardLinkEdge(old1.getRouter().getId(), old2.getRouter().getId(),
-			old1.getCostIPv4(), old2.getCostIPv4(), ol.getLinkID());
+			old1.getCostIPv4(), old2.getCostIPv4(), ol.getLinkIDv4());
 	    } else {
 		// MULTILINK
-		if (netChangeModel.findAndSetActualMultilinkCenter(ol.getLinkID())) {
+		if (netChangeModel.findAndSetActualMultilinkCenter(ol.getLinkIDv4())) {
 		    for (OspfLinkData old : ol.getOspfLinkData()) {
-			netChangeModel.addMultilinkEdge(old.getRouter().getId(), old.getCostIPv4(), ol.getLinkID());
+			netChangeModel.addMultilinkEdge(old.getRouter().getId(), old.getCostIPv4(), ol.getLinkIDv4());
 		    }
 		}
 	    }

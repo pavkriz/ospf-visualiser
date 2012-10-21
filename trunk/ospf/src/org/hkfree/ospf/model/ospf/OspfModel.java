@@ -36,6 +36,16 @@ public class OspfModel {
 
 
     /**
+     * Metoda, která vytvoří záznam o novém spoji
+     * @param name
+     * @param subnetMask
+     */
+    // public void addOspfLink(String name) {
+    // Link l = new Link();
+    // l.setLinkIDIPv4(name);
+    // links.add(l);
+    // }
+    /**
      * Metoda, která přidá router reprezentovaný určitou IP do posledně vytvořeného ospfLinks
      * @param ip
      */
@@ -75,7 +85,7 @@ public class OspfModel {
 	for (Link s : links) {
 	    text += String.format(
 		    "%1$s: %2$s\t %3$s %4$d\n%5$s\n",
-		    new Object[] { rb.getString("lfd.1"), s.getLinkID(), rb.getString("om.0"), s.getSubnetMask(),
+		    new Object[] { rb.getString("lfd.1"), s.getLinkIDv4(), rb.getString("om.0"), s.getSubnetMask(),
 			    s.routersToString() });
 	}
 	return text;
@@ -164,8 +174,17 @@ public class OspfModel {
      */
     public void updateCost(String linkName, Router router, String intervaceIp, int cost) {
 	for (Link s : links) {
-	    if (s.getLinkID().equals(linkName)) {
+	    if (s.getLinkIDv4().equals(linkName)) {
 		s.updateLinkData(router, intervaceIp, cost);
+	    }
+	}
+    }
+
+
+    public void updateCostIPv6(String linkName, Router router, String intervaceIp, int cost) {
+	for (Link s : links) {
+	    if (s.getLinkIDv6().equals(linkName)) {
+		s.updateLinkDataIPv6(router, intervaceIp, cost);
 	    }
 	}
     }
@@ -184,6 +203,35 @@ public class OspfModel {
 		updateCost(linkId, r, linkData, cost);
 	    }
 	}
+    }
+
+
+    /**
+     * Nastaví cenu spoji mezi dvěma routerama
+     * @param router id prvního routeru
+     * @param neighborRouter id druhého routeru
+     * @param cost cena
+     */
+    public void updateCostIPv6(String linkId, String router, String neighborRouter, int cost) {
+	for (Router r : routers) {
+	    if (r.getId().equals(router)) {
+		updateCostIPv6(linkId, r, neighborRouter, cost);
+	    }
+	}
+	// for (Link s : links) {
+	// if (s.getLinkID().equals(linkId)) {
+	// s.updateLinkDataIPv6(router, neighborRouter, cost);
+	// }
+	// }
+	// for (Link l : links) {
+	// if (l.getOspfLinkData().get(0).getRouter().getId().equals(router) &&
+	// l.getOspfLinkData().get(1).getRouter().getId().equals(neighborRouter)) {
+	// l.getOspfLinkData().get(0).setCostIPv6(cost);
+	// } else if (l.getOspfLinkData().get(0).getRouter().getId().equals(neighborRouter) &&
+	// l.getOspfLinkData().get(1).getRouter().getId().equals(router)) {
+	// l.getOspfLinkData().get(1).setCostIPv6(cost);
+	// }
+	// }
     }
 
 

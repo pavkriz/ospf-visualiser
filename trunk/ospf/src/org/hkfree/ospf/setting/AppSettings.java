@@ -37,7 +37,7 @@ public class AppSettings {
     public int telnetPortIPv6;// =2606
     public String telnetPassword;// =free
     public int telnetTimeout;// =5000
-    public String rdnsServer;// =lab.hkfree.org
+    public String telnetRDNSServer;// =lab.hkfree.org
     public LANGUAGE language;
     public String fileNameRouterNames;// =router_names
     public String remoteFileIdentification;// =file
@@ -47,6 +47,8 @@ public class AppSettings {
     public int countDaysBack; // =7
     public String fromDateToDateLoadTo; // =MAP_PANEL
     public boolean closeLogDialog; // =true
+    public String cgiUrl; // =
+    public String cgiRDNSServer; // =lab.hkfree.org
 
 
     /**

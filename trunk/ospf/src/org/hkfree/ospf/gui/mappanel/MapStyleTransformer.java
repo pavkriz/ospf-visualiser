@@ -99,13 +99,7 @@ public class MapStyleTransformer {
 	edgeLabeler = new Transformer<LinkEdge, String>() {
 
 	    public String transform(LinkEdge e) {
-		if (e.isEnabled()) {
-		    if (e.getRVertex2() != null && e.getRVertex2().isMultilink())
-			return Integer.toString(e.getCost1());
-		    return e.getCost1() + " - " + e.getCost2();
-		} else {
-		    return "";
-		}
+		return e.getLabel();
 	    }
 	};
 	edgeToolTiper = new Transformer<LinkEdge, String>() {

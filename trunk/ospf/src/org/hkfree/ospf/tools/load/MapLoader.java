@@ -26,6 +26,8 @@ public class MapLoader {
 	int multilinkCount = 0;
 	int cost1 = 0;
 	int cost2 = 0;
+	int cost1IPv6 = 0;
+	int cost2IPv6 = 0;
 	String descr1 = "";
 	String descr2 = ""; // pouzito take pro popisek multilinku
 	String id1 = "";
@@ -49,15 +51,19 @@ public class MapLoader {
 		// ceny
 		cost1 = link.getOspfLinkData().get(0).getCostIPv4();
 		cost2 = link.getOspfLinkData().get(1).getCostIPv4();
+		cost1IPv6 = link.getOspfLinkData().get(0).getCostIPv6();
+		cost2IPv6 = link.getOspfLinkData().get(1).getCostIPv6();
 		// gps souradnice
 		GPSPoint gp1 = link.getOspfLinkData().get(0).getRouter().getGpsPosition();
 		GPSPoint gp2 = link.getOspfLinkData().get(1).getRouter().getGpsPosition();
 		// pridani spoje v mapModelu
-		mapModel.addLinkEdge(id1, id2, descr1, descr2, cost1, cost2, gp1, gp2, link.getLinkID(),
+		// System.out.println(cost1IPv6 + " " + cost2IPv6);
+		mapModel.addLinkEdge(id1, id2, descr1, descr2, cost1, cost2, cost1IPv6, cost2IPv6, gp1, gp2,
+			link.getLinkIDv4(), link.getLinkIDv6(),
 			link.getOspfLinkData());
 	    } else {
 		multilinkCount++;
-		descr2 = "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + link.getLinkID() + "</b></body></html>";
+		descr2 = "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + link.getLinkIDv4() + "</b></body></html>";
 		for (OspfLinkData old : link.getOspfLinkData()) {
 		    id1 = old.getRouter().getId();
 		    GPSPoint gp = old.getRouter().getGpsPosition();
@@ -67,7 +73,8 @@ public class MapLoader {
 			descr1 = old.getRouter().getId();
 		    }
 		    mapModel.addLinkEdge(id1, Constants.MULTILINK + Integer.toString(multilinkCount), descr1, descr2,
-			    old.getCostIPv4(), 0, gp, null, link.getLinkID(), link.getOspfLinkData());
+			    old.getCostIPv4(), -1, old.getCostIPv6(), -1, gp, null, link.getLinkIDv4(), link.getLinkIDv6(),
+			    link.getOspfLinkData());
 		}
 	    }
 	}

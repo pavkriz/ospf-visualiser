@@ -26,6 +26,7 @@ public abstract class Constants {
     public static final int ZIP_LOCAL = 2;
     public static final int LOCAL_SOURCES = 3;
     public static final int TELNET = 4;
+    public static final int CGI = 5;
     public static final int LOCAL = 1;
     public static final int REMOTE_SERVER = 2;
     public static final int FOLDER = 1;
@@ -60,6 +61,8 @@ public abstract class Constants {
 	ADD_EDGES,
 	ASYMETRIC_LINKS,
 	SHORTEST_PATH_TWO_ROUTERS,
-	NONE
+	IPV6_SHOW,
+	IPV6_HIDE,
+	NONE, 
     }
 }

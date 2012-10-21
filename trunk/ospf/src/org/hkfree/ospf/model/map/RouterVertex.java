@@ -32,6 +32,7 @@ public class RouterVertex {
     private boolean isFirstRVOfTwoRVShortestPath = false;
     private boolean isSecondRVOfTwoRVShortestPath = false;
     private boolean isFounded = false;
+    private boolean isVisible = true;
 
 
     /**
@@ -90,6 +91,9 @@ public class RouterVertex {
      * @return barva výplně
      */
     public Color getColorFill() {
+	if (!isVisible) {
+	    return null;
+	}
 	if (isEnabled()) {
 	    if (isPartOfNewAddedEdge()) {
 		return Color.BLACK;
@@ -125,11 +129,10 @@ public class RouterVertex {
      * @return barva
      */
     public Color getColorStroke() {
-	if (isEnabled() && isPermanentlyDisplayed()) {
-	    return Color.DARK_GRAY;
-	} else {
-	    return Color.LIGHT_GRAY;
+	if (!isVisible) {
+	    return null;
 	}
+	return isEnabled && isPermanentlyDisplayed() ? Color.DARK_GRAY : Color.LIGHT_GRAY;
     }
 
 
@@ -138,11 +141,10 @@ public class RouterVertex {
      * @return štětec
      */
     public Stroke getStroker() {
-	if (isEnabled()) {
-	    return new BasicStroke(1);
-	} else {
-	    return RenderContext.DASHED;
+	if (!isVisible) {
+	    return null;
 	}
+	return isEnabled ? new BasicStroke(1) : RenderContext.DASHED;
     }
 
 
@@ -205,7 +207,10 @@ public class RouterVertex {
      * @return name
      */
     public String getName() {
-	return name;
+	if (isVisible) {
+	    return name;
+	}
+	return "";
     }
 
 
@@ -461,5 +466,10 @@ public class RouterVertex {
 
     public void setFounded(boolean isFounded) {
 	this.isFounded = isFounded;
+    }
+
+
+    public void setVisible(boolean visible) {
+	this.isVisible = visible;
     }
 }

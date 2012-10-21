@@ -81,8 +81,8 @@ public class MapGraphContextMenu extends AbstractPopupGraphMousePlugin implement
 			public void actionPerformed(ActionEvent e) {
 			    ChangeLinkCostDialog dialog = new ChangeLinkCostDialog(linkEdge);
 			    if (dialog.costDataSaved()) {
-				linkEdge.setCost1(dialog.getChangedCost1());
-				linkEdge.setCost2(dialog.getChangedCost2());
+				linkEdge.setCost1v4(dialog.getChangedCost1());
+				linkEdge.setCost2v4(dialog.getChangedCost2());
 			    }
 			    owner.tryRecomputeShortestPaths();
 			    vv.repaint();

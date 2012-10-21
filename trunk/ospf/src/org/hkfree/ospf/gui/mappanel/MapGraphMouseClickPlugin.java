@@ -96,8 +96,8 @@ public class MapGraphMouseClickPlugin extends AbstractGraphMousePlugin implement
 			case MapGraphComponentMode.COST_CHANGING:
 			    ChangeLinkCostDialog dialog = new ChangeLinkCostDialog(linkEdge);
 			    if (dialog.costDataSaved()) {
-				linkEdge.setCost1(dialog.getChangedCost1());
-				linkEdge.setCost2(dialog.getChangedCost2());
+				linkEdge.setCost1v4(dialog.getChangedCost1());
+				linkEdge.setCost2v4(dialog.getChangedCost2());
 			    }
 			    vv.repaint();
 			    break;

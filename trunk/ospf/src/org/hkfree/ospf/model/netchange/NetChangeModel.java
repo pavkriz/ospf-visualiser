@@ -149,7 +149,14 @@ public class NetChangeModel implements AbstractMapModel {
 	RouterVertex rv1 = getRouterVertexByRouterID(routerId1);
 	RouterVertex rv2 = getRouterVertexByRouterID(routerId2);
 	if (rv1 != null && rv2 != null) {
-	    linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
+	    LinkEdge le = new LinkEdge();
+	    le.setLinkIDv4(linkID);
+	    le.setRouterVertex1(rv1);
+	    le.setCost1v4(cost1);
+	    le.setRouterVertex2(rv2);
+	    le.setCost2v4(cost2);
+	    linkEdges.add(le);
+//	    linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
 	} else {
 	    System.err.println("Chyba NetChangeModel -> addStandardLinkEdge" + rv1 + " " + rv2);
 	}
@@ -165,7 +172,14 @@ public class NetChangeModel implements AbstractMapModel {
     public void addMultilinkEdge(String routerId1, int cost1, String linkID) {
 	RouterVertex rv1 = getRouterVertexByRouterID(routerId1);
 	if (rv1 != null) {
-	    linkEdges.add(new LinkEdge(rv1, cost1, actualMultilinkCenter, 0, linkID));
+	    LinkEdge le = new LinkEdge();
+	    le.setLinkIDv4(linkID);
+	    le.setRouterVertex1(rv1);
+	    le.setCost1v4(cost1);
+	    le.setRouterVertex2(actualMultilinkCenter);
+	    le.setCost2v4(0);
+	    linkEdges.add(le);
+//	    linkEdges.add(new LinkEdge(rv1, cost1, actualMultilinkCenter, 0, linkID));
 	} else {
 	    System.err.println("Chyba NetChangeModel -> addMultilinkEdge" + rv1);
 	}
@@ -208,7 +222,7 @@ public class NetChangeModel implements AbstractMapModel {
      */
     public LinkEdge getStandardLinkEdge(RouterVertex rv1, RouterVertex rv2, String linkID) {
 	for (LinkEdge le : linkEdges) {
-	    if (le.getLinkID().equals(linkID)) {
+	    if (le.getLinkIDv4().equals(linkID)) {
 		if ((le.getRVertex1().equals(rv1) && le.getRVertex2().equals(rv2))
 			|| (le.getRVertex1().equals(rv2) && le.getRVertex2().equals(rv1))) {
 		    return le;
@@ -226,7 +240,7 @@ public class NetChangeModel implements AbstractMapModel {
      */
     public LinkEdge getMultilinkEdge(RouterVertex rv, String linkID) {
 	for (LinkEdge le : linkEdges) {
-	    if (le.getLinkID().equals(linkID)) {
+	    if (le.getLinkIDv4().equals(linkID)) {
 		if ((le.getRVertex1().equals(rv) && le.getRVertex2().equals(actualMultilinkCenter))
 			|| (le.getRVertex1().equals(actualMultilinkCenter) && le.getRVertex2().equals(rv))) {
 		    return le;
@@ -279,9 +293,9 @@ public class NetChangeModel implements AbstractMapModel {
 	    NetState actualState = netStates.get(actualStateIndex);
 	    for (LinkEdge le : linkEdges) {
 		if (!previousState.isLinkEdgeActive(le) && actualState.isLinkEdgeActive(le)) {
-		    if (!linkIDs.contains(le.getLinkID())) {
-			log += " ^   linkID: " + le.getLinkID() + "\n";
-			linkIDs.add(le.getLinkID());
+		    if (!linkIDs.contains(le.getLinkIDv4())) {
+			log += " ^   linkID: " + le.getLinkIDv4() + "\n";
+			linkIDs.add(le.getLinkIDv4());
 		    }
 		    le.setActuallyLive(true);
 		}
@@ -303,9 +317,9 @@ public class NetChangeModel implements AbstractMapModel {
 	    NetState actualState = netStates.get(actualStateIndex);
 	    for (LinkEdge le : linkEdges) {
 		if (previousState.isLinkEdgeActive(le) && !actualState.isLinkEdgeActive(le)) {
-		    if (!linkIDs.contains(le.getLinkID())) {
-			log += " †   linkID: " + le.getLinkID() + "\n";
-			linkIDs.add(le.getLinkID());
+		    if (!linkIDs.contains(le.getLinkIDv4())) {
+			log += " †   linkID: " + le.getLinkIDv4() + "\n";
+			linkIDs.add(le.getLinkIDv4());
 		    }
 		    le.setActuallyDead(true);
 		}
@@ -527,7 +541,7 @@ public class NetChangeModel implements AbstractMapModel {
 	    int min = -1;
 	    for (LinkEdge le : linkEdges) {
 		for (OspfLinkFault olf : ospfLinkFaultModel.getOspfLinkFaults()) {
-		    if (olf.getOspfLink().getLinkID().equals(le.getLinkID())) {
+		    if (olf.getOspfLink().getLinkIDv4().equals(le.getLinkIDv4())) {
 			int cnt = olf.getTotalFaultCount();
 			le.setFaultCount(cnt);
 			if (cnt > max) {

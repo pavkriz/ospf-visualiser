@@ -16,19 +16,28 @@ import org.hkfree.ospf.tools.ip.IpSubnetCalculator;
 public class Link {
 
     private ResourceBundle rb = Factory.getRb();
-    private String linkID = "";
+    private String linkIDv4 = "";
+    private String linkIDv6 = "";
     private int subnetMask = 0;
     private List<OspfLinkData> routersOfLink = new ArrayList<OspfLinkData>();
-//    private List<String> subnetIps = new ArrayList<String>();
     private String networkAddress = "0.0.0.0";
     private String broadcastAddress = "0.0.0.0";
 
 
     /**
+     * Kontruktor
+     */
+    public Link() {}
+
+
+    // public Link(String linkID) {
+    // this.linkID = linkID;
+    // }
+    /**
      * Konstruktor - vytvoří instanci třídy
      */
     public Link(String linkID, int subnetMask) {
-	this.linkID = linkID;
+	this.linkIDv4 = linkID;
 	this.subnetMask = subnetMask;
 	computeSubnetIps();
     }
@@ -39,30 +48,29 @@ public class Link {
      */
     public void computeSubnetIps() {
 	IpSubnetCalculator ipSubnetCalc = new IpSubnetCalculator();
-	ipSubnetCalc.computeAddresses(linkID, subnetMask);
+	ipSubnetCalc.computeAddresses(linkIDv4, subnetMask);
 	networkAddress = ipSubnetCalc.getNetworkAddress();
 	broadcastAddress = ipSubnetCalc.getBroadcastAddress();
     }
 
 
-    /**
-     * Vrací příznak zda podsíť spoje obsahuje zadanou ip adresu
-     * @param ip
-     * @return boolean
-     */
-//    public boolean subnetContainsIP(String ip) {
-//	if (subnetIps.contains(ip))
-//	    return true;
-//	return false;
-//    }
+    public String getLinkIDv4() {
+	return linkIDv4;
+    }
 
 
-    /**
-     * Metoda, která vrátí název spoje
-     * @return linkId
-     */
-    public String getLinkID() {
-	return linkID;
+    public void setLinkIDv4(String linkIDIPv4) {
+	this.linkIDv4 = linkIDIPv4;
+    }
+
+
+    public void setLinkIDv6(String linkIDIPv6) {
+	this.linkIDv6 = linkIDIPv6;
+    }
+
+
+    public String getLinkIDv6() {
+	return linkIDv6;
     }
 
 
@@ -92,13 +100,28 @@ public class Link {
 
 
     /**
-     * Vrátí OspfLinkData, které reprezentují zučastněný router @router
-     * @param router
+     * Vrátí OspfLinkData, které reprezentují zučastněný router
+     * @param router router
      * @return linkdata
      */
     public OspfLinkData getOspfLinkData(Router router) {
 	for (OspfLinkData old : routersOfLink) {
 	    if (old.getRouter().equals(router)) {
+		return old;
+	    }
+	}
+	return null;
+    }
+
+
+    /**
+     * Vrátí OspfLinkData, které reprezentují zučastněný router
+     * @param routerId id routeru
+     * @return linkdata
+     */
+    public OspfLinkData getOspfLinkData(String routerId) {
+	for (OspfLinkData old : routersOfLink) {
+	    if (old.getRouter().getId().equals(routerId)) {
 		return old;
 	    }
 	}
@@ -143,6 +166,16 @@ public class Link {
 	    if (old.getRouter().equals(router)) {
 		old.setCostIPv4(cost);
 		old.setInterfaceIp(interfaceIp);
+	    }
+	}
+    }
+
+
+    public void updateLinkDataIPv6(Router router, String interfaceIp, int cost) {
+	for (OspfLinkData old : routersOfLink) {
+	    if (old.getRouter().equals(router)) {
+		old.setCostIPv6(cost);
+		// old.setInterfaceIp(interfaceIp);
 	    }
 	}
     }
@@ -211,11 +244,11 @@ public class Link {
 	for (OspfLinkData old : routersOfLink) {
 	    // standard link
 	    if (routersOfLink.size() == 2) {
-		if (old.getCostIPv4() == -1) {
+		if (old.getCostIPv4() == -1 && old.getCostIPv6() == -1) {
 		    return true; // smazat link
 		}
 	    } else { // multilink
-		if (old.getCostIPv4() == -1) {
+		if (old.getCostIPv4() == -1 && old.getCostIPv6() == -1) {
 		    if (actualMultilinkRemData == null) {
 			actualMultilinkRemData = new ArrayList<OspfLinkData>();
 		    }
@@ -232,5 +265,23 @@ public class Link {
 	    }
 	}
 	return false; // nechat link
+    }
+
+
+    /**
+     * zjisti zda spoj obsahuje stejny pocet routeru se stejnymi id routeru
+     * @return
+     */
+    public boolean hasSameRouters(List<OspfLinkData> routers) {
+	// pokud nesouhlasi pocet routeru na spoji, neni to ten samy
+	if (routers.size() != routersOfLink.size()) {
+	    return false;
+	}
+	// prochazeni predanych routeru
+	for (int i = 0; i < routers.size(); i++) {
+	    if (!routersOfLink.get(i).getRouter().getId().equals(routers.get(i).getRouter().getId()))
+		return false;
+	}
+	return true;
     }
 }

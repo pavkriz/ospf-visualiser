@@ -139,6 +139,8 @@ public class OspfWinManager {
 	((OspfWin) owner).getOspfWinActListener().getActionShowNeighboursMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(b);
+	((OspfWin) owner).getOspfWinActListener().getActionIPv6Show().setEnabled(b);
+	((OspfWin) owner).getOspfWinActListener().getActionIPv6Hide().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModely.size() < 2 ? false : true);
 	if (!b) {
 	    ((OspfWin) owner).getStatusBar().clear();

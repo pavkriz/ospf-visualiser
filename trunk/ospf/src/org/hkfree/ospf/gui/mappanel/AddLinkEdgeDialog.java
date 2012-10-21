@@ -73,7 +73,7 @@ public class AddLinkEdgeDialog extends JDialog {
 	    public void actionPerformed(ActionEvent e) {
 		successfulyConfirmed = true;
 		for (LinkEdge le : linkEdges) {
-		    if (le.getLinkID().equals(txtLEName.getText())) {
+		    if (le.getLinkIDv4().equals(txtLEName.getText())) {
 			JOptionPane.showMessageDialog(thisDialog, "\n" + rb.getString("aled.2") + " \n\n",
 				rb.getString("warning"), JOptionPane.WARNING_MESSAGE);
 			successfulyConfirmed = false;

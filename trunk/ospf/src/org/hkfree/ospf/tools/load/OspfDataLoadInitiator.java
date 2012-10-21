@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +75,9 @@ public class OspfDataLoadInitiator {
 		break;
 	    case Constants.TELNET:
 		loadDataViaTelnet(ospfModel, sourcePath);
+		break;
+	    case Constants.CGI:
+		loadDataFromCgiScript(ospfModel, sourcePath);
 		break;
 	}
     }
@@ -351,7 +356,7 @@ public class OspfDataLoadInitiator {
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
 	OspfLoader.getTopologyFromData(ospfModel, new BufferedReader(new StringReader(data.toString())));
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
-	// nacteni cen a nazvu routeru
+	// nacteni nazvu routeru
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.3"));
 	loadNames(ospfModel);
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
@@ -359,10 +364,53 @@ public class OspfDataLoadInitiator {
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.9"));
 	findAndSetSuffix(ospfModel);
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
-	// nazev noveho tabbu
+	// nazev modelu
 	Date date = new Date(System.currentTimeMillis());
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm");
 	ospfModel.setModelName(formatter.format(date) + "_telnet");
+    }
+
+
+    /**
+     * Stáhne data ze výstupu CGI skriptu
+     * @param ospfModel
+     * @param sourcePath
+     * @throws InterruptedException
+     */
+    private void loadDataFromCgiScript(OspfModel model, String sourcePath) throws InterruptedException {
+	try {
+	    // stazeni dat
+	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.0"));
+	    URL adresa = new URL(settings.cgiUrl);
+	    InputStream is = adresa.openStream();
+	    StringBuilder sb = new StringBuilder();
+	    byte[] buff = new byte[1024];
+	    int receiveLength = 0; // počet znaků přijatého řetězce
+	    while ((receiveLength = is.read(buff)) != -1) {
+		sb.append(new String(buff, 0, receiveLength));
+	    }
+	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    // nacteni dat
+	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
+	    OspfLoader.getTopologyFromData(model, new BufferedReader(new StringReader(sb.toString())));
+	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    // nacteni nazvu routeru
+	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.3"));
+	    loadNames(model);
+	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    // nalezeni a prirazeni suffixu z nazvu routeru
+	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.9"));
+	    findAndSetSuffix(model);
+	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    // nazev modelu
+	    Date date = new Date(System.currentTimeMillis());
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd--HH-mm");
+	    model.setModelName(sdf.format(date) + "_" + settings.cgiUrl.substring(settings.cgiUrl.lastIndexOf("/") + 1));
+	} catch (MalformedURLException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
     }
 
 
@@ -378,7 +426,15 @@ public class OspfDataLoadInitiator {
 	for (Router r : ospfModel.getRouters()) {
 	    ips.add(r.getId());
 	}
-	ReverseDNS rdns = new ReverseDNS(settings.rdnsServer);
+	ReverseDNS rdns = null;
+	switch (settings.getDataSourceType()) {
+	    case Constants.TELNET:
+		rdns = new ReverseDNS(settings.telnetRDNSServer);
+		break;
+	    case Constants.CGI:
+		rdns = new ReverseDNS(settings.cgiRDNSServer);
+		break;
+	}
 	IPEnumeration ipe = new IPEnumeration(ips);
 	Map<String, String> names = new HashMap<String, String>();
 	Thread threads[] = new Thread[60];
@@ -391,7 +447,7 @@ public class OspfDataLoadInitiator {
 	}
 	for (Router r : ospfModel.getRouters()) {
 	    String s = names.get(r.getId());
-	    if (s != null) {
+	    if (s != null && !s.equals(r.getId())) {
 		r.setName(s);
 	    }
 	}
@@ -403,11 +459,11 @@ public class OspfDataLoadInitiator {
      * @param ospfModel ospf model obsahujici seznam routeru
      */
     private void findAndSetSuffix(OspfModel ospfModel) {
-	// nalezeni suffixu
 	String suffix = findSuffix(ospfModel);
 	// odebrani suffixu z nazvu routeru a nastaveni atributu pro suffix
 	List<Router> routers = ospfModel.getRouters();
 	for (Router r : routers) {
+	    // pokud se obdrzelo neco jineho nez je id routeru, vlozi se to do nazvu routeru
 	    if (r.getName() != null && r.getName().endsWith(suffix)) {
 		r.setName(r.getName().replace(suffix, ""));
 		r.setSuffix(suffix);

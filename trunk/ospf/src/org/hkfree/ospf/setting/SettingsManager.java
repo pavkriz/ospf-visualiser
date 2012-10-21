@@ -101,8 +101,8 @@ public class SettingsManager {
 	if (propUser.getProperty("telnetTimeout") == null) {
 	    propUser.setProperty("telnetTimeout", propDef.getProperty("telnetTimeout"));
 	}
-	if (propUser.getProperty("rdnsServer") == null) {
-	    propUser.setProperty("rdnsServer", propDef.getProperty("rdnsServer"));
+	if (propUser.getProperty("telnetRDNSServer") == null) {
+	    propUser.setProperty("telnetRDNSServer", propDef.getProperty("telnetRDNSServer"));
 	}
 	if (propUser.getProperty("language") == null) {
 	    propUser.setProperty("language", propDef.getProperty("language"));
@@ -133,6 +133,12 @@ public class SettingsManager {
 	}
 	if (propUser.getProperty("closeLogDialog") == null) {
 	    propUser.setProperty("closeLogDialog", propDef.getProperty("closeLogDialog"));
+	}
+	if (propUser.getProperty("cgiUrl") == null) {
+	    propUser.setProperty("cgiUrl", propDef.getProperty("cgiUrl"));
+	}
+	if (propUser.getProperty("cgiRDNSServer") == null) {
+	    propUser.setProperty("cgiRDNSServer", propDef.getProperty("cgiRDNSServer"));
 	}
 	propUser.setProperty("appVersion", Constants.APP_VERSION);
 	propUser.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
@@ -186,7 +192,7 @@ public class SettingsManager {
 	settings.telnetPortIPv6 = Integer.valueOf(prop.getProperty("telnetPortIPv6"));
 	settings.telnetPassword = prop.getProperty("telnetPassword");
 	settings.telnetTimeout = Integer.valueOf(prop.getProperty("telnetTimeout"));
-	settings.rdnsServer = prop.getProperty("rdnsServer");
+	settings.telnetRDNSServer = prop.getProperty("telnetRDNSServer");
 	settings.language = Constants.LANGUAGE.valueOf(prop.getProperty("language"));
 	settings.fileNameRouterNames = prop.getProperty("fileNameRouterNames");
 	settings.fileNameTopology = prop.getProperty("fileNameTopology");
@@ -197,6 +203,8 @@ public class SettingsManager {
 	settings.countDaysBack = Integer.valueOf(prop.getProperty("countDaysBack"));
 	settings.fromDateToDateLoadTo = prop.getProperty("fromDateToDateLoadTo");
 	settings.closeLogDialog = Boolean.parseBoolean(prop.getProperty("closeLogDialog"));
+	settings.cgiUrl = prop.getProperty("cgiUrl");
+	settings.cgiRDNSServer = prop.getProperty("cgiRDNSServer");
     }
 
 
@@ -221,7 +229,7 @@ public class SettingsManager {
 	prop.setProperty("telnetPortIPv6", String.valueOf(settings.telnetPortIPv6));
 	prop.setProperty("telnetPassword", settings.telnetPassword);
 	prop.setProperty("telnetTimeout", String.valueOf(settings.telnetTimeout));
-	prop.setProperty("rdnsServer", settings.rdnsServer);
+	prop.setProperty("telnetRDNSServer", settings.telnetRDNSServer);
 	prop.setProperty("language", settings.language.toString());
 	prop.setProperty("fileNameRouterNames", settings.fileNameRouterNames);
 	prop.setProperty("fileNameTopology", settings.fileNameTopology);
@@ -232,6 +240,8 @@ public class SettingsManager {
 	prop.setProperty("countDaysBack", String.valueOf(settings.countDaysBack));
 	prop.setProperty("fromDateToDateLoadTo", settings.fromDateToDateLoadTo);
 	prop.setProperty("closeLogDialog", String.valueOf(settings.closeLogDialog));
+	prop.setProperty("cgiUrl", settings.cgiUrl);
+	prop.setProperty("cgiRDNSServer", settings.cgiRDNSServer);
 	prop.setProperty("appVersion", Constants.APP_VERSION);
 	prop.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }

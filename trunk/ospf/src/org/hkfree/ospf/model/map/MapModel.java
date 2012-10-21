@@ -37,11 +37,11 @@ public class MapModel implements AbstractMapModel {
      * @param cost2
      * @param gpsP1
      * @param gpsP2
-     * @param linkID
+     * @param linkIDv4
      * @param ospfLinksData
      */
-    public void addLinkEdge(String id1, String id2, String name1, String name2, int cost1, int cost2, GPSPoint gpsP1,
-	    GPSPoint gpsP2, String linkID, List<OspfLinkData> ospfLinksData) {
+    public void addLinkEdge(String id1, String id2, String name1, String name2, int cost1, int cost2, int cost1IPv6, int cost2IPv6, GPSPoint gpsP1,
+	    GPSPoint gpsP2, String linkIDv4, String linkIDv6, List<OspfLinkData> ospfLinksData) {
 	RouterVertex rv1 = getRouterVertexById(id1);
 	RouterVertex rv2 = getRouterVertexById(id2);
 	if (rv1 == null) {
@@ -58,10 +58,47 @@ public class MapModel implements AbstractMapModel {
 		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
 	    }
 	}
-	linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
+	LinkEdge le = new LinkEdge();
+	le.setRouterVertex1(rv1);
+	le.setRouterVertex2(rv2);
+	le.setCost1v4(cost1);
+	le.setCost2v4(cost2);
+	le.setCost1v6(cost1IPv6);
+	le.setCost2v6(cost2IPv6);
+	le.setLinkIDv4(linkIDv4);
+	le.setLinkIDv6(linkIDv6);
+	linkEdges.add(le);
     }
 
 
+
+    /**
+     * Přidá do MapModelu novou hranu a vrací odkaz na její instanci
+     * @param rv1
+     * @param rv2
+     * @param cost1
+     * @param cost2
+     * @param linkID
+     * @return linkEdge
+     */
+    public LinkEdge addLinkEdge(RouterVertex rv1, RouterVertex rv2, int cost1, int cost2, String linkID) {
+	LinkEdge le = new LinkEdge();
+	le.setLinkIDv4(linkID);
+	
+	//TODO add link edge dodelat
+/*	if (rv1.isMultilink()) {
+	    linkEdges.add(new LinkEdge(rv2, cost2, rv1, 0, linkID));
+	} else {
+	    if (rv2.isMultilink()) {
+		linkEdges.add(new LinkEdge(rv1, cost1, rv2, 0, linkID));
+	    } else
+		linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
+	}
+*/	
+	return linkEdges.get(linkEdges.size() - 1);
+    }
+    
+    
     /**
      * Nalezne routerVertex dle id a vrati ho
      * @param id
@@ -77,26 +114,6 @@ public class MapModel implements AbstractMapModel {
     }
 
 
-    /**
-     * Přidá do MapModelu novou hranu a vrací odkaz na její instanci
-     * @param rv1
-     * @param rv2
-     * @param cost1
-     * @param cost2
-     * @param linkID
-     * @return linkEdge
-     */
-    public LinkEdge addLinkEdge(RouterVertex rv1, RouterVertex rv2, int cost1, int cost2, String linkID) {
-	if (rv1.isMultilink()) {
-	    linkEdges.add(new LinkEdge(rv2, cost2, rv1, 0, linkID));
-	} else {
-	    if (rv2.isMultilink()) {
-		linkEdges.add(new LinkEdge(rv1, cost1, rv2, 0, linkID));
-	    } else
-		linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
-	}
-	return linkEdges.get(linkEdges.size() - 1);
-    }
 
 
     /**
@@ -258,12 +275,12 @@ public class MapModel implements AbstractMapModel {
 	    if ((le.getRVertex1().equals(routerVertex) || le.getRVertex2().equals(routerVertex)) && le.isEnabled()) {
 		if (!le.isEdgeOfMultilink()) {
 		    if (le.getRVertex1().equals(routerVertex)) {
-			neighbours.add(new NeighbourCostAndLink(le.getRVertex2(), le.getCost1(), le));
+			neighbours.add(new NeighbourCostAndLink(le.getRVertex2(), le.getCost1v4(), le));
 		    } else {
-			neighbours.add(new NeighbourCostAndLink(le.getRVertex1(), le.getCost2(), le));
+			neighbours.add(new NeighbourCostAndLink(le.getRVertex1(), le.getCost2v4(), le));
 		    }
 		} else {
-		    int mcost = le.getCost1();
+		    int mcost = le.getCost1v4();
 		    for (LinkEdge mle : getIncidentEdges(le.getRVertex2())) {
 			if (!mle.getRVertex1().equals(routerVertex) && mle.isEnabled())
 			    neighbours.add(new NeighbourCostAndLink(mle.getRVertex1(), mcost, le));
