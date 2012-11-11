@@ -41,7 +41,6 @@ public abstract class Constants {
 
     /**
      * Enum pro nastavení pracovního režimu
-     * Ord odpovídá hodnotě v lng 'mdwal.ORD'
      */
     public enum MODE {
 	SHOW_NEIGHBORS,
@@ -61,8 +60,7 @@ public abstract class Constants {
 	ADD_EDGES,
 	ASYMETRIC_LINKS,
 	SHORTEST_PATH_TWO_ROUTERS,
-	IPV6_SHOW,
-	IPV6_HIDE,
+	IPV6,
 	NONE, 
     }
 }

@@ -189,7 +189,7 @@ public class SettingsManager {
 	settings.modelZipLocalPath = prop.getProperty("modelZipLocalPath");
 	settings.telnetUrl = prop.getProperty("telnetUrl");
 	settings.telnetPortIPv4 = Integer.valueOf(prop.getProperty("telnetPortIPv4"));
-	settings.telnetPortIPv6 = Integer.valueOf(prop.getProperty("telnetPortIPv6"));
+	settings.telnetPortIPv6 = prop.getProperty("telnetPortIPv6").isEmpty() ? null : Integer.valueOf(prop.getProperty("telnetPortIPv6"));
 	settings.telnetPassword = prop.getProperty("telnetPassword");
 	settings.telnetTimeout = Integer.valueOf(prop.getProperty("telnetTimeout"));
 	settings.telnetRDNSServer = prop.getProperty("telnetRDNSServer");
@@ -226,7 +226,7 @@ public class SettingsManager {
 	prop.setProperty("modelZipLocalPath", settings.modelZipLocalPath);
 	prop.setProperty("telnetUrl", settings.telnetUrl);
 	prop.setProperty("telnetPortIPv4", String.valueOf(settings.telnetPortIPv4));
-	prop.setProperty("telnetPortIPv6", String.valueOf(settings.telnetPortIPv6));
+	prop.setProperty("telnetPortIPv6", settings.telnetPortIPv6 == null ? "" : String.valueOf(settings.telnetPortIPv6));
 	prop.setProperty("telnetPassword", settings.telnetPassword);
 	prop.setProperty("telnetTimeout", String.valueOf(settings.telnetTimeout));
 	prop.setProperty("telnetRDNSServer", settings.telnetRDNSServer);

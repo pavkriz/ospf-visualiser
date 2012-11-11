@@ -346,11 +346,18 @@ public class OspfDataLoadInitiator {
 	tc.initConnection();
 	data.append(tc.getDataIPv4());
 	tc.close();
-	tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv6, settings.telnetPassword,
-		settings.telnetTimeout);
-	tc.initConnection();
-	data.append(tc.getDataIPv6());
-	tc.close();
+	// nacteni dat pro IPv6 pouze v pripade zadani portu
+	if (settings.telnetPortIPv6 != null) {
+	    try {
+		tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv6, settings.telnetPassword,
+			settings.telnetTimeout);
+		tc.initConnection();
+		data.append(tc.getDataIPv6());
+		tc.close();
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	}
 	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	// nacteni modelu z prijatych dat
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
@@ -500,7 +507,14 @@ public class OspfDataLoadInitiator {
 	String suffix = "";
 	int count = 0;
 	for (String suf : map.keySet()) {
+	    if (suf.trim().equals(".") || suf.isEmpty()) {
+		continue;
+	    }
 	    if (map.get(suf).intValue() > count) {
+		count = map.get(suf).intValue();
+		suffix = suf;
+	    }
+	    if (map.get(suf).intValue() >= (count - 5) && suf.length() > suffix.length()) {
 		count = map.get(suf).intValue();
 		suffix = suf;
 	    }

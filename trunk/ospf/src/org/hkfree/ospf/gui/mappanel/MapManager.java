@@ -213,12 +213,16 @@ public class MapManager {
 	    case SHORTEST_PATH_TWO_ROUTERS:
 		graphComponent.setTwoRoutersShortesPathMode();
 		break;
-	    case IPV6_SHOW:
-		graphComponent.setShowIPv6(true);
+	    case IPV6:
+		graphComponent.setShowIPv6(!graphComponent.isShowIPv6());
+		graphComponent.setShowIPv6(graphComponent.isShowIPv6());
 		break;
-	    case IPV6_HIDE:
-		graphComponent.setShowIPv6(false);
-		break;
+//	    case IPV6_SHOW:
+//		graphComponent.setShowIPv6(graphComponent.isShowIPv6());
+//		break;
+//	    case IPV6_HIDE:
+//		graphComponent.setShowIPv6(false);
+//		break;
 	    default:
 		break;
 	}

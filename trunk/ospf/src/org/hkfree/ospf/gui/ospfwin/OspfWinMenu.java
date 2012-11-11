@@ -3,6 +3,7 @@ package org.hkfree.ospf.gui.ospfwin;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -69,6 +70,7 @@ public class OspfWinMenu extends JMenuBar {
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionTwoRoutersShortesPathMode()));
 	mMode.addSeparator();
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionAsymetricLinksMode()));
+	mMode.add(getIPv6CheckBoxItem());
 	mMode.addSeparator();
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionAddVertexes()));
 	mMode.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionAddEdges()));
@@ -98,5 +100,11 @@ public class OspfWinMenu extends JMenuBar {
 	this.add(mMode);
 	this.add(mVertices);
 	this.add(mHelp);
+    }
+    
+    public JCheckBoxMenuItem getIPv6CheckBoxItem() {
+	JCheckBoxMenuItem i = new JCheckBoxMenuItem(((OspfWinActionListener) actionListener).getActionIPv6Toggle());
+	i.setSelected(false);
+	return i;
     }
 }
