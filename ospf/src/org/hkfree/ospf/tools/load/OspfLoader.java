@@ -206,7 +206,8 @@ public class OspfLoader {
     }
 
 
-    public static void getTopologyFromData(OspfModel model, BufferedReader input) throws NumberFormatException, IOException {
+    public static void getTopologyFromData(OspfModel model, BufferedReader input) { //throws NumberFormatException, IOException {
+	try {
 	OspfModel modelIPv6 = new OspfModel();
 	String linkStateId = null;
 	String linkId = null;
@@ -399,5 +400,8 @@ public class OspfLoader {
 	// BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
 	// out.write(input.toString());
 	// out.close();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
     }
 }

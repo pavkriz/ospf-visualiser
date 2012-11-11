@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -45,7 +46,6 @@ public class OspfWinToolBar extends JToolBar {
      * Vytvoří komponenty GUI
      */
     public void makeComponents() {
-	// z puvodniho
 	this.setName(rb.getString("owtb.0"));
 	this.setOrientation(JToolBar.HORIZONTAL);
 	this.setRollover(true);
@@ -70,8 +70,6 @@ public class OspfWinToolBar extends JToolBar {
 	this.add(((OspfWinActionListener) actionListener).getActionGPS());
 	this.add(((OspfWinActionListener) actionListener).getActionLockAll());
 	this.add(((OspfWinActionListener) actionListener).getActionGPSAll());
-//	this.add(((OspfWinActionListener) actionListener).getActionStartLayouting());
-//	this.add(((OspfWinActionListener) actionListener).getActionStopLayouting());
 	this.add(((OspfWinActionListener) actionListener).getActionLayoutStartFR());
 	this.add(((OspfWinActionListener) actionListener).getActionLayoutStartSpring());
 	this.add(((OspfWinActionListener) actionListener).getActionLayoutStopSpring());
@@ -79,9 +77,17 @@ public class OspfWinToolBar extends JToolBar {
 	this.add(((OspfWinActionListener) actionListener).getActionAddVertexes());
 	this.add(((OspfWinActionListener) actionListener).getActionAddEdges());
 	this.addSeparator();
-	this.add(((OspfWinActionListener) actionListener).getActionIPv6Show());
-	this.add(((OspfWinActionListener) actionListener).getActionIPv6Hide());
+	this.add(getIPv6ToggleButton());
 	this.add(getSearchPanel());
+    }
+
+
+    public JToggleButton getIPv6ToggleButton() {
+	JToggleButton tbtn = new JToggleButton();
+	tbtn.setAction(((OspfWinActionListener) actionListener).getActionIPv6Toggle());
+	tbtn.setText("");
+	tbtn.setSelected(false);
+	return tbtn;
     }
 
 

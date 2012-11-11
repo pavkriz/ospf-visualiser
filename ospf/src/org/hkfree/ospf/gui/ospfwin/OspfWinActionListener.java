@@ -56,8 +56,7 @@ public class OspfWinActionListener implements ActionListener {
     private Action actionExportModelToSVG = null;
     private Action actionShowInfoTable = null;
     private Action actionTips = null;
-    private Action actionIPv6Show = null;
-    private Action actionIPv6Hide = null;
+    private Action actionIPv6Toggle = null;
 
 
     /**
@@ -72,7 +71,7 @@ public class OspfWinActionListener implements ActionListener {
     /**
      * Vytvoří akce
      */
-    public void createActions() {
+    private void createActions() {
 	actionShowNeighboursMode = new AbstractAction(rb.getString("mode." + MODE.SHOW_NEIGHBORS), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "show_neighbours.png"))) {
 
@@ -299,32 +298,6 @@ public class OspfWinActionListener implements ActionListener {
 	actionTwoRoutersShortesPathMode.putValue(AbstractAction.SHORT_DESCRIPTION,
 		rb.getString("mode." + MODE.SHORTEST_PATH_TWO_ROUTERS + ".title"));
 	actionTwoRoutersShortesPathMode.setEnabled(false);
-	actionIPv6Show = new AbstractAction(rb.getString("mode." + MODE.IPV6_SHOW), new ImageIcon(getClass()
-		.getResource(Constants.URL_IMG_GUI + "ip_v6_show.png"))) {
-
-	    private static final long serialVersionUID = 1L;
-
-
-	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.IPV6_SHOW);
-	    }
-	};
-	actionIPv6Show.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.IPV6_SHOW + ".title"));
-	actionIPv6Show.setEnabled(false);
-	actionIPv6Hide = new AbstractAction(rb.getString("mode." + MODE.IPV6_HIDE), new ImageIcon(getClass()
-		.getResource(Constants.URL_IMG_GUI + "ip_v6_hide.png"))) {
-
-	    private static final long serialVersionUID = 1L;
-
-
-	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.IPV6_HIDE);
-	    }
-	};
-	actionIPv6Hide.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.IPV6_HIDE + ".title"));
-	actionIPv6Hide.setEnabled(false);
 	actionCloseWin = new AbstractAction(rb.getString("menu.program.close"), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "exit.png"))) {
 
@@ -531,28 +504,20 @@ public class OspfWinActionListener implements ActionListener {
 	};
 	actionExportModelToSVG.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.map.exportSVG.title"));
 	actionExportModelToSVG.setEnabled(false);
-	// actionFRLayout = new AbstractAction(rb.getString("menu.layout.fr")) {
-	//
-	// private static final long serialVersionUID = 1L;
-	//
-	//
-	// public void actionPerformed(ActionEvent e) {
-	// winManager.getActualMDManager().setLayout(LAYOUT.FR);
-	// }
-	// };
-	// actionFRLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.fr.title"));
-	// actionFRLayout.setEnabled(false);
-	// actionSpringLayout = new AbstractAction(rb.getString("menu.layout.spring")) {
-	//
-	// private static final long serialVersionUID = 1L;
-	//
-	//
-	// public void actionPerformed(ActionEvent e) {
-	// winManager.getActualMDManager().setLayout(LAYOUT.SPRING);
-	// }
-	// };
-	// actionSpringLayout.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.layout.spring.title"));
-	// actionSpringLayout.setEnabled(false);
+	actionIPv6Toggle = new AbstractAction(rb.getString("mode.IPV6"), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "ip_v6.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().setMode(MODE.IPV6);
+		winManager.actualizeIPv6mode();
+	    }
+	};
+	actionIPv6Toggle.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode.IPV6.title"));
+	actionIPv6Toggle.setEnabled(false);
     }
 
 
@@ -592,22 +557,6 @@ public class OspfWinActionListener implements ActionListener {
     }
 
 
-    /**
-     * Vrací akci spuštění automatického rozvrhování
-     * @return action
-     */
-    // public Action getActionStartLayouting() {
-    // return actionStartLayouting;
-    // }
-    //
-    //
-    // /**
-    // * Vrací akci zastavení automatického rozvrhování
-    // * @return action
-    // */
-    // public Action getActionStopLayouting() {
-    // return actionStopLayouting;
-    // }
     /**
      * Vrací akci nastavení režimu zobrazení nejkratších cest
      * @return action
@@ -878,12 +827,7 @@ public class OspfWinActionListener implements ActionListener {
     }
 
 
-    public Action getActionIPv6Hide() {
-	return actionIPv6Hide;
-    }
-
-
-    public Action getActionIPv6Show() {
-	return actionIPv6Show;
+    public Action getActionIPv6Toggle() {
+	return actionIPv6Toggle;
     }
 }

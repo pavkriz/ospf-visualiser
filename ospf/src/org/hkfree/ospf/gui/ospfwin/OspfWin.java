@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
@@ -42,8 +43,8 @@ public class OspfWin extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private ResourceBundle rb = null; // zde je null, v teto tride se teprve nastavuje pres konstruktor manageru
-    private OspfWinActionListener actionListener = null;
     private OspfWinManager manager = null;
+    private OspfWinActionListener actionListener = null;
     private JToolBar toolBar;
     private StatusBar statusBar;
     private StateDialog stateDialog;
@@ -317,5 +318,16 @@ public class OspfWin extends JFrame {
      */
     public MapManager getActualMDManager() {
 	return ((MapPanel) models.get(cbModels.getSelectedItem().toString())).getMapDesignWinManager();
+    }
+
+
+    public void actualizeIPv6mode() {
+	boolean b = manager.getActualMDManager().getGraphComponent().isShowIPv6();
+	System.out.println(b);
+	((OspfWinToolBar)toolBar).getIPv6ToggleButton().setSelected(b);
+	((OspfWinToolBar)toolBar).getIPv6ToggleButton().repaint();
+	((OspfWinToolBar)toolBar).getIPv6ToggleButton().revalidate();
+	((OspfWinToolBar)toolBar).repaint();
+	((OspfWinMenu)this.getJMenuBar()).getIPv6CheckBoxItem().setSelected(b);
     }
 }

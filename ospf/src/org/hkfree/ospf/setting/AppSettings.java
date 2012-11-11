@@ -33,8 +33,8 @@ public class AppSettings {
     public String modelSingleLocalPath;// =/home/schovjan/Desktop/2012-03-18--14-20
     public String modelZipLocalPath;// =d:/
     public String telnetUrl;// =89.248.243.69
-    public int telnetPortIPv4;// =2604
-    public int telnetPortIPv6;// =2606
+    public Integer telnetPortIPv4;// =2604
+    public Integer telnetPortIPv6;// =2606
     public String telnetPassword;// =free
     public int telnetTimeout;// =5000
     public String telnetRDNSServer;// =lab.hkfree.org

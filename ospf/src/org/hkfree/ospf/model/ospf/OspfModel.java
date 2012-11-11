@@ -244,6 +244,9 @@ public class OspfModel {
      */
     public void addStubNetwork(String routerId, String linkId, String mask, int cost) {
 	Router r = getRouterByIp(routerId);
+	if (r == null) {
+	    return; //TODO opravit, router by se mel nalezt
+	}
 	StubLink sl = new StubLink();
 	sl.setLinkID(linkId);
 	sl.setMask(mask);

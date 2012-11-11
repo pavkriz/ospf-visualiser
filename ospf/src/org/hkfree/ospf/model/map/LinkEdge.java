@@ -416,11 +416,13 @@ public class LinkEdge {
 	    return result;
 	}
 	if (!linkEdgeIDv4.isEmpty()) {
-	    result += "(" + Integer.toString(getCost1v4());
+	    result += Integer.toString(getCost1v4());
 	    if (!getRVertex2().isMultilink()) {
 		result += " - " + Integer.toString(getCost2v4());
 	    }
-	    result += ")v4";
+	    if (graphComponent.isShowIPv6()) {
+		result = "(" + result + ")v4";
+	    }
 	}
 	if (!linkEdgeIDv4.isEmpty() && !linkEdgeIDv6.isEmpty() && graphComponent.isShowIPv6()) {
 	    result += " ";

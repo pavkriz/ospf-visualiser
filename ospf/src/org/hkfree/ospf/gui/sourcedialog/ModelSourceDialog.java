@@ -111,7 +111,7 @@ public class ModelSourceDialog extends JDialog {
 	this.tfRowZIPFileIdentification.setText(settings.remoteZipFileIdentification);
 	this.tfTelnetUrl.setText(settings.telnetUrl);
 	this.tfTelnetPortIPv4.setText(String.valueOf(settings.telnetPortIPv4));
-	this.tfTelnetPortIPv6.setText(String.valueOf(settings.telnetPortIPv6));
+	this.tfTelnetPortIPv6.setText(settings.telnetPortIPv6 == null ? "" : String.valueOf(settings.telnetPortIPv6));
 	this.tfTelnetPassword.setText(settings.telnetPassword);
 	this.tfTelnetRDNSServer.setText(settings.telnetRDNSServer);
 	this.tfTelnetTimeout.setText(String.valueOf(settings.telnetTimeout));
@@ -695,7 +695,11 @@ public class ModelSourceDialog extends JDialog {
 	settings.telnetUrl = tfTelnetUrl.getText();
 	try {
 	    settings.telnetPortIPv4 = Integer.valueOf(tfTelnetPortIPv4.getText());
-	    settings.telnetPortIPv6 = Integer.valueOf(tfTelnetPortIPv6.getText());
+	    if (tfTelnetPortIPv6.getText().isEmpty()) {
+		settings.telnetPortIPv6 = null;
+	    } else {
+		settings.telnetPortIPv6 = Integer.valueOf(tfTelnetPortIPv6.getText());
+	    }
 	    settings.telnetTimeout = Integer.valueOf(tfTelnetTimeout.getText());
 	} catch (Exception e) {
 	    throw new Exception("telnet port parse error");
