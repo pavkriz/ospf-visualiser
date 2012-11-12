@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
@@ -45,6 +44,7 @@ public class OspfWin extends JFrame {
     private ResourceBundle rb = null; // zde je null, v teto tride se teprve nastavuje pres konstruktor manageru
     private OspfWinManager manager = null;
     private OspfWinActionListener actionListener = null;
+    private OspfWinMenu mainMenu;
     private JToolBar toolBar;
     private StatusBar statusBar;
     private StateDialog stateDialog;
@@ -82,7 +82,7 @@ public class OspfWin extends JFrame {
 	JPanel stred = new JPanel();
 	stred.setLayout(new BorderLayout());
 	// menu
-	OspfWinMenu mainMenu = new OspfWinMenu(actionListener);
+	mainMenu = new OspfWinMenu(actionListener);
 	this.setJMenuBar(mainMenu);
 	// toolbar
 	toolBar = new OspfWinToolBar(actionListener);
@@ -321,13 +321,13 @@ public class OspfWin extends JFrame {
     }
 
 
+    /**
+     * aktualizuje stav toggle tlacitka v toolbaru pro zobrazeniIPv6
+     * a check tlacitka v menu
+     */
     public void actualizeIPv6mode() {
 	boolean b = manager.getActualMDManager().getGraphComponent().isShowIPv6();
-	System.out.println(b);
-	((OspfWinToolBar)toolBar).getIPv6ToggleButton().setSelected(b);
-	((OspfWinToolBar)toolBar).getIPv6ToggleButton().repaint();
-	((OspfWinToolBar)toolBar).getIPv6ToggleButton().revalidate();
-	((OspfWinToolBar)toolBar).repaint();
-	((OspfWinMenu)this.getJMenuBar()).getIPv6CheckBoxItem().setSelected(b);
+	((OspfWinToolBar) toolBar).getIPv6ToggleButton().setSelected(b);
+	((OspfWinMenu) mainMenu).getIPv6CheckBoxItem().setSelected(b);
     }
 }
