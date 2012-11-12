@@ -20,6 +20,7 @@ public class OspfWinMenu extends JMenuBar {
     private static final long serialVersionUID = 1L;
     private ResourceBundle rb = Factory.getRb();
     private ActionListener actionListener = null;
+    private JCheckBoxMenuItem checkIPv6 = null;
 
 
     /**
@@ -28,7 +29,14 @@ public class OspfWinMenu extends JMenuBar {
      */
     public OspfWinMenu(ActionListener actionListener) {
 	this.actionListener = actionListener;
+	init();
 	makeComponents();
+    }
+
+
+    private void init() {
+	checkIPv6 = new JCheckBoxMenuItem(((OspfWinActionListener) actionListener).getActionIPv6Toggle());
+	checkIPv6.setSelected(false);
     }
 
 
@@ -101,10 +109,9 @@ public class OspfWinMenu extends JMenuBar {
 	this.add(mVertices);
 	this.add(mHelp);
     }
-    
+
+
     public JCheckBoxMenuItem getIPv6CheckBoxItem() {
-	JCheckBoxMenuItem i = new JCheckBoxMenuItem(((OspfWinActionListener) actionListener).getActionIPv6Toggle());
-	i.setSelected(false);
-	return i;
+	return checkIPv6;
     }
 }

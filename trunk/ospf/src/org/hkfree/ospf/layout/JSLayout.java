@@ -2,7 +2,10 @@ package org.hkfree.ospf.layout;
 
 import java.awt.Dimension;
 
+import org.hkfree.ospf.model.map.RouterVertex;
+
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.util.IterativeContext;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -39,7 +42,10 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 
     private void doInit() {
 	currentIteration = 0;
-	
+	for (V v : graph.getVertices()) {
+//	    ((RouterVertex)v).
+//	    FRLayout<V, E>
+	}
     }
 
 

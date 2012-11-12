@@ -28,7 +28,8 @@ public class OspfWinToolBar extends JToolBar {
     private static final long serialVersionUID = 1L;
     private ResourceBundle rb = Factory.getRb();
     private ActionListener actionListener = null;
-    private JTextField tfFind = new JTextField();
+    private JTextField tfFind = null;
+    private JToggleButton togIPv6 = null;
 
 
     /**
@@ -38,7 +39,17 @@ public class OspfWinToolBar extends JToolBar {
      */
     public OspfWinToolBar(ActionListener actionListener) {
 	this.actionListener = actionListener;
+	init();
 	makeComponents();
+    }
+
+
+    private void init() {
+	tfFind = new JTextField();
+	togIPv6 = new JToggleButton();
+	togIPv6.setAction(((OspfWinActionListener) actionListener).getActionIPv6Toggle());
+	togIPv6.setText("");
+	togIPv6.setSelected(false);
     }
 
 
@@ -79,15 +90,6 @@ public class OspfWinToolBar extends JToolBar {
 	this.addSeparator();
 	this.add(getIPv6ToggleButton());
 	this.add(getSearchPanel());
-    }
-
-
-    public JToggleButton getIPv6ToggleButton() {
-	JToggleButton tbtn = new JToggleButton();
-	tbtn.setAction(((OspfWinActionListener) actionListener).getActionIPv6Toggle());
-	tbtn.setText("");
-	tbtn.setSelected(false);
-	return tbtn;
     }
 
 
@@ -145,6 +147,11 @@ public class OspfWinToolBar extends JToolBar {
 	findPanel.add(btnFind, BorderLayout.EAST);
 	findPanel.setBorder(BorderFactory.createEtchedBorder());
 	return findPanel;
+    }
+
+
+    public JToggleButton getIPv6ToggleButton() {
+	return togIPv6;
     }
 
 
