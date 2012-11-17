@@ -15,16 +15,20 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import org.hkfree.ospf.gui.pathstreedialog.ShortestPathTreeDialog;
+import org.hkfree.ospf.layout.JSLayout;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.ospf.ExternalLSA;
+import org.hkfree.ospf.model.ospf.OspfModel;
+import org.hkfree.ospf.model.ospf.Router;
+import org.hkfree.ospf.model.ospf.StubLink;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
 
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.DelegateForest;
@@ -64,6 +68,9 @@ public class MapGraphComponent extends JComponent {
     private RouterVertex firstShortestPathRV = null;
     private RouterVertex secondShortestPathRV = null;
     private boolean showIPv6 = false;
+    private static int MAX_ITERATIONS = 800;
+    private static double ATTRACTION = 0.15; // 0.55, vzdalenosti vrcholu od sebe 45
+    private static double REPULSION = 0.45; // 0.18, vzdalenosti vrcholu na spoji od sobe 15
 
 
     /**
@@ -108,11 +115,11 @@ public class MapGraphComponent extends JComponent {
      */
     private void initializeGraph() {
 	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
-	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
+	layout = new JSLayout<RouterVertex, LinkEdge>(graph);
 	layout.setSize(new Dimension(2200, 2200));
-	((FRLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-	((FRLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
-	((FRLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(400); // default
+	((JSLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(REPULSION);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(ATTRACTION);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(MAX_ITERATIONS);
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
 	vv.setSize(2200, 2200);
@@ -170,7 +177,7 @@ public class MapGraphComponent extends JComponent {
 	    graph.removeVertex(rv);
 	}
 	graph.addVertex(center);
-	((FRLayout<RouterVertex, LinkEdge>) layout).setLocation(center, vv.getWidth() / 2, vv.getHeight() / 2);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setLocation(center, vv.getWidth() / 2, vv.getHeight() / 2);
 	layout.lock(center, true);
 	center.setPermanentlyDisplayed(true);
 	List<RouterVertex> previousStepVertexes = new ArrayList<RouterVertex>();
@@ -805,7 +812,7 @@ public class MapGraphComponent extends JComponent {
 	    rv.setPermanentlyDisplayed(true);
 	    rv.setExtraAddedVertex(true);
 	    rvPoint = transformClickedPointToGraphPoint(rvPoint);
-	    ((FRLayout<RouterVertex, LinkEdge>) layout).setLocation(rv, rvPoint.getX(), rvPoint.getY());
+	    ((JSLayout<RouterVertex, LinkEdge>) layout).setLocation(rv, rvPoint.getX(), rvPoint.getY());
 	}
     }
 
@@ -854,8 +861,8 @@ public class MapGraphComponent extends JComponent {
     public Map<RouterVertex, Point2D> getRouterVertexPositions() {
 	Map<RouterVertex, Point2D> positions = new HashMap<RouterVertex, Point2D>();
 	for (RouterVertex rv : graph.getVertices()) {
-	    positions.put(rv, new Point2D.Double(((FRLayout<RouterVertex, LinkEdge>) layout).getX(rv),
-		    ((FRLayout<RouterVertex, LinkEdge>) layout).getY(rv)));
+	    positions.put(rv, new Point2D.Double(((JSLayout<RouterVertex, LinkEdge>) layout).getX(rv),
+		    ((JSLayout<RouterVertex, LinkEdge>) layout).getY(rv)));
 	}
 	return positions;
     }
@@ -894,20 +901,41 @@ public class MapGraphComponent extends JComponent {
 
 
     /**
-     * Nalezne a oznaci routery obsahujici v nazvu text
+     * Nalezne a oznaci routery obsahujici v nazvu text, take prohledava stuby a external LSA
      * text muze byt oddeleny | pro vyhledavani vice retezcu
      * @param text filtr pro nazev routeru
      */
     public void findByNameOrIP(String text) {
 	boolean b;
+	OspfModel model = owner.getMapDesignWinManager().getOspfModel();
 	Set<RouterVertex> rvs = new HashSet<RouterVertex>(graph.getVertices());
+	Router r = null;
 	String[] foundedNames = text.split("\\|");
 	for (RouterVertex rv : rvs) {
+	    // multilink se preskakuje, v nem se nehleda
+	    if (rv.isMultilink()) {
+		continue;
+	    }
 	    b = false;
+	    // prochazeni a hledani kazdeho retezce ktere byly oddeleny '|'
 	    for (String name : foundedNames) {
-		if (!name.isEmpty()) {
-		    if (rv.getName().toUpperCase().contains(name.toUpperCase())
-			    || rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
+		if (name.isEmpty()) {
+		    continue;
+		}
+		if (rv.getName().toUpperCase().contains(name.toUpperCase())
+			|| rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
+		    b = true;
+		}
+		r = model.getRouterByIp(rv.getDescription());
+		// vyhledavani ve stubs
+		for (StubLink sl : r.getStubs()) {
+		    if (sl.getLinkID().toUpperCase().contains(name.toUpperCase())) {
+			b = true;
+		    }
+		}
+		// vyhledavani v external lsa
+		for (ExternalLSA el : r.getExternalLsa()) {
+		    if (el.getNetwork().toUpperCase().contains(name.toUpperCase())) {
 			b = true;
 		    }
 		}
@@ -940,16 +968,15 @@ public class MapGraphComponent extends JComponent {
 	    Animator animator = null;
 	    switch (mode) {
 		case LAYOUT_FR_START:
-		    layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) FRLayout.class;
+		    layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
 		    constructor = layoutC
 			    .getConstructor(new Class[] { Graph.class });
 		    o = constructor.newInstance(constructorArgs);
 		    l = (Layout<RouterVertex, LinkEdge>) o;
 		    l.setInitializer(vv.getGraphLayout());
-		    ((FRLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-		    ((FRLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k
-											  // sobe
-		    ((FRLayout<RouterVertex, LinkEdge>) l).setMaxIterations(800); // default
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(REPULSION);
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(ATTRACTION);
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(MAX_ITERATIONS);
 		    l.setSize(new Dimension(2200, 2200));
 		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
 		    animator = new Animator(lt);

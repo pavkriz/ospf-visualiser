@@ -63,7 +63,7 @@ public class OspfWin extends JFrame {
 	rb = Factory.getRb();
 	actionListener = new OspfWinActionListener(manager);
 	models = new HashMap<String, MapPanel>();
-	propSize = new Dimension(150, 10);
+	propSize = new Dimension(190, 10);
 	createGUI();
     }
 

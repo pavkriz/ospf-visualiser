@@ -242,7 +242,7 @@ public class OspfModel {
      * @param mask
      * @param cost
      */
-    public void addStubNetwork(String routerId, String linkId, String mask, int cost) {
+    public void addStubNetwork(String routerId, String linkId, int mask, int cost) {
 	Router r = getRouterByIp(routerId);
 	if (r == null) {
 	    return; //TODO opravit, router by se mel nalezt

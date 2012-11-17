@@ -8,6 +8,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import org.hkfree.ospf.gui.mappanel.MapManager;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.tools.Factory;
@@ -512,7 +513,9 @@ public class OspfWinActionListener implements ActionListener {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.IPV6);
+		for (MapManager manager : winManager.getAllMDManager()) {
+		    manager.setMode(MODE.IPV6);
+		}
 		winManager.actualizeIPv6mode();
 	    }
 	};

@@ -9,12 +9,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hkfree.ospf.model.linkfault.LinkFaultModel;
+import org.hkfree.ospf.model.ospf.ExternalLSA;
 import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.model.ospf.OspfLinkData;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
 import org.hkfree.ospf.model.ospf.StubLink;
 import org.hkfree.ospf.tools.geo.GeoCoordinatesTransformator;
+import org.hkfree.ospf.tools.ip.IpCalculator;
 
 /**
  * Třída, která slouží k načítání OspfModelu z externích souborů.
@@ -113,7 +115,7 @@ public class OspfLoader {
 			while (!(radek = infoUzlu.readLine()).contains("(Link Data) Network Mask")) {}
 			ipMatcher = ipPattern.matcher(radek);
 			ipMatcher.find();
-			stub.setMask(ipMatcher.group(0));
+			stub.setMask(IpCalculator.getMask(ipMatcher.group(0)));
 			while (!(radek = infoUzlu.readLine()).contains("TOS 0 Metric")) {}
 			costMatcher = costPattern.matcher(radek);
 			costMatcher.find();
@@ -206,200 +208,265 @@ public class OspfLoader {
     }
 
 
-    public static void getTopologyFromData(OspfModel model, BufferedReader input) { //throws NumberFormatException, IOException {
+    public static void getTopologyFromData(OspfModel model, BufferedReader input) { // throws NumberFormatException,
+										    // IOException {
 	try {
-	OspfModel modelIPv6 = new OspfModel();
-	String linkStateId = null;
-	String linkId = null;
-	String linkData = null;
-	String router = null;
-	String neighborInterface = null;
-	String neighborRouter = null;
-	int cost = -1;
-	int numberOfLinks;
-	String radek = "";
-	Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
-	Matcher ipMatcher = null;
-	Pattern maskPattern = Pattern.compile("^.*/([0-9]{1,2})");
-	Matcher maskMatcher = null;
-	Pattern costPattern = Pattern.compile("^.*:\\s([0-9]{1,})");
-	Matcher costMatcher = null;
-	// prikazy dle poradi vyskytu v datech
-	String cmd1 = "show ip ospf database network";
-	String cmd2 = "show ip ospf database router";
-	String cmd3 = "show ipv6 ospf6 database network detail";
-	String cmd4 = "show ipv6 ospf6 database router detail";
-	boolean isStub = false;
-	int cmd = 0;
-	while ((radek = input.readLine()) != null) {
-	    if (radek.contains(cmd1))
-		cmd = 1;
-	    if (radek.contains(cmd2))
-		cmd = 2;
-	    if (radek.contains(cmd3))
-		cmd = 3;
-	    if (radek.contains(cmd4))
-		cmd = 4;
-	    switch (cmd) {
-		case 1:
-		    // nacitani topologie pro IPv4
-		    if (radek.contains("Link State ID")) {
-			String linkName = "";
-			int linkMask = 0;
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			linkName = ipMatcher.group(0);
-			while (!((radek = input.readLine()).contains("Network Mask")))
-			    ;
-			maskMatcher = maskPattern.matcher(radek);
-			maskMatcher.find();
-			linkMask = Integer.valueOf(maskMatcher.group(1));
-			Link l = new Link();
-			l.setLinkIDv4(linkName);
-			l.setSubnetMask(linkMask);
-			model.getLinks().add(l);
-			// čtení řádků než narazí na Attached Router
-			while (!((radek = input.readLine()).contains("Attached Router")))
-			    ;
-			// načtení první IP jdoucí do spoje
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			model.addRouter(ipMatcher.group(0));
-			// načtení zbylých IP jdoucích do spoje
-			while ((radek = input.readLine()).contains("Attached Router")) {
-			    ipMatcher = ipPattern.matcher(radek);
-			    ipMatcher.find();
-			    model.addRouter(ipMatcher.group(0));
-			}
-		    }
-		    break;
-		case 2:
-		    // nacitani dodatecnych dat pro IPv4
-		    if (radek.contains("Link State ID")) {
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			linkStateId = ipMatcher.group(0);
-			while (!(radek = input.readLine()).contains("Number of Links"))
-			    ;
-			costMatcher = costPattern.matcher(radek);
-			costMatcher.find();
-			numberOfLinks = Integer.valueOf(costMatcher.group(1));
-			for (int i = 0; i < numberOfLinks; i++) {
-			    while (!(radek = input.readLine()).contains("Link connected to"))
+	    // zapis dat do souboru
+	    // BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
+	    // String s;
+	    // while ((s = input.readLine()) != null) {
+	    // out.write(s + "\n");
+	    // }
+	    // out.close();
+	    OspfModel modelIPv6 = new OspfModel();
+	    String linkStateId = null;
+	    String linkId = null;
+	    String linkData = null;
+	    String linkName = null;
+	    String router = null;
+	    String neighborInterface = null;
+	    String neighborRouter = null;
+	    String advRouter = null;
+	    int metric = -1;
+	    int mask = -1;
+	    int cost = -1;
+	    int numberOfLinks;
+	    String radek = null;
+	    Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+	    Pattern maskPattern = Pattern.compile("^.*/([0-9]{1,2})");
+	    Pattern costPattern = Pattern.compile("^.*:\\s*([0-9]{1,})");
+	    Matcher matcher = null;
+	    // prikazy dle poradi vyskytu v datech
+	    String cmd1 = "show ip ospf database network";
+	    String cmd2 = "show ip ospf database router";
+	    String cmd3 = "show ip ospf database external";
+	    String cmd4 = "show ipv6 ospf6 database network detail";
+	    String cmd5 = "show ipv6 ospf6 database router detail";
+	    String cmd6 = "show ipv6 ospf6 database as-external detail";
+	    boolean isStub = false;
+	    int cmd = 0;
+	    while ((radek = input.readLine()) != null) {
+		if (radek.contains(cmd1))
+		    cmd = 1;
+		if (radek.contains(cmd2))
+		    cmd = 2;
+		if (radek.contains(cmd3))
+		    cmd = 3;
+		if (radek.contains(cmd4))
+		    cmd = 4;
+		if (radek.contains(cmd5))
+		    cmd = 5;
+		if (radek.contains(cmd6))
+		    cmd = 6;
+		switch (cmd) {
+		    case 1:
+			// nacitani topologie pro IPv4
+			if (radek.contains("Link State ID")) {
+			    int linkMask = 0;
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    linkName = matcher.group(0);
+			    while (!((radek = input.readLine()).contains("Network Mask")))
 				;
-			    isStub = radek.endsWith("Stub Network");
-			    while (!(radek = input.readLine()).contains("(Link ID)"))
+			    matcher = maskPattern.matcher(radek);
+			    matcher.find();
+			    linkMask = Integer.valueOf(matcher.group(1));
+			    Link l = new Link();
+			    l.setLinkIDv4(linkName);
+			    l.setSubnetMask(linkMask);
+			    model.getLinks().add(l);
+			    // čtení řádků než narazí na Attached Router
+			    while (!((radek = input.readLine()).contains("Attached Router")))
 				;
-			    ipMatcher = ipPattern.matcher(radek);
-			    ipMatcher.find();
-			    linkId = ipMatcher.group(0);
-			    while (!(radek = input.readLine()).contains("(Link Data)"))
-				;
-			    ipMatcher = ipPattern.matcher(radek);
-			    ipMatcher.find();
-			    linkData = ipMatcher.group(0);
-			    while (!(radek = input.readLine()).contains("TOS 0 Metric"))
-				;
-			    costMatcher = costPattern.matcher(radek);
-			    costMatcher.find();
-			    cost = Integer.valueOf(costMatcher.group(1));
-			    if (isStub) {
-				model.addStubNetwork(linkStateId, linkId, linkData, cost);
-			    } else {
-				model.updateCost(linkId, linkStateId, linkData, cost);
+			    // načtení první IP jdoucí do spoje
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    model.addRouter(matcher.group(0));
+			    // načtení zbylých IP jdoucích do spoje
+			    while ((radek = input.readLine()).contains("Attached Router")) {
+				matcher = ipPattern.matcher(radek);
+				matcher.find();
+				model.addRouter(matcher.group(0));
 			    }
 			}
-		    }
-		    break;
-		case 3:
-		    // nacitani topologie pro IPv6
-		    if (radek.contains("Link State ID")) {
-			String linkName = "";
-			int linkMask = 0;
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			linkName = ipMatcher.group(0);
-			Link l = new Link();
-			l.setLinkIDv6(linkName);
-			l.setSubnetMask(linkMask);
-			modelIPv6.getLinks().add(l);
-			// čtení řádků než narazí na Attached Router
-			while (!((radek = input.readLine()).contains("Attached Router")))
-			    ;
-			// načtení první IP jdoucí do spoje
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			modelIPv6.addRouter(ipMatcher.group(0));
-			// načtení zbylých IP jdoucích do spoje
-			while ((radek = input.readLine()).contains("Attached Router")) {
-			    ipMatcher = ipPattern.matcher(radek);
-			    ipMatcher.find();
-			    modelIPv6.addRouter(ipMatcher.group(0));
+			break;
+		    case 2:
+			// nacitani dodatecnych dat pro IPv4
+			if (radek.contains("Link State ID")) {
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    linkStateId = matcher.group(0);
+			    while (!(radek = input.readLine()).contains("Number of Links"))
+				;
+			    matcher = costPattern.matcher(radek);
+			    matcher.find();
+			    numberOfLinks = Integer.valueOf(matcher.group(1));
+			    for (int i = 0; i < numberOfLinks; i++) {
+				while (!(radek = input.readLine()).contains("Link connected to"))
+				    ;
+				isStub = radek.endsWith("Stub Network");
+				while (!(radek = input.readLine()).contains("(Link ID)"))
+				    ;
+				matcher = ipPattern.matcher(radek);
+				matcher.find();
+				linkId = matcher.group(0);
+				while (!(radek = input.readLine()).contains("(Link Data)"))
+				    ;
+				matcher = ipPattern.matcher(radek);
+				matcher.find();
+				linkData = matcher.group(0);
+				while (!(radek = input.readLine()).contains("TOS 0 Metric"))
+				    ;
+				matcher = costPattern.matcher(radek);
+				matcher.find();
+				cost = Integer.valueOf(matcher.group(1));
+				if (isStub) {
+				    model.addStubNetwork(linkStateId, linkId, IpCalculator.getMask(linkData), cost);
+				} else {
+				    model.updateCost(linkId, linkStateId, linkData, cost);
+				}
+			    }
 			}
-		    }
-		    break;
-		case 4:
-		    // nacitani dodatecnych dat pro IPv6
-		    if (radek.contains("Advertising Router")) {
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			router = ipMatcher.group(0);
-		    } else if (radek.contains("Transit-Network Metric")) {
-			costMatcher = costPattern.matcher(radek);
-			costMatcher.find();
-			cost = Integer.valueOf(costMatcher.group(1));
-		    } else if (radek.contains("Neighbor Interface ID")) {
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			neighborInterface = ipMatcher.group(0);
-		    } else if (radek.contains("Neighbor Router ID")) {
-			ipMatcher = ipPattern.matcher(radek);
-			ipMatcher.find();
-			neighborRouter = ipMatcher.group(0);
-			// linkId, router, 2.router, cena
-			modelIPv6.updateCostIPv6(neighborInterface, router, neighborRouter, cost);
-		    }
-		    break;
-	    }
-	}
-	// zacleneni IPv6 do puvodniho modelu kde je do teto doby pouze IPv4
-	// prochazeni spoju
-	boolean b = false;
-	for (Link l6 : modelIPv6.getLinks()) {
-	    b = false;
-	    for (Link l4 : model.getLinks()) {
-		if (l6.hasSameRouters(l4.getOspfLinkData())) {
-		    b = true;
-		    l4.setLinkIDv6(l6.getLinkIDv6());
-		    for (OspfLinkData old6 : l6.getOspfLinkData()) {
-			OspfLinkData old4 = l4.getOspfLinkData(old6.getRouter().getId());
-			old4.setCostIPv6(old6.getCostIPv6());
-		    }
-		    continue;
+			break;
+		    case 3:
+			// nacitani externich LSA a jejich masek
+			if (radek.contains("Link State ID")) {
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    linkName = matcher.group(0);
+			    while (!((radek = input.readLine()).contains("Advertising Router")))
+				;
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    advRouter = matcher.group(0);
+			    while (!(radek = input.readLine()).contains("Network Mask"))
+				;
+			    matcher = maskPattern.matcher(radek);
+			    matcher.find();
+			    mask = Integer.valueOf(matcher.group(1));
+			    while (!(radek = input.readLine()).contains("Metric Type"))
+				;
+			    matcher = costPattern.matcher(radek);
+			    matcher.find();
+			    metric = Integer.valueOf(matcher.group(1));
+			    ExternalLSA exLsa = new ExternalLSA();
+			    exLsa.setMask(mask);
+			    exLsa.setMetricType(metric);
+			    exLsa.setNetwork(linkName);
+			    model.getRouterByIp(advRouter).getExternalLsa().add(exLsa);
+			}
+			break;
+		    case 4:
+			// nacitani topologie pro IPv6
+			if (radek.contains("Link State ID")) {
+			    int linkMask = 0;
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    linkName = matcher.group(0);
+			    Link l = new Link();
+			    l.setLinkIDv6(linkName);
+			    l.setSubnetMask(linkMask);
+			    modelIPv6.getLinks().add(l);
+			    // čtení řádků než narazí na Attached Router
+			    while (!((radek = input.readLine()).contains("Attached Router")))
+				;
+			    // načtení první IP jdoucí do spoje
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    modelIPv6.addRouter(matcher.group(0));
+			    // načtení zbylých IP jdoucích do spoje
+			    while ((radek = input.readLine()).contains("Attached Router")) {
+				matcher = ipPattern.matcher(radek);
+				matcher.find();
+				modelIPv6.addRouter(matcher.group(0));
+			    }
+			}
+			break;
+		    case 5:
+			// nacitani dodatecnych dat pro IPv6
+			if (radek.contains("Advertising Router")) {
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    router = matcher.group(0);
+			} else if (radek.contains("Transit-Network Metric")) {
+			    matcher = costPattern.matcher(radek);
+			    matcher.find();
+			    cost = Integer.valueOf(matcher.group(1));
+			} else if (radek.contains("Neighbor Interface ID")) {
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    neighborInterface = matcher.group(0);
+			} else if (radek.contains("Neighbor Router ID")) {
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    neighborRouter = matcher.group(0);
+			    // linkId, router, 2.router, cena
+			    modelIPv6.updateCostIPv6(neighborInterface, router, neighborRouter, cost);
+			}
+			break;
+		    case 6:
+			// nacitani externich lsa a masky pro IPv6
+			if (radek.contains("Advertising Router")) {
+			    matcher = ipPattern.matcher(radek);
+			    matcher.find();
+			    advRouter = matcher.group(0);
+			} else if (radek.contains("Metric")) {
+			    matcher = costPattern.matcher(radek);
+			    matcher.find();
+			    metric = Integer.valueOf(matcher.group(1));
+			} else if (radek.contains("Prefix") && !radek.contains("Options")) {
+			    linkName = radek.substring(radek.indexOf(':') + 2, radek.indexOf('/'));
+			    mask = Integer.valueOf(radek.substring(radek.indexOf('/') + 1));
+			    ExternalLSA exLsa = new ExternalLSA();
+			    exLsa.setMask(mask);
+			    exLsa.setMetricType(metric);
+			    exLsa.setNetwork(linkName);
+			    if (model.getRouterByIp(advRouter) != null) {
+				model.getRouterByIp(advRouter).getExternalLsa().add(exLsa);
+			    } else if (modelIPv6.getRouterByIp(advRouter) != null) {
+				modelIPv6.getRouterByIp(advRouter).getExternalLsa().add(exLsa);
+			    } else {
+				System.err.println("OspfLoader - Router nenalezen");
+			    }
+			}
+			break;
 		}
 	    }
-	    if (!b) {
-		Link l = new Link();
-		l.setLinkIDv6(l6.getLinkIDv6());
-		for (OspfLinkData old : l6.getOspfLinkData()) {
-		    Router r = model.getRouterByIp(old.getRouter().getId());
-		    if (r == null) {
-			r = new Router(old.getRouter().getId());
-			model.getRouters().add(r);
+	    // zacleneni IPv6 do puvodniho modelu kde je do teto doby pouze IPv4
+	    // prochazeni spoju
+	    boolean b = false;
+	    for (Link l6 : modelIPv6.getLinks()) {
+		b = false;
+		for (Link l4 : model.getLinks()) {
+		    if (l6.hasSameRouters(l4.getOspfLinkData())) {
+			b = true;
+			l4.setLinkIDv6(l6.getLinkIDv6());
+			for (OspfLinkData old6 : l6.getOspfLinkData()) {
+			    OspfLinkData old4 = l4.getOspfLinkData(old6.getRouter().getId());
+			    old4.setCostIPv6(old6.getCostIPv6());
+			}
+			continue;
 		    }
-		    OspfLinkData o = new OspfLinkData();
-		    o.setCostIPv4(old.getCostIPv4());
-		    o.setCostIPv6(old.getCostIPv6());
-		    o.setRouter(model.getRouterByIp(old.getRouter().getId()));
-		    o.setInterfaceIp(old.getInterfaceIp());
-		    l.getOspfLinkData().add(o);
 		}
-		model.getLinks().add(l);
+		if (!b) {
+		    Link l = new Link();
+		    l.setLinkIDv6(l6.getLinkIDv6());
+		    for (OspfLinkData old : l6.getOspfLinkData()) {
+			Router r = model.getRouterByIp(old.getRouter().getId());
+			if (r == null) {
+			    r = new Router(old.getRouter().getId());
+			    model.getRouters().add(r);
+			}
+			OspfLinkData o = new OspfLinkData();
+			o.setCostIPv4(old.getCostIPv4());
+			o.setCostIPv6(old.getCostIPv6());
+			o.setRouter(model.getRouterByIp(old.getRouter().getId()));
+			o.setInterfaceIp(old.getInterfaceIp());
+			l.getOspfLinkData().add(o);
+		    }
+		    model.getLinks().add(l);
+		}
 	    }
-	}
-	// BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
-	// out.write(input.toString());
-	// out.close();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
