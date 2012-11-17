@@ -1,4 +1,4 @@
-*11.11.2012*
+*17.11.2012*
   * nacitani subnetu + external LSA
   * vyhledavani v stub + external LSA
 
