@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.hkfree.ospf.tools.Factory;
-import org.hkfree.ospf.tools.ip.IpSubnetCalculator;
+import org.hkfree.ospf.tools.ip.IpCalculator;
 
 /**
  * Třída představující spoj OspfModelu.
@@ -30,9 +30,6 @@ public class Link {
     public Link() {}
 
 
-    // public Link(String linkID) {
-    // this.linkID = linkID;
-    // }
     /**
      * Konstruktor - vytvoří instanci třídy
      */
@@ -47,10 +44,8 @@ public class Link {
      * Spočítá adresu sítě a broadcastovou adresu spoje
      */
     public void computeSubnetIps() {
-	IpSubnetCalculator ipSubnetCalc = new IpSubnetCalculator();
-	ipSubnetCalc.computeAddresses(linkIDv4, subnetMask);
-	networkAddress = ipSubnetCalc.getNetworkAddress();
-	broadcastAddress = ipSubnetCalc.getBroadcastAddress();
+	networkAddress = IpCalculator.getNetworkAddress(linkIDv4, subnetMask);
+	broadcastAddress = IpCalculator.getBroadcastAddress(linkIDv4, subnetMask);
     }
 
 

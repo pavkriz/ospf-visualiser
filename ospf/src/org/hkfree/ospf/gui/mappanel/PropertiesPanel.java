@@ -1,6 +1,7 @@
 package org.hkfree.ospf.gui.mappanel;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,12 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.ospf.ExternalLSA;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
 import org.hkfree.ospf.model.ospf.StubLink;
@@ -112,7 +115,7 @@ public class PropertiesPanel extends JPanel {
 	    pInfo.setLayout(new GridBagLayout());
 	    GridBagConstraints c = new GridBagConstraints();
 	    c.anchor = GridBagConstraints.NORTHWEST;
-	    c.fill = GridBagConstraints.HORIZONTAL;
+	    c.fill = GridBagConstraints.BOTH;
 	    c.ipadx = 2;
 	    c.ipady = 2;
 	    c.weightx = 1;
@@ -139,28 +142,68 @@ public class PropertiesPanel extends JPanel {
 	    c.gridy = c.gridy + 1;
 	    c.insets = new Insets(2, 6, 0, 0);
 	    pInfo.add(new JLabel(rb.getString("pw.4") + ": " + String.valueOf(model.getCountOfLinksContainingRouter(r))), c);
+	    // tabulka se Stuby
 	    c.gridy = c.gridy + 1;
-	    c.gridwidth = 1;
-	    c.insets = new Insets(20, 6, 0, 0);
-	    pInfo.add(new JLabel(rb.getString("pw.14")), c);
-	    c.gridx = 1;
-	    pInfo.add(new JLabel(rb.getString("pw.11")), c);
-	    c.gridwidth = 1;
-	    c.gridy = c.gridy + 1;
-	    c.insets = new Insets(2, 6, 0, 0);
-	    for (StubLink sl : r.getStubs()) {
-		c.gridy = c.gridy + 1;
-		c.gridx = 0;
-		pInfo.add(new JLabel(sl.getLinkID()), c);
-		c.gridx = 1;
-		pInfo.add(new JLabel(String.valueOf(sl.getCost())), c);
-	    }
-	    c.gridx = 0;
-	    c.gridy = c.gridy + 1;
+	    c.gridwidth = 2;
+	    c.insets = new Insets(20, 0, 0, 0);
 	    c.weighty = 1;
-	    pInfo.add(new JLabel(""), c);
+	    pInfo.add(getStubTable(r), c);
+	    // tabulka s External LSA
+	    c.gridy = c.gridy + 1;
+	    c.insets = new Insets(2, 0, 0, 0);
+	    pInfo.add(getExternalLSATable(r), c);
 	}
 	pInfo.updateUI();
+    }
+
+
+    /**
+     * Vrací tabulku s External LSA
+     * @param r router ze kterého se načtou data
+     * @return
+     */
+    private Component getExternalLSATable(Router r) {
+	String[] columnNames = { rb.getString("pw.17"), rb.getString("pw.11.short"), rb.getString("pw.16.short") };
+	Object data[][] = new Object[r.getExternalLsa().size()][3];
+	int i = 0;
+	for (ExternalLSA e : r.getExternalLsa()) {
+	    data[i][0] = e.getNetwork();
+	    data[i][1] = e.getMetricType();
+	    data[i][2] = e.getMask();
+	    i++;
+	}
+	JTable table = new JTable(data, columnNames);
+	table.getColumnModel().getColumn(1).setMaxWidth(60);
+	table.getColumnModel().getColumn(2).setMaxWidth(25);
+	table.setFillsViewportHeight(true);
+	table.setAutoCreateRowSorter(true);
+	JScrollPane scrollPane = new JScrollPane(table);
+	return scrollPane;
+    }
+
+
+    /**
+     * Vrací tabulku se Stub sítěmi
+     * @param r router ze ktere se načtou data
+     * @return
+     */
+    private Component getStubTable(Router r) {
+	String[] columnNames = { rb.getString("pw.14"), rb.getString("pw.11.short"), rb.getString("pw.16.short") };
+	Object data[][] = new Object[r.getStubs().size()][3];
+	int i = 0;
+	for (StubLink s : r.getStubs()) {
+	    data[i][0] = s.getLinkID();
+	    data[i][1] = s.getCost();
+	    data[i][2] = s.getMask();
+	    i++;
+	}
+	JTable table = new JTable(data, columnNames);
+	table.getColumnModel().getColumn(1).setMaxWidth(60);
+	table.getColumnModel().getColumn(2).setMaxWidth(25);
+	table.setFillsViewportHeight(true);
+	table.setAutoCreateRowSorter(true);
+	JScrollPane scrollPane = new JScrollPane(table);
+	return scrollPane;
     }
 
 

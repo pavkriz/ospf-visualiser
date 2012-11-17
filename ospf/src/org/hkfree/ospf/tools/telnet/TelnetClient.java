@@ -85,6 +85,7 @@ public class TelnetClient {
 	setSb(new StringBuilder());
 	sendRecive("show ip ospf database network");
 	sendRecive("show ip ospf database router");
+	sendRecive("show ip ospf database external");
 	return getSb();
     }
 
@@ -93,6 +94,7 @@ public class TelnetClient {
 	setSb(new StringBuilder());
 	sendRecive("show ipv6 ospf6 database network detail");
 	sendRecive("show ipv6 ospf6 database router detail");
+	sendRecive("show ipv6 ospf6 database as-external detail");
 	return getSb();
     }
 

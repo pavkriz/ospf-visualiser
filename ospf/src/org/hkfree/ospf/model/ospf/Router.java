@@ -1,7 +1,7 @@
 package org.hkfree.ospf.model.ospf;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hkfree.ospf.tools.geo.GPSPoint;
 
@@ -16,7 +16,8 @@ public class Router {
     private String name = "";
     private String suffix = "";
     private GPSPoint gpsPosition = null;
-    private List<StubLink> stubs = new ArrayList<StubLink>();
+    private Set<ExternalLSA> externalLsa = new HashSet<ExternalLSA>();
+    private Set<StubLink> stubs = new HashSet<StubLink>();
 
 
     public Router(String id) {
@@ -76,12 +77,22 @@ public class Router {
     }
 
 
-    public List<StubLink> getStubs() {
+    public Set<StubLink> getStubs() {
 	return stubs;
     }
 
 
-    public void setStubs(List<StubLink> stubs) {
+    public void setStubs(Set<StubLink> stubs) {
 	this.stubs = stubs;
+    }
+
+
+    public Set<ExternalLSA> getExternalLsa() {
+	return externalLsa;
+    }
+
+
+    public void setExternalLsa(Set<ExternalLSA> externalLsa) {
+	this.externalLsa = externalLsa;
     }
 }

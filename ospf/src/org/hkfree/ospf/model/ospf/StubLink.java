@@ -7,8 +7,8 @@ package org.hkfree.ospf.model.ospf;
 public class StubLink {
 
     private String linkID;
-    private String mask;
-    private int cost;
+    private int mask = -1;
+    private int cost = -1;
 
 
     public String getLinkID() {
@@ -21,12 +21,12 @@ public class StubLink {
     }
 
 
-    public String getMask() {
+    public int getMask() {
 	return mask;
     }
 
 
-    public void setMask(String mask) {
+    public void setMask(int mask) {
 	this.mask = mask;
     }
 
@@ -38,5 +38,11 @@ public class StubLink {
 
     public void setCost(int cost) {
 	this.cost = cost;
+    }
+
+
+    @Override
+    public String toString() {
+	return "StubLink [linkID=" + linkID + ", mask=" + mask + ", cost=" + cost + "]";
     }
 }
