@@ -1,4 +1,8 @@
 *11.11.2012*
+  * nacitani subnetu + external LSA
+  * vyhledavani v stub + external LSA
+
+*11.11.2012*
   * toggle tlacitko pro IPv6 zobrazit/skryt
   * zobrazeni cen zpet na puvodni zpusob, pri IPv6 info o verzi
   * port pro IPv6 data netreba vypnlit
