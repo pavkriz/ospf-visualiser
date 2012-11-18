@@ -1,3 +1,6 @@
+*18.11.2012*
+  * vyhledavani v podsitich dle rozsahu (masky)
+
 *17.11.2012*
   * nacitani subnetu + external LSA
   * vyhledavani v stub + external LSA
