@@ -7,8 +7,8 @@ package org.hkfree.ospf.tools.ip;
  */
 public class IpCalculator {
 
-    private static String networkAddress = "0.0.0.0";
-    private static String broadcastAddress = "0.0.0.0";
+    private static String ZEROS = "00000000";
+    private static String ONES = "11111111";
 
 
     /**
@@ -19,45 +19,36 @@ public class IpCalculator {
 	if (ip == null || ip.isEmpty()) {
 	    return null;
 	}
-	int ip_1, ip_2, ip_3, ip_4;
+	String na;
+	int ip1, ip2, ip3, ip4;
 	String[] octets1 = ip.split("\\.");
-	ip_1 = Integer.valueOf(octets1[0]);
-	ip_2 = Integer.valueOf(octets1[1]);
-	ip_3 = Integer.valueOf(octets1[2]);
-	ip_4 = Integer.valueOf(octets1[3]);
+	ip1 = Integer.valueOf(octets1[0]);
+	ip2 = Integer.valueOf(octets1[1]);
+	ip3 = Integer.valueOf(octets1[2]);
+	ip4 = Integer.valueOf(octets1[3]);
 	if (subnetMask <= 8) {
 	    int maskedBits = subnetMask;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_1));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip1));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2) + ".0.0.0";
-	    broadcastAddress = Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2)
-		    + ".255.255.255";
+	    na = Integer.valueOf((ipB.substring(0, maskedBits) + ZEROS).substring(0, 8), 2) + ".0.0.0";
 	} else if (subnetMask <= 16) {
 	    int maskedBits = subnetMask - 8;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_2));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip2));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = ip_1 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2)
-		    + ".0.0";
-	    broadcastAddress = ip_1 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2)
-		    + ".255.255";
+	    na = ip1 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + ZEROS).substring(0, 8), 2) + ".0.0";
 	} else if (subnetMask <= 24) {
 	    int maskedBits = subnetMask - 16;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_3));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip3));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = ip_1 + "." + ip_2 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2) + ".0";
-	    broadcastAddress = ip_1 + "." + ip_2 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2) + ".255";
+	    na = ip1 + "." + ip2 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + ZEROS).substring(0, 8), 2) + ".0";
 	} else {
 	    int maskedBits = subnetMask - 24;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_4));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip4));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = ip_1 + "." + ip_2 + "." + ip_3 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2);
-	    broadcastAddress = ip_1 + "." + ip_2 + "." + ip_3 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2);
+	    na = ip1 + "." + ip2 + "." + ip3 + "."
+		    + Integer.valueOf((ipB.substring(0, maskedBits) + ZEROS).substring(0, 8), 2);
 	}
-	return networkAddress;
+	return na;
     }
 
 
@@ -69,45 +60,36 @@ public class IpCalculator {
 	if (ip == null || ip.isEmpty()) {
 	    return null;
 	}
-	int ip_1, ip_2, ip_3, ip_4;
+	String ba;
+	int ip1, ip2, ip3, ip4;
 	String[] octets1 = ip.split("\\.");
-	ip_1 = Integer.valueOf(octets1[0]);
-	ip_2 = Integer.valueOf(octets1[1]);
-	ip_3 = Integer.valueOf(octets1[2]);
-	ip_4 = Integer.valueOf(octets1[3]);
+	ip1 = Integer.valueOf(octets1[0]);
+	ip2 = Integer.valueOf(octets1[1]);
+	ip3 = Integer.valueOf(octets1[2]);
+	ip4 = Integer.valueOf(octets1[3]);
 	if (subnetMask <= 8) {
 	    int maskedBits = subnetMask;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_1));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip1));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2) + ".0.0.0";
-	    broadcastAddress = Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2)
-		    + ".255.255.255";
+	    ba = Integer.valueOf((ipB.substring(0, maskedBits) + ONES).substring(0, 8), 2) + ".255.255.255";
 	} else if (subnetMask <= 16) {
 	    int maskedBits = subnetMask - 8;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_2));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip2));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = ip_1 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2)
-		    + ".0.0";
-	    broadcastAddress = ip_1 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2)
-		    + ".255.255";
+	    ba = ip1 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + ONES).substring(0, 8), 2) + ".255.255";
 	} else if (subnetMask <= 24) {
 	    int maskedBits = subnetMask - 16;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_3));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip3));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = ip_1 + "." + ip_2 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2) + ".0";
-	    broadcastAddress = ip_1 + "." + ip_2 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2) + ".255";
+	    ba = ip1 + "." + ip2 + "." + Integer.valueOf((ipB.substring(0, maskedBits) + ONES).substring(0, 8), 2) + ".255";
 	} else {
 	    int maskedBits = subnetMask - 24;
-	    String ipB = ("00000000" + Integer.toBinaryString(ip_4));
+	    String ipB = (ZEROS + Integer.toBinaryString(ip4));
 	    ipB = ipB.substring(ipB.length() - 8, ipB.length());
-	    networkAddress = ip_1 + "." + ip_2 + "." + ip_3 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "00000000").substring(0, 8), 2);
-	    broadcastAddress = ip_1 + "." + ip_2 + "." + ip_3 + "."
-		    + Integer.valueOf((ipB.substring(0, maskedBits) + "11111111").substring(0, 8), 2);
+	    ba = ip1 + "." + ip2 + "." + ip3 + "."
+		    + Integer.valueOf((ipB.substring(0, maskedBits) + ONES).substring(0, 8), 2);
 	}
-	return broadcastAddress;
+	return ba;
     }
 
 
@@ -120,15 +102,56 @@ public class IpCalculator {
 	if (mask == null || mask.isEmpty()) {
 	    return -1;
 	}
-	int m_1, m_2, m_3, m_4;
+	int m1, m2, m3, m4;
 	String[] octets1 = mask.split("\\.");
-	m_1 = Integer.valueOf(octets1[0]);
-	m_2 = Integer.valueOf(octets1[1]);
-	m_3 = Integer.valueOf(octets1[2]);
-	m_4 = Integer.valueOf(octets1[3]);
-	String s = Integer.toBinaryString(m_1) + Integer.toBinaryString(m_2) + Integer.toBinaryString(m_3)
-		+ Integer.toBinaryString(m_4);
+	m1 = Integer.valueOf(octets1[0]);
+	m2 = Integer.valueOf(octets1[1]);
+	m3 = Integer.valueOf(octets1[2]);
+	m4 = Integer.valueOf(octets1[3]);
+	String s = Integer.toBinaryString(m1) + Integer.toBinaryString(m2) + Integer.toBinaryString(m3)
+		+ Integer.toBinaryString(m4);
 	s = s.replaceAll("0", "");
-	return s.length();
+	return s.length(); // vraci pocet jednicek (masku site)
+    }
+
+
+    /**
+     * Zjisti zda podsit s maskou obsahuje hledanou sit
+     * @param network sit
+     * @param mask maska site
+     * @param search hledany retezec
+     */
+    public static boolean networkContains(String network, int mask, String search) {
+	if (network.contains(":")) {
+	    return false;
+	}
+	// minimalni adresa - adresa site
+	String na = getNetworkAddress(network, mask);
+	// maximalni adresa - adresa broadcast
+	String ba = getBroadcastAddress(network, mask);
+	String[] sas = search.split("\\.");
+	String[] nas = na.split("\\.");
+	String[] bas = ba.split("\\.");
+	for (int i = 0; i < 4; i++) {
+	    if (!isBetweenInclude(Integer.valueOf(nas[i]), Integer.valueOf(bas[i]), Integer.valueOf(sas[i]))) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
+
+    /**
+     * Vrací příznak zda num je mezi min a max včetně
+     * @param min min číslo
+     * @param max max číslo
+     * @param num číslo porovnávané
+     * @return pokud num je mezi min/max - true, jinak false
+     */
+    private static boolean isBetweenInclude(int min, int max, int num) {
+	if (num >= min && num <= max) {
+	    return true;
+	}
+	return false;
     }
 }
