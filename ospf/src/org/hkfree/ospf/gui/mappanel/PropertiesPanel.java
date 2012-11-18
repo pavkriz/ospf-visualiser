@@ -173,7 +173,7 @@ public class PropertiesPanel extends JPanel {
 	    i++;
 	}
 	JTable table = new JTable(data, columnNames);
-	table.getColumnModel().getColumn(1).setMaxWidth(60);
+	table.getColumnModel().getColumn(1).setMaxWidth(40);
 	table.getColumnModel().getColumn(2).setMaxWidth(25);
 	table.setFillsViewportHeight(true);
 	table.setAutoCreateRowSorter(true);
@@ -198,7 +198,7 @@ public class PropertiesPanel extends JPanel {
 	    i++;
 	}
 	JTable table = new JTable(data, columnNames);
-	table.getColumnModel().getColumn(1).setMaxWidth(60);
+	table.getColumnModel().getColumn(1).setMaxWidth(40);
 	table.getColumnModel().getColumn(2).setMaxWidth(25);
 	table.setFillsViewportHeight(true);
 	table.setAutoCreateRowSorter(true);

@@ -28,6 +28,7 @@ import org.hkfree.ospf.model.ospf.StubLink;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
+import org.hkfree.ospf.tools.ip.IpCalculator;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
@@ -929,13 +930,15 @@ public class MapGraphComponent extends JComponent {
 		r = model.getRouterByIp(rv.getDescription());
 		// vyhledavani ve stubs
 		for (StubLink sl : r.getStubs()) {
-		    if (sl.getLinkID().toUpperCase().contains(name.toUpperCase())) {
+		    if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
+			    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
 			b = true;
 		    }
 		}
 		// vyhledavani v external lsa
 		for (ExternalLSA el : r.getExternalLsa()) {
-		    if (el.getNetwork().toUpperCase().contains(name.toUpperCase())) {
+		    if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
+			    IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
 			b = true;
 		    }
 		}
