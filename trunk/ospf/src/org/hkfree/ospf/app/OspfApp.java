@@ -7,7 +7,7 @@ import org.hkfree.ospf.gui.ospfwin.OspfWin;
  * 
  * @author Jakub Menzel
  */
-public class StartOspf {
+public class OspfApp {
 
 	public static void main(String[] args) {
 		OspfWin okno = new OspfWin();

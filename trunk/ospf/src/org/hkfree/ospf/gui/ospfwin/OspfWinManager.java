@@ -110,8 +110,8 @@ public class OspfWinManager {
     /**
      * Nastaví en/disable akce dle počtu záložek (modelů)
      */
-    private void checkActionsEnable() {
-	boolean b = ospfModely.size() == 0 ? false : true;
+    protected void checkActionsEnable() {
+	boolean b = ospfModely.isEmpty() ? false : true;
 	((OspfWin) owner).getOspfWinActListener().getActionCenterRouter().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionCloseActualModel().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionShowInfoTable().setEnabled(b);
@@ -137,9 +137,19 @@ public class OspfWinManager {
 	((OspfWin) owner).getOspfWinActListener().getActionShortestPath().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionCostChangingMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionShowNeighboursMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(b);
+	if (b) {
+	    // GPS - kontrola zda jsou souřadnice pro daný model načteny
+	    // IPv6 - kontrola zda jsou data načtena
+	    boolean gpsLoaded = getActualMDManager().getOspfModel().isGpsLoaded();
+	    ((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(gpsLoaded);
+	    ((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(gpsLoaded);
+	    boolean ipv6Loaded = getActualMDManager().getOspfModel().isIpv6Loaded();
+	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(ipv6Loaded);
+	} else {
+	    ((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(b);
+	    ((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(b);
+	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(b);
+	}
 	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModely.size() < 2 ? false : true);
 	if (!b) {
 	    ((OspfWin) owner).getStatusBar().clear();
@@ -717,6 +727,6 @@ public class OspfWinManager {
 
 
     public void actualizeIPv6mode() {
-	((OspfWin)owner).actualizeIPv6mode();
+	((OspfWin) owner).actualizeIPv6mode();
     }
 }

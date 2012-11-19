@@ -466,7 +466,9 @@ public class OspfWinActionListener implements ActionListener {
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().searchInMap(winManager.getSearchString());
+		if (!winManager.getSearchString().isEmpty() && !winManager.getSearchString().equals(rb.getString("mdwtb.2"))) {
+		    winManager.getActualMDManager().searchInMap(winManager.getSearchString());
+		}
 	    }
 	};
 	actionSearchRouter.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mdwtb.1"));

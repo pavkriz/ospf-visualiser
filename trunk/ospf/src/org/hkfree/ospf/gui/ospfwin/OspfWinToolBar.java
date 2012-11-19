@@ -3,8 +3,9 @@ package org.hkfree.ospf.gui.ospfwin;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -13,8 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.hkfree.ospf.tools.Factory;
 
@@ -101,40 +100,26 @@ public class OspfWinToolBar extends JToolBar {
 	tfFind.setText(rb.getString("mdwtb.2"));
 	tfFind.setForeground(Color.GRAY);
 	tfFind.setToolTipText(rb.getString("mdwtb.1"));
-	tfFind.getDocument().addDocumentListener(new DocumentListener() {
+	tfFind.addFocusListener(new FocusListener() {
 
-	    public void removeUpdate(DocumentEvent e) {
-		String s = tfFind.getText();
-		if (s.length() != String.valueOf(rb.getString("mdwtb.2")).length() || !s.contains(rb.getString("mdwtb.2"))) {
-		    tfFind.setForeground(Color.BLACK);
-		} else {
-		    tfFind.setForeground(Color.GRAY);
-		}
-	    }
-
-
-	    public void insertUpdate(DocumentEvent e) {
-		String s = tfFind.getText();
-		if (!s.contains(rb.getString("mdwtb.2")) || s.length() != String.valueOf(rb.getString("mdwtb.2")).length()) {
-		    tfFind.setForeground(Color.BLACK);
-		} else {
-		    tfFind.setForeground(Color.GRAY);
-		}
-	    }
-
-
-	    public void changedUpdate(DocumentEvent arg0) {}
-	});
-	tfFind.setAction(((OspfWinActionListener) actionListener).getActionSearchRouter());
-	tfFind.addActionListener(new ActionListener() {
-
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+	    public void focusLost(FocusEvent e) {
 		if (tfFind.getText().isEmpty()) {
 		    tfFind.setText(rb.getString("mdwtb.2"));
 		    tfFind.setForeground(Color.GRAY);
 		}
 	    }
+
+
+	    @Override
+	    public void focusGained(FocusEvent e) {
+		if (tfFind.getText().equals(rb.getString("mdwtb.2"))) {
+		    tfFind.setText("");
+		    tfFind.setForeground(Color.BLACK);
+		}
+	    }
 	});
+	tfFind.setAction(((OspfWinActionListener) actionListener).getActionSearchRouter());
 	JButton btnFind = new JButton(((OspfWinActionListener) actionListener).getActionSearchRouter());
 	btnFind.setBorder(BorderFactory.createEmptyBorder());
 	JPanel findPanel = new JPanel();

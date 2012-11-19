@@ -20,6 +20,8 @@ public class OspfModel {
     private List<Link> links = new ArrayList<Link>();
     private List<Router> routers = new ArrayList<Router>();
     private String modelName = "";
+    private boolean ipv6Loaded = false;
+    private boolean gpsLoaded = false;
 
 
     public OspfModel() {}
@@ -35,16 +37,6 @@ public class OspfModel {
     }
 
 
-    /**
-     * Metoda, která vytvoří záznam o novém spoji
-     * @param name
-     * @param subnetMask
-     */
-    // public void addOspfLink(String name) {
-    // Link l = new Link();
-    // l.setLinkIDIPv4(name);
-    // links.add(l);
-    // }
     /**
      * Metoda, která přidá router reprezentovaný určitou IP do posledně vytvořeného ospfLinks
      * @param ip
@@ -218,20 +210,6 @@ public class OspfModel {
 		updateCostIPv6(linkId, r, neighborRouter, cost);
 	    }
 	}
-	// for (Link s : links) {
-	// if (s.getLinkID().equals(linkId)) {
-	// s.updateLinkDataIPv6(router, neighborRouter, cost);
-	// }
-	// }
-	// for (Link l : links) {
-	// if (l.getOspfLinkData().get(0).getRouter().getId().equals(router) &&
-	// l.getOspfLinkData().get(1).getRouter().getId().equals(neighborRouter)) {
-	// l.getOspfLinkData().get(0).setCostIPv6(cost);
-	// } else if (l.getOspfLinkData().get(0).getRouter().getId().equals(neighborRouter) &&
-	// l.getOspfLinkData().get(1).getRouter().getId().equals(router)) {
-	// l.getOspfLinkData().get(1).setCostIPv6(cost);
-	// }
-	// }
     }
 
 
@@ -245,7 +223,7 @@ public class OspfModel {
     public void addStubNetwork(String routerId, String linkId, int mask, int cost) {
 	Router r = getRouterByIp(routerId);
 	if (r == null) {
-	    return; //TODO opravit, router by se mel nalezt
+	    return; // TODO opravit, router by se mel nalezt
 	}
 	StubLink sl = new StubLink();
 	sl.setLinkID(linkId);
@@ -272,5 +250,25 @@ public class OspfModel {
 
     public void setModelName(String modelName) {
 	this.modelName = modelName;
+    }
+
+
+    public void setIpv6Loaded(boolean ipv6Loaded) {
+	this.ipv6Loaded = ipv6Loaded;
+    }
+
+
+    public boolean isIpv6Loaded() {
+	return ipv6Loaded;
+    }
+
+
+    public boolean isGpsLoaded() {
+	return gpsLoaded;
+    }
+
+
+    public void setGpsLoaded(boolean gpsLoaded) {
+	this.gpsLoaded = gpsLoaded;
     }
 }

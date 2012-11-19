@@ -163,18 +163,18 @@ public class PropertiesPanel extends JPanel {
      * @return
      */
     private Component getExternalLSATable(Router r) {
-	String[] columnNames = { rb.getString("pw.17"), rb.getString("pw.11.short"), rb.getString("pw.16.short") };
+	String[] columnNames = { rb.getString("pw.17"), rb.getString("pw.16.short"), rb.getString("pw.11.short") };
 	Object data[][] = new Object[r.getExternalLsa().size()][3];
 	int i = 0;
 	for (ExternalLSA e : r.getExternalLsa()) {
 	    data[i][0] = e.getNetwork();
-	    data[i][1] = e.getMetricType();
-	    data[i][2] = e.getMask();
+	    data[i][1] = e.getMask();
+	    data[i][2] = e.getMetricType();
 	    i++;
 	}
 	JTable table = new JTable(data, columnNames);
-	table.getColumnModel().getColumn(1).setMaxWidth(40);
-	table.getColumnModel().getColumn(2).setMaxWidth(25);
+	table.getColumnModel().getColumn(1).setMaxWidth(25);
+	table.getColumnModel().getColumn(2).setMaxWidth(40);
 	table.setFillsViewportHeight(true);
 	table.setAutoCreateRowSorter(true);
 	JScrollPane scrollPane = new JScrollPane(table);
@@ -188,18 +188,18 @@ public class PropertiesPanel extends JPanel {
      * @return
      */
     private Component getStubTable(Router r) {
-	String[] columnNames = { rb.getString("pw.14"), rb.getString("pw.11.short"), rb.getString("pw.16.short") };
+	String[] columnNames = { rb.getString("pw.14"), rb.getString("pw.16.short"),rb.getString("pw.11.short") };
 	Object data[][] = new Object[r.getStubs().size()][3];
 	int i = 0;
 	for (StubLink s : r.getStubs()) {
 	    data[i][0] = s.getLinkID();
-	    data[i][1] = s.getCost();
-	    data[i][2] = s.getMask();
+	    data[i][1] = s.getMask();
+	    data[i][2] = s.getCost();
 	    i++;
 	}
 	JTable table = new JTable(data, columnNames);
-	table.getColumnModel().getColumn(1).setMaxWidth(40);
-	table.getColumnModel().getColumn(2).setMaxWidth(25);
+	table.getColumnModel().getColumn(1).setMaxWidth(25);
+	table.getColumnModel().getColumn(2).setMaxWidth(40);
 	table.setFillsViewportHeight(true);
 	table.setAutoCreateRowSorter(true);
 	JScrollPane scrollPane = new JScrollPane(table);

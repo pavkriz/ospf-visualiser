@@ -133,6 +133,7 @@ public class OspfWin extends JFrame {
      * Aktualzace komponent hlavniho okna
      */
     private void actualizeContent() {
+	manager.checkActionsEnable();
 	MapPanel mp = ((MapPanel) models.get(cbModels.getSelectedItem()));
 	spPanel.setRightComponent(null);
 	if (((JPanel) spPanel.getLeftComponent()).getComponentCount() > 1) {
@@ -313,10 +314,13 @@ public class OspfWin extends JFrame {
 
 
     /**
-     * Vrací manažera aktivní mapy
+     * Vrací manažera aktivní mapy, pokud není žádná mapa, vrací null
      * @return
      */
     public MapManager getActualMDManager() {
+	if (cbModels.getSelectedItem() == null) {
+	    return null;
+	}
 	return ((MapPanel) models.get(cbModels.getSelectedItem().toString())).getMapDesignWinManager();
     }
 
