@@ -198,6 +198,7 @@ public class OspfLoader {
 	    geoMatcher = geoPattern.matcher(line);
 	    geoMatcher.find();
 	    if (geoMatcher.matches()) {
+		model.setGpsLoaded(true);
 		Router r = model.getRouterByIp(geoMatcher.group(1));
 		if (r != null) {
 		    r.setGpsPosition(geoCoorTransormator.transformJTSKToWGS(Integer.valueOf(geoMatcher.group(2)),
@@ -433,6 +434,8 @@ public class OspfLoader {
 		}
 	    }
 	    // zacleneni IPv6 do puvodniho modelu kde je do teto doby pouze IPv4
+	    // priznak zda jsou nacteny nejaky IPv6
+	    model.setIpv6Loaded(!modelIPv6.getLinks().isEmpty());
 	    // prochazeni spoju
 	    boolean b = false;
 	    for (Link l6 : modelIPv6.getLinks()) {
