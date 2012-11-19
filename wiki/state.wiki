@@ -1,3 +1,9 @@
+*19.11.2012*
+  * zaneseny drobne upravy
+    * prohozeni sloupcu v tabulka se subnetama
+    * oprava hintu ve vyhledavacim poli
+    * disabled akce ktere nelze provest (GPS, IPv6)
+
 *18.11.2012*
   * vyhledavani v podsitich dle rozsahu (masky)
 
