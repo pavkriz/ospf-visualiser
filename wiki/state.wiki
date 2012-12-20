@@ -1,3 +1,6 @@
+*20.12.2012*
+  * oprava netstatewindow - pridani fr a spring layoutu
+
 *19.12.2012*
   * oprava nacitani NML souboru
   * zmenseni source data dialogu
