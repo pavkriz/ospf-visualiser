@@ -1,5 +1,6 @@
 *20.12.2012*
   * oprava netstatewindow - pridani fr a spring layoutu
+  * zbaveni zavislosti na prikazech pro urceni typu dat pri parsovani
 
 *19.12.2012*
   * oprava nacitani NML souboru
