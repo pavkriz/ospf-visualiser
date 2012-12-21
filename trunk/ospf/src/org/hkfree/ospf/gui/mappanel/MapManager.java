@@ -217,12 +217,6 @@ public class MapManager {
 		graphComponent.setShowIPv6(!graphComponent.isShowIPv6());
 		graphComponent.setShowIPv6(graphComponent.isShowIPv6());
 		break;
-//	    case IPV6_SHOW:
-//		graphComponent.setShowIPv6(graphComponent.isShowIPv6());
-//		break;
-//	    case IPV6_HIDE:
-//		graphComponent.setShowIPv6(false);
-//		break;
 	    default:
 		break;
 	}

@@ -6,6 +6,8 @@ package org.hkfree.ospf.model;
  */
 public abstract class Constants {
 
+    /** verze aplikace */
+    public static final String APP_VERSION = "3.0.3";
     /** url k obrázkům */
     public static final String URL_IMG_GUI = "/images/";
     /** url k webovym strankam s tipy aplikace */
@@ -18,8 +20,12 @@ public abstract class Constants {
     public static final String MULTILINK = "MULTILINK";
     /** symetricky spoj */
     public static final String SYMETRIC = "SYMETRIC";
-    /** verze aplikace */
-    public static final String APP_VERSION = "3.0.3";
+    /** maximalni pocet iteraci pro FR layout */
+    public static int LAYOUT_FR_MAX_ITERATIONS = 800;
+    /** vzdalenosti vrcholu od sebe */
+    public static double LAYOUT_ATTRACTION = 0.55; // 0.55, vzdalenosti vrcholu od sebe 45
+    /** vzdalenosti vrcholu na spoji od sebe */
+    public static double LAYOUT_REPULSION = 0.18; // 0.18, vzdalenosti vrcholu na spoji od sobe 15
     // konstanty pro vyber zdroje pro nacteni dat
     public static final int FROM_DATE_TO_DATE = 0;
     public static final int ZIP_SERVER = 1;
@@ -61,6 +67,6 @@ public abstract class Constants {
 	ASYMETRIC_LINKS,
 	SHORTEST_PATH_TWO_ROUTERS,
 	IPV6,
-	NONE, 
+	NONE,
     }
 }

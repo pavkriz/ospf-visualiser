@@ -94,6 +94,10 @@ public class PropertiesPanel extends JPanel {
      * @param rv router
      */
     public void actualizeValues(RouterVertex rv) {
+	if (model == null) {
+	    //v pripade nacteni mapModelu z NML souboru je ospfmodelu null
+	    return;
+	}
 	DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
 	for (int i = 0; i < tree.getModel().getChildCount(root); i++) {
 	    if (((DefaultMutableTreeNode) tree.getModel().getChild(root, i)).toString().startsWith(rv.getDescription())) {
@@ -212,6 +216,10 @@ public class PropertiesPanel extends JPanel {
      * @param le spoj
      */
     public void actualizeValues(LinkEdge le) {
+	if (model == null) {
+	    //v pripade nacteni mapModelu z NML souboru je ospfmodelu null
+	    return;
+	}
 	pInfo.removeAll();
 	Router r = model.getRouterByIp(le.getRVertex1().getDescription());
 	Router r2 = model.getRouterByIp(le.getRVertex2().getDescription());

@@ -123,8 +123,22 @@ public class IpCalculator {
      */
     public static boolean networkContains(String network, int mask, String search) {
 	if (network.contains(":")) {
+	    // return networkContainsIPv6(network, mask, search);
 	    return false;
+	} else {
+	    return networkContainsIPv4(network, mask, search);
 	}
+    }
+
+
+    /**
+     * Zjisti zda podsit IPv4 s maskou obsahuje hledanou sit
+     * @param network sit
+     * @param mask maska site
+     * @param search hledany retezec
+     * @return
+     */
+    private static boolean networkContainsIPv4(String network, int mask, String search) {
 	// minimalni adresa - adresa site
 	String na = getNetworkAddress(network, mask);
 	// maximalni adresa - adresa broadcast
@@ -132,11 +146,26 @@ public class IpCalculator {
 	String[] sas = search.split("\\.");
 	String[] nas = na.split("\\.");
 	String[] bas = ba.split("\\.");
-	for (int i = 0; i < 4; i++) {
-	    if (!isBetweenInclude(Integer.valueOf(nas[i]), Integer.valueOf(bas[i]), Integer.valueOf(sas[i]))) {
-		return false;
-	    }
+	if (sas.length != 4) {
+	    return false;
 	}
+	for (int i = 0; i < 4; i++) {
+	    try {
+		if (!isBetweenInclude(Integer.valueOf(nas[i]), Integer.valueOf(bas[i]), Integer.valueOf(sas[i]))) {
+		    return false;
+		}
+	    } catch (NumberFormatException ex) {}
+	}
+	return true;
+    }
+
+
+    /** Zjisti zda podsit IPv6 s maskou obsahuje hledanou sit
+    * @param network sit
+    * @param mask maska site
+    * @param search hledany retezec
+    */
+    private static boolean networkContainsIPv6(String network, int mask, String search) {
 	return true;
     }
 

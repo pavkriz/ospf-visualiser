@@ -16,13 +16,13 @@ import javax.swing.JComponent;
 
 import org.hkfree.ospf.gui.pathstreedialog.ShortestPathTreeDialog;
 import org.hkfree.ospf.layout.JSLayout;
+import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.model.ospf.ExternalLSA;
-import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
 import org.hkfree.ospf.model.ospf.StubLink;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
@@ -69,9 +69,6 @@ public class MapGraphComponent extends JComponent {
     private RouterVertex firstShortestPathRV = null;
     private RouterVertex secondShortestPathRV = null;
     private boolean showIPv6 = false;
-    private static int MAX_ITERATIONS = 800;
-    private static double ATTRACTION = 0.15; // 0.55, vzdalenosti vrcholu od sebe 45
-    private static double REPULSION = 0.45; // 0.18, vzdalenosti vrcholu na spoji od sobe 15
 
 
     /**
@@ -118,9 +115,9 @@ public class MapGraphComponent extends JComponent {
 	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
 	layout = new JSLayout<RouterVertex, LinkEdge>(graph);
 	layout.setSize(new Dimension(2200, 2200));
-	((JSLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(REPULSION);
-	((JSLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(ATTRACTION);
-	((JSLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(MAX_ITERATIONS);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
 	vv.setSize(2200, 2200);
@@ -908,7 +905,6 @@ public class MapGraphComponent extends JComponent {
      */
     public void findByNameOrIP(String text) {
 	boolean b;
-	OspfModel model = owner.getMapDesignWinManager().getOspfModel();
 	Set<RouterVertex> rvs = new HashSet<RouterVertex>(graph.getVertices());
 	Router r = null;
 	String[] foundedNames = text.split("\\|");
@@ -927,19 +923,22 @@ public class MapGraphComponent extends JComponent {
 			|| rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
 		    b = true;
 		}
-		r = model.getRouterByIp(rv.getDescription());
-		// vyhledavani ve stubs
-		for (StubLink sl : r.getStubs()) {
-		    if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
-			    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
-			b = true;
+		// pokud je model null, hledat pouze v mapModelu
+		if (owner.getMapDesignWinManager().getOspfModel() != null) {
+		    r = owner.getMapDesignWinManager().getOspfModel().getRouterByIp(rv.getDescription());
+		    // vyhledavani ve stubs
+		    for (StubLink sl : r.getStubs()) {
+			if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
+				IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
+			    b = true;
+			}
 		    }
-		}
-		// vyhledavani v external lsa
-		for (ExternalLSA el : r.getExternalLsa()) {
-		    if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
-			    IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
-			b = true;
+		    // vyhledavani v external lsa
+		    for (ExternalLSA el : r.getExternalLsa()) {
+			if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
+				IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
+			    b = true;
+			}
 		    }
 		}
 	    }
@@ -963,7 +962,7 @@ public class MapGraphComponent extends JComponent {
     public void layouting(MODE mode) {
 	try {
 	    Object[] constructorArgs = { graph };
-	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutC = null;
+	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutNew = null;
 	    Constructor<? extends Layout<RouterVertex, LinkEdge>> constructor = null;
 	    Object o = null;
 	    Layout<RouterVertex, LinkEdge> l = null;
@@ -971,15 +970,19 @@ public class MapGraphComponent extends JComponent {
 	    Animator animator = null;
 	    switch (mode) {
 		case LAYOUT_FR_START:
-		    layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
-		    constructor = layoutC
-			    .getConstructor(new Class[] { Graph.class });
+		    // if (layout instanceof JSLayout<?, ?>) {
+		    // vv.getModel().getRelaxer().prerelax();
+		    // vv.getModel().getRelaxer().relax();
+		    // vv.repaint();
+		    // } else {
+		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
+		    constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 		    o = constructor.newInstance(constructorArgs);
 		    l = (Layout<RouterVertex, LinkEdge>) o;
 		    l.setInitializer(vv.getGraphLayout());
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(REPULSION);
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(ATTRACTION);
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(MAX_ITERATIONS);
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
 		    l.setSize(new Dimension(2200, 2200));
 		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
 		    animator = new Animator(lt);
@@ -987,14 +990,14 @@ public class MapGraphComponent extends JComponent {
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		    vv.repaint();
 		    layout = l;
+		    // }
 		    break;
 		case LAYOUT_SPRING_START:
 		    if (layout instanceof SpringLayout<?, ?>) {
 			vv.getModel().getRelaxer().relax();
 		    } else {
-			layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) SpringLayout.class;
-			constructor = layoutC
-				.getConstructor(new Class[] { Graph.class });
+			layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) SpringLayout.class;
+			constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 			o = constructor.newInstance(constructorArgs);
 			l = (Layout<RouterVertex, LinkEdge>) o;
 			l.setInitializer(vv.getGraphLayout());
@@ -1002,7 +1005,6 @@ public class MapGraphComponent extends JComponent {
 			((SpringLayout<RouterVertex, LinkEdge>) l).setRepulsionRange(120);
 			((SpringLayout<RouterVertex, LinkEdge>) l).setForceMultiplier(0.85);
 			l.setSize(new Dimension(2000, 2000));
-			// break;
 			lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
 			animator = new Animator(lt);
 			animator.start();

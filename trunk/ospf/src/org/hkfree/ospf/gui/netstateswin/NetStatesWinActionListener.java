@@ -29,7 +29,9 @@ public class NetStatesWinActionListener implements ActionListener {
     private Action actionPickingMode = null;
     private Action actionTransformingMode = null;
     private Action actionZoom = null;
-    private Action actionStartLayouting = null;
+    private Action actionLayoutStartFR = null;
+    private Action actionLayoutStartSpring = null;
+    private Action actionLayoutStopSpring = null;
     private Action actionLockMode = null;
     private Action actionLockAll = null;
     private Action actionNoneMode = null;
@@ -153,17 +155,44 @@ public class NetStatesWinActionListener implements ActionListener {
 	    }
 	};
 	actionZoom.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ZOOM + ".title"));
-//	actionStartLayouting = new AbstractAction(rb.getString("mode." + MODE.LAYOUTING_START), new ImageIcon(getClass()
-//		.getResource(Constants.URL_IMG_GUI + "startlayout.png"))) {
-//
-//	    private static final long serialVersionUID = 1L;
-//
-//
-//	    public void actionPerformed(ActionEvent e) {
-//		netStatesWinManager.getGraphComponent().startLayouting();
-//	    }
-//	};
-//	actionStartLayouting.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LAYOUTING_START + ".title"));
+	actionLayoutStartFR = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_FR_START), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "layout_fr_start.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		netStatesWinManager.setMode(MODE.LAYOUT_FR_START);
+	    }
+	};
+	actionLayoutStartFR.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUT_FR_START + ".title"));
+	actionLayoutStartSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_START), new ImageIcon(
+		getClass()
+			.getResource(Constants.URL_IMG_GUI + "layout_spring_start.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		netStatesWinManager.setMode(MODE.LAYOUT_SPRING_START);
+	    }
+	};
+	actionLayoutStartSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUT_SPRING_START + ".title"));
+	actionLayoutStopSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_STOP), new ImageIcon(
+		getClass()
+			.getResource(Constants.URL_IMG_GUI + "layout_spring_stop.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		netStatesWinManager.setMode(MODE.LAYOUT_SPRING_STOP);
+	    }
+	};
+	actionLayoutStopSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("mode." + MODE.LAYOUT_SPRING_STOP + ".title"));
 	actionLockAll = new AbstractAction(rb.getString("mode." + MODE.LOCK_ALL), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "lock_all.png"))) {
 
@@ -344,12 +373,18 @@ public class NetStatesWinActionListener implements ActionListener {
     }
 
 
-    /**
-     * Vrací akci zapnutí automatického rozvrhování
-     * @return action
-     */
-    public Action getActionStartLayouting() {
-	return actionStartLayouting;
+    public Action getActionLayoutStartFR() {
+	return actionLayoutStartFR;
+    }
+
+
+    public Action getActionLayoutStartSpring() {
+	return actionLayoutStartSpring;
+    }
+
+
+    public Action getActionLayoutStopSpring() {
+	return actionLayoutStopSpring;
     }
 
 
@@ -415,8 +450,8 @@ public class NetStatesWinActionListener implements ActionListener {
     public Action getActionGPSAll() {
 	return actionGPSAll;
     }
-    
-    
+
+
     public Action getActionZoom() {
 	return actionZoom;
     }
