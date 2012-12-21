@@ -1,6 +1,8 @@
 package org.hkfree.ospf.tools.load;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -209,16 +211,18 @@ public class OspfLoader {
     }
 
 
-    public static void getTopologyFromData(OspfModel model, BufferedReader input) { // throws NumberFormatException,
-										    // IOException {
+    public static void getTopologyFromData(OspfModel model, BufferedReader input) throws NumberFormatException,
+	    IOException {
 	try {
 	    // zapis dat do souboru
-	    // BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
-	    // String s;
-	    // while ((s = input.readLine()) != null) {
-	    // out.write(s + "\n");
-	    // }
-	    // out.close();
+//	     BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
+//	     String s;
+//	     BufferedReader input2 = new BufferedReader(input);
+//	     while ((s = input2.readLine()) != null) {
+//	     out.write(s + "\n");
+//	     }
+//	     out.close();
+	     
 	    OspfModel modelIPv6 = new OspfModel();
 	    String linkStateId = null;
 	    String linkId = null;
@@ -237,28 +241,32 @@ public class OspfLoader {
 	    Pattern maskPattern = Pattern.compile("^.*/([0-9]{1,2})");
 	    Pattern costPattern = Pattern.compile("^.*:\\s*([0-9]{1,})");
 	    Matcher matcher = null;
-	    // prikazy dle poradi vyskytu v datech
-	    String cmd1 = "show ip ospf database network";
-	    String cmd2 = "show ip ospf database router";
-	    String cmd3 = "show ip ospf database external";
-	    String cmd4 = "show ipv6 ospf6 database network detail";
-	    String cmd5 = "show ipv6 ospf6 database router detail";
-	    String cmd6 = "show ipv6 ospf6 database as-external detail";
+	    // prikazy
+	    String cmd1 = "Net Link States"; // "show ip ospf database network"
+	    String cmd2 = "Router Link States"; // "show ip ospf database router"
+	    String cmd3 = "AS External Link States"; // "show ip ospf database external"
+	    // String cmd4 = "show ipv6 ospf6 database network detail";
+	    // String cmd5 = "show ipv6 ospf6 database router detail";
+	    String cmd6 = "AS Scoped Link State Database"; // "show ipv6 ospf6 database as-external detail"
+	    String cmd7 = "Area Scoped Link State Database"; // pozdeji bude urceno a jaka data jde
 	    boolean isStub = false;
 	    int cmd = 0;
 	    while ((radek = input.readLine()) != null) {
-		if (radek.contains(cmd1))
-		    cmd = 1;
-		if (radek.contains(cmd2))
-		    cmd = 2;
-		if (radek.contains(cmd3))
-		    cmd = 3;
-		if (radek.contains(cmd4))
-		    cmd = 4;
-		if (radek.contains(cmd5))
-		    cmd = 5;
-		if (radek.contains(cmd6))
-		    cmd = 6;
+		if (radek.contains(cmd1)) {
+		    cmd = 1; continue;
+		} 
+		if (radek.contains(cmd2)) {
+		    cmd = 2; continue;
+		} 
+		if (radek.contains(cmd3)) {
+		    cmd = 3; continue;
+		}
+		if (radek.contains(cmd6)) {
+		    cmd = 6; continue;
+		}
+		if (radek.contains(cmd7)) {
+		    cmd = 7; continue;
+		}
 		switch (cmd) {
 		    case 1:
 			// nacitani topologie pro IPv4
@@ -297,7 +305,7 @@ public class OspfLoader {
 			    matcher = ipPattern.matcher(radek);
 			    matcher.find();
 			    linkStateId = matcher.group(0);
-			    while (!(radek = input.readLine()).contains("Number of Links"))
+			    while (!((radek = input.readLine()).contains("Number of Links")))
 				;
 			    matcher = costPattern.matcher(radek);
 			    matcher.find();
@@ -335,17 +343,24 @@ public class OspfLoader {
 			    matcher = ipPattern.matcher(radek);
 			    matcher.find();
 			    linkName = matcher.group(0);
-			    while (!((radek = input.readLine()).contains("Advertising Router")))
+			    while (!(radek = input.readLine()).contains("Advertising Router"))
 				;
 			    matcher = ipPattern.matcher(radek);
 			    matcher.find();
 			    advRouter = matcher.group(0);
 			    while (!(radek = input.readLine()).contains("Network Mask"))
+//			    while (true) {
+//				radek = input.readLine();
+//				System.out.println(radek);
+//				if (radek.contains("Network Mask")) {
+//				    break;
+//				}
+//			    }
 				;
 			    matcher = maskPattern.matcher(radek);
 			    matcher.find();
 			    mask = Integer.valueOf(matcher.group(1));
-			    while (!(radek = input.readLine()).contains("Metric Type"))
+			    while (!(radek = input.readLine()).contains("Metric Type")) 
 				;
 			    matcher = costPattern.matcher(radek);
 			    matcher.find();
@@ -429,6 +444,13 @@ public class OspfLoader {
 			    } else {
 				System.err.println("OspfLoader - Router nenalezen");
 			    }
+			}
+			break;
+		    case 7:
+			if (radek.contains("Type: Network")) {
+			    cmd = 4;
+			} else if (radek.contains("Type: Router")) {
+			    cmd = 5;
 			}
 			break;
 		}

@@ -86,6 +86,8 @@ public class ModelSourceDialog extends JDialog {
     private boolean loadDialogConfirmed = false;
     private int countDays = 0;
     private AppSettings settings = null;
+    
+    private static final Dimension MAX_SIZE_SCROLL = new Dimension(400,300);
 
 
     /**
@@ -182,7 +184,6 @@ public class ModelSourceDialog extends JDialog {
 			.addComponent(btnStorno)));
 	this.setTitle(rb.getString("ssd.title"));
 	this.pack();
-	this.setResizable(false);
 	this.setLocationRelativeTo(null);
     }
 
@@ -230,6 +231,7 @@ public class ModelSourceDialog extends JDialog {
 	model = new DefaultListModel<String>();
 	final JList<String> list = new JList<String>(model);
 	JScrollPane scroll = new JScrollPane(list);
+	scroll.setMaximumSize(MAX_SIZE_SCROLL);
 	JButton btnAdd = new JButton();
 	btnAdd.setAction(new AbstractAction(rb.getString("ssd.26")) {
 
@@ -301,18 +303,23 @@ public class ModelSourceDialog extends JDialog {
 		.addGroup(l.createParallelGroup()
 			.addComponent(lPath)
 			.addComponent(tfZIPRemoteAddressFieldPath, 320, 320, 320)
-			.addComponent(lDFrom)
-			.addComponent(tfDateFrom, 100, 100, 100)
-			.addComponent(lDTo)
-			.addComponent(tfDateTo, 100, 100, 100)
-			.addComponent(lTime)
-			.addComponent(tfTime, 100, 100, 100)
-			.addComponent(rbMapPanel)
-			.addComponent(rbNetStateWindow)
-			.addGroup(l.createSequentialGroup()
-				.addComponent(btnAdd, 100, 100, 100)
-				.addComponent(btnRemove, 100, 100, 100))
-			.addComponent(btnRemoveAll, 100, 100, 100))
+			.addGroup(l.createParallelGroup(Alignment.TRAILING)
+				.addGroup(l.createSequentialGroup()
+					.addComponent(lDFrom)
+					.addComponent(tfDateFrom, 100, 100, 100))
+				.addGroup(l.createSequentialGroup()
+					.addComponent(lDTo)
+					.addComponent(tfDateTo, 100, 100, 100))
+				.addGroup(l.createSequentialGroup()
+					.addComponent(lTime)
+					.addComponent(tfTime, 100, 100, 100))
+				.addGroup(l.createParallelGroup()
+					.addComponent(rbMapPanel)
+					.addComponent(rbNetStateWindow)
+					.addGroup(l.createSequentialGroup()
+						.addComponent(btnAdd, 100, 100, 100)
+						.addComponent(btnRemove, 100, 100, 100)
+						.addComponent(btnRemoveAll, 100, 100, 100)))))
 		.addGroup(l.createParallelGroup()
 			.addComponent(lbl2)
 			.addComponent(scroll)));
@@ -323,19 +330,23 @@ public class ModelSourceDialog extends JDialog {
 		.addGroup(l.createSequentialGroup()
 			.addComponent(lPath)
 			.addComponent(tfZIPRemoteAddressFieldPath, 25, 25, 25)
-			.addComponent(lDFrom)
-			.addComponent(tfDateFrom, 25, 25, 25)
-			.addComponent(lDTo)
-			.addComponent(tfDateTo, 25, 25, 25)
-			.addComponent(lTime)
-			.addComponent(tfTime, 25, 25, 25)
+			.addGroup(l.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(lDFrom)
+				.addComponent(tfDateFrom, 25, 25, 25))
+			.addGroup(l.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(lDTo)
+				.addComponent(tfDateTo, 25, 25, 25))
+			.addGroup(l.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(lTime)
+				.addComponent(tfTime, 25, 25, 25))
 			.addComponent(rbMapPanel)
 			.addComponent(rbNetStateWindow)
 			.addGap(30)
 			.addGroup(l.createParallelGroup()
 				.addComponent(btnAdd)
-				.addComponent(btnRemove))
-			.addComponent(btnRemoveAll)));
+				.addComponent(btnRemove)
+				.addComponent(btnRemoveAll)))
+		);
     }
 
 
@@ -432,6 +443,7 @@ public class ModelSourceDialog extends JDialog {
 	JButton selectLclFolderBtn = new JButton(actListener.getActionChooseLocalFolder());
 	JButton loadLclSrcTreeBtn = new JButton(actListener.getActionLoadSourcesLocal());
 	localScrollPane = new JScrollPane(localSourceTree);
+	localScrollPane.setMaximumSize(MAX_SIZE_SCROLL);
 	localScrollPanel = new JPanel();
 	localScrollPanel.setLayout(new BorderLayout());
 	localScrollPanel.add(localScrollPane, BorderLayout.CENTER);
@@ -473,6 +485,7 @@ public class ModelSourceDialog extends JDialog {
 	remoteScrollPanel = new JPanel();
 	remoteScrollPanel.setLayout(new BorderLayout());
 	remoteScrollPanel.add(remoteScrollPane);
+	remoteScrollPanel.setMaximumSize(MAX_SIZE_SCROLL);
 	GroupLayout l = new GroupLayout(remoteSourcesPanel);
 	remoteSourcesPanel.setLayout(l);
 	l.setAutoCreateContainerGaps(true);

@@ -112,6 +112,9 @@ public class OspfWinManager {
      */
     protected void checkActionsEnable() {
 	boolean b = ospfModely.isEmpty() ? false : true;
+	if (!b && !((OspfWin) owner).getAllMDManager().isEmpty()) {
+	    b = true;
+	}
 	((OspfWin) owner).getOspfWinActListener().getActionCenterRouter().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionCloseActualModel().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionShowInfoTable().setEnabled(b);
@@ -137,7 +140,7 @@ public class OspfWinManager {
 	((OspfWin) owner).getOspfWinActListener().getActionShortestPath().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionCostChangingMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionShowNeighboursMode().setEnabled(b);
-	if (b) {
+	if (b && getActualMDManager().getOspfModel() != null) {
 	    // GPS - kontrola zda jsou souřadnice pro daný model načteny
 	    // IPv6 - kontrola zda jsou data načtena
 	    boolean gpsLoaded = getActualMDManager().getOspfModel().isGpsLoaded();
@@ -153,30 +156,6 @@ public class OspfWinManager {
 	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModely.size() < 2 ? false : true);
 	if (!b) {
 	    ((OspfWin) owner).getStatusBar().clear();
-	}
-    }
-
-
-    /**
-     * Načte logy dle nastavení
-     */
-    private void loadLogs() {
-	OspfDataLoadInitiator loadInitiator = new OspfDataLoadInitiator(settings, this);
-	boolean success = true;
-	for (String path : settings.getFilePaths()) {
-	    try {
-		if (!loadedLogs.contains(path)) {
-		    loadInitiator.loadLogsFromRemoteServerFiles(linkFaultModel, path);
-		    loadedLogs.add(path);
-		}
-	    } catch (Exception e) {
-		success = false;
-		((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
-	    }
-	}
-	if (success) {
-	    ((OspfWin) owner).getOspfWinActListener().getActionShowLoadedLogs().setEnabled(true);
-	    ((OspfWin) owner).showInfoMessage(rb.getString("info"), rb.getString("owm.0"));
 	}
     }
 
@@ -307,6 +286,30 @@ public class OspfWinManager {
 
 
     /**
+     * Načte logy dle nastavení
+     */
+    private void loadLogs() {
+	OspfDataLoadInitiator loadInitiator = new OspfDataLoadInitiator(settings, this);
+	boolean success = true;
+	for (String path : settings.getFilePaths()) {
+	    try {
+		if (!loadedLogs.contains(path)) {
+		    loadInitiator.loadLogsFromRemoteServerFiles(linkFaultModel, path);
+		    loadedLogs.add(path);
+		}
+	    } catch (Exception e) {
+		success = false;
+		((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	    }
+	}
+	if (success) {
+	    ((OspfWin) owner).getOspfWinActListener().getActionShowLoadedLogs().setEnabled(true);
+	    ((OspfWin) owner).showInfoMessage(rb.getString("info"), rb.getString("owm.0"));
+	}
+    }
+
+
+    /**
      * Otevře dialog pro výběr NML (XML) souboru k načtení
      */
     protected void openLoadXMLFileDialog() {
@@ -342,13 +345,12 @@ public class OspfWinManager {
      */
     private void loadMapModelFromXML(File inputFile) {
 	if (inputFile.exists()) {
-	    MapModel mapModel = new MapModel();
+//	    MapModel mapModel = new MapModel();
 	    MapXMLLoader mapXmlLoader = new MapXMLLoader();
 	    mapXmlLoader.setInputFile(inputFile);
 	    mapXmlLoader.loadModelFromDocument();
-	    mapModel = mapXmlLoader.getMapModel();
-	    // FIXME opravit chybu
-	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapModel);
+//	    mapModel = mapXmlLoader.getMapModel();
+	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapXmlLoader.getMapModel(), mapXmlLoader.getRVertexPositions());
 	}
     }
 

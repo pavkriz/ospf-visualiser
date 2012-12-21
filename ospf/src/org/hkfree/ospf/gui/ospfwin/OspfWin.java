@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import org.hkfree.ospf.gui.mappanel.MapManager;
 import org.hkfree.ospf.gui.mappanel.MapPanel;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.map.MapModel;
+import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.tools.Factory;
 
@@ -123,7 +125,7 @@ public class OspfWin extends JFrame {
 	    // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Exception e) {
-	    System.out.print(e.getMessage());
+	    System.err.print(e.getMessage());
 	}
 	SwingUtilities.updateComponentTreeUI(OspfWin.this);
     }
@@ -169,23 +171,29 @@ public class OspfWin extends JFrame {
 
 
     /**
+     * Volá se po standardním načtení ospf modelu s daty (telnet, cgi, date-date...)
      * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu
      * @param modelName
      * @param model
      */
     public void addAndFillModelTabbedPane(String modelName, OspfModel model) {
 	MapPanel map = new MapPanel(model);
+	map.processModelsAfterStart(true, null, 0);
 	addMapPanel(modelName, map);
     }
 
 
     /**
-     * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu
+     * Volá se po načtení mapModelu z NML souboru.
+     * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu. 
      * @param modelName
      * @param model
+     * @param rvPoints 
      */
-    public void addAndFillModelTabbedPane(String modelName, MapModel model) {
+    public void addAndFillModelTabbedPane(String modelName, MapModel model, Map<RouterVertex, Point2D> rvPoints) {
 	MapPanel map = new MapPanel(model);
+	map.getMapDesignWinManager().setRouterVertexPositions(rvPoints);
+	map.getMapDesignWinManager().processMapModelFromXml();
 	addMapPanel(modelName, map);
     }
 
@@ -197,7 +205,6 @@ public class OspfWin extends JFrame {
      * @param mapPanel panel s grafem
      */
     private void addMapPanel(String name, MapPanel mapPanel) {
-	mapPanel.processModelsAfterStart(true, null, 0);
 	// pokud je jiz vlozen model se stejnym nazvem, upravi se nazev
 	int i = 1;
 	while (true) {

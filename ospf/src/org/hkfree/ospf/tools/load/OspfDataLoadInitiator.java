@@ -389,17 +389,18 @@ public class OspfDataLoadInitiator {
 	    // stazeni dat
 	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.0"));
 	    URL adresa = new URL(settings.cgiUrl);
-	    InputStream is = adresa.openStream();
-	    StringBuilder sb = new StringBuilder();
-	    byte[] buff = new byte[1024];
-	    int receiveLength = 0; // počet znaků přijatého řetězce
-	    while ((receiveLength = is.read(buff)) != -1) {
-		sb.append(new String(buff, 0, receiveLength));
-	    }
+//	    InputStream is = adresa.openStream();
+//	    StringBuilder sb = new StringBuilder();
+//	    byte[] buff = new byte[8096];
+//	    int receiveLength = 0; // počet znaků přijatého řetězce
+//	    while ((receiveLength = is.read(buff)) != -1) {
+//		sb.append(new String(buff, 0, receiveLength));
+//	    }
 	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	    // nacteni dat
 	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
-	    OspfLoader.getTopologyFromData(model, new BufferedReader(new StringReader(sb.toString())));
+	    //OspfLoader.getTopologyFromData(model, new BufferedReader(new StringReader(sb.toString())));
+	    OspfLoader.getTopologyFromData(model, new BufferedReader(new InputStreamReader(adresa.openStream())));
 	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	    // nacteni nazvu routeru
 	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.3"));

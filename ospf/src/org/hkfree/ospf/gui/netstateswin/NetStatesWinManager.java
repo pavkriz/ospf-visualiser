@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
 import org.hkfree.ospf.model.ospffault.IntervalFault;
 import org.hkfree.ospf.model.ospffault.OspfLinkFault;
@@ -261,5 +262,64 @@ public class NetStatesWinManager {
      */
     protected void setStatusTextToolTip(int index, String text) {
 	((NetStatesWin) owner).getStatusBar().setToolTip(index, text);
+    }
+    
+    
+    public void setMode(MODE mode) {
+   	switch (mode) {
+//   	    case SHOW_NEIGHBORS:
+//   		graphComponent.setShowNeighboursMode();
+//   		break;
+//   	    case COST_CHANGING:
+//   		graphComponent.setCostChangingMode();
+//   		break;
+//   	    case PICKING:
+//   		graphComponent.setPickingMode();
+//   		break;
+//   	    case TRANSFORMING:
+//   		graphComponent.setTransformingMode();
+//   		break;
+   	    case LAYOUT_FR_START:
+   	    case LAYOUT_SPRING_START:
+   	    case LAYOUT_SPRING_STOP:
+   		graphComponent.layouting(mode);
+   		break;
+   	    case ZOOM:
+   		graphComponent.setZoomMode();
+   		break;
+//   	    case LOCK_VERTEX:
+//   		graphComponent.setLockVertexMode();
+//   		break;
+//   	    case LOCK_ALL:
+//   		graphComponent.lockAllRouterVertices();
+//   		break;
+//   	    case SHORTEST_PATH:
+//   		graphComponent.setShowShortestPathMode();
+//   		break;
+//   	    case GPS:
+//   		graphComponent.setGPSPositioningMode();
+//   		break;
+//   	    case GPS_ALL:
+//   		graphComponent.setAllVerticesToGPSPosition();
+//   		break;
+//   	    case ADD_VERTEXES:
+//   		graphComponent.setAddRVertexMode();
+//   		break;
+//   	    case ADD_EDGES:
+//   		graphComponent.setAddLEdgeMode();
+//   		break;
+//   	    case ASYMETRIC_LINKS:
+//   		graphComponent.setAsymetricLinkMode();
+//   		break;
+//   	    case SHORTEST_PATH_TWO_ROUTERS:
+//   		graphComponent.setTwoRoutersShortesPathMode();
+//   		break;
+//   	    case IPV6:
+//   		graphComponent.setShowIPv6(!graphComponent.isShowIPv6());
+//   		graphComponent.setShowIPv6(graphComponent.isShowIPv6());
+//   		break;
+   	    default:
+   		break;
+   	}
     }
 }

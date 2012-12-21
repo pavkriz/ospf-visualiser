@@ -46,7 +46,9 @@ public class NetStatesWinToolBar extends JToolBar {
 	this.add(((NetStatesWinActionListener) actionListener).getActionLockAll());
 	this.add(((NetStatesWinActionListener) actionListener).getActionGPSAll());
 	this.addSeparator();
-	this.add(((NetStatesWinActionListener) actionListener).getActionStartLayouting());
+	this.add(((NetStatesWinActionListener) actionListener).getActionLayoutStartFR());
+	this.add(((NetStatesWinActionListener) actionListener).getActionLayoutStartSpring());
+	this.add(((NetStatesWinActionListener) actionListener).getActionLayoutStopSpring());
 	this.addSeparator();
 	this.add(((NetStatesWinActionListener) actionListener).getActionShowCostDifferences());
 	this.add(((NetStatesWinActionListener) actionListener).getActionLinkFaultMode());

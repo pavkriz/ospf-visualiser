@@ -49,20 +49,26 @@ public class NetStatesWinMenu extends JMenuBar {
 	mMod.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionPickingMode()));
 	mMod.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionZoom()));
 	// nabídka "Pozice vrcholů"
-	JMenu mPozice = new JMenu(rb.getString("nswm.2"));
-	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionStartLayouting()));
-	mPozice.addSeparator();
-	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionGPS()));
-	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionGPSAll()));
-	mPozice.addSeparator();
-	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockMode()));
-	mPozice.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockAll()));
+	JMenu mVertices = new JMenu(rb.getString("nswm.2"));
+	// nabidka Pozice vrcholu
+	JMenu mLayouts = new JMenu(rb.getString("menu.layout"));
+	mLayouts.setToolTipText(rb.getString("menu.layout.title"));
+	mLayouts.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLayoutStartFR()));
+	mLayouts.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLayoutStartSpring()));
+	mLayouts.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLayoutStopSpring()));
+	mVertices.add(mLayouts);
+	mVertices.addSeparator();
+	mVertices.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionGPS()));
+	mVertices.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionGPSAll()));
+	mVertices.addSeparator();
+	mVertices.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockMode()));
+	mVertices.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionLockAll()));
 	// nabídka "Změny cen"
 	JMenu mCeny = new JMenu(rb.getString("nswm.3"));
 	mCeny.add(new JMenuItem(((NetStatesWinActionListener) actionListener).getActionShowCostDifferences()));
 	this.add(mOkno);
 	this.add(mMod);
-	this.add(mPozice);
+	this.add(mVertices);
 	this.add(mCeny);
     }
 }

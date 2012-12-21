@@ -3,11 +3,16 @@ package org.hkfree.ospf.gui.netstateswin;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import org.hkfree.ospf.gui.mappanel.OspfModalGraphMouse;
+import org.hkfree.ospf.layout.JSLayout;
+import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
@@ -16,13 +21,16 @@ import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
 
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.layout.LayoutTransition;
+import edu.uci.ics.jung.visualization.util.Animator;
 
 /**
  * Třída představující komponentnu pro vykreslení grafu
@@ -37,7 +45,7 @@ public class NSWGraphComponent extends JComponent {
     private RouterVertex shortestTreeCenter = null;
     private VisualizationViewer<RouterVertex, LinkEdge> vv = null;
     private Graph<RouterVertex, LinkEdge> graph = null;
-    private FRLayout<RouterVertex, LinkEdge> layout = null;
+    private Layout<RouterVertex, LinkEdge> layout = null;
     private OspfModalGraphMouse<RouterVertex, LinkEdge> graphMouse = null;
     private NetStateMapStyleTransformer styleTransformer = null;
     private int actualNetStateIndex = 0;
@@ -116,11 +124,11 @@ public class NSWGraphComponent extends JComponent {
      */
     public void initializeGraph() {
 	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
-	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
-	layout.setRepulsionMultiplier(0.55); // vzdalenosti vrcholu od sebe
-	layout.setAttractionMultiplier(0.18); // vzdalenosti vrcholu na spoji k sobe
-	layout.setSize(new Dimension(2300, 2300));
-	layout.setMaxIterations(800); // default
+	layout = new JSLayout<RouterVertex, LinkEdge>(graph);
+	layout.setSize(new Dimension(2200, 2200));
+	((JSLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+	((JSLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
 	vv.setSize(2000, 2000);
@@ -448,5 +456,80 @@ public class NSWGraphComponent extends JComponent {
      */
     public void setShortestTreeCenter(RouterVertex routerVertex) {
 	shortestTreeCenter = routerVertex;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public void layouting(MODE mode) {
+	try {
+	    Object[] constructorArgs = { graph };
+	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutC = null;
+	    Constructor<? extends Layout<RouterVertex, LinkEdge>> constructor = null;
+	    Object o = null;
+	    Layout<RouterVertex, LinkEdge> l = null;
+	    LayoutTransition<RouterVertex, LinkEdge> lt = null;
+	    Animator animator = null;
+	    switch (mode) {
+		case LAYOUT_FR_START:
+		    layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
+		    constructor = layoutC
+			    .getConstructor(new Class[] { Graph.class });
+		    o = constructor.newInstance(constructorArgs);
+		    l = (Layout<RouterVertex, LinkEdge>) o;
+		    l.setInitializer(vv.getGraphLayout());
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+		    ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+		    l.setSize(new Dimension(2200, 2200));
+		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+		    animator = new Animator(lt);
+		    animator.start();
+		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+		    vv.repaint();
+		    layout = l;
+		    break;
+		case LAYOUT_SPRING_START:
+		    if (layout instanceof SpringLayout<?, ?>) {
+			vv.getModel().getRelaxer().relax();
+		    } else {
+			layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) SpringLayout.class;
+			constructor = layoutC
+				.getConstructor(new Class[] { Graph.class });
+			o = constructor.newInstance(constructorArgs);
+			l = (Layout<RouterVertex, LinkEdge>) o;
+			l.setInitializer(vv.getGraphLayout());
+			((SpringLayout<RouterVertex, LinkEdge>) l).setStretch(0.7);
+			((SpringLayout<RouterVertex, LinkEdge>) l).setRepulsionRange(120);
+			((SpringLayout<RouterVertex, LinkEdge>) l).setForceMultiplier(0.85);
+			l.setSize(new Dimension(2000, 2000));
+			// break;
+			lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+			animator = new Animator(lt);
+			animator.start();
+			vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+			vv.repaint();
+			layout = l;
+		    }
+		    break;
+		case LAYOUT_SPRING_STOP:
+		    // pokud je aktivni rozvrhovani pomoci SpringLayoutu, pauza
+		    if (layout instanceof SpringLayout<?, ?>) {
+			vv.getModel().getRelaxer().pause();
+		    }
+		    break;
+	    }
+	} catch (NoSuchMethodException e) {
+	    e.printStackTrace();
+	} catch (SecurityException e) {
+	    e.printStackTrace();
+	} catch (InstantiationException e) {
+	    e.printStackTrace();
+	} catch (IllegalAccessException e) {
+	    e.printStackTrace();
+	} catch (IllegalArgumentException e) {
+	    e.printStackTrace();
+	} catch (InvocationTargetException e) {
+	    e.printStackTrace();
+	}
     }
 }
