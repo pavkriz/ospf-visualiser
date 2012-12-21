@@ -1,3 +1,6 @@
+*21.12.2012*
+  * oprava vyhledavani - pri nacteni nml nehleda v ospfmodelu, jen v mapamodelu
+
 *20.12.2012*
   * oprava netstatewindow - pridani fr a spring layoutu
   * zbaveni zavislosti na prikazech pro urceni typu dat pri parsovani
