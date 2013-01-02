@@ -1,5 +1,7 @@
 package org.hkfree.ospf.model;
 
+import java.awt.Dimension;
+
 /**
  * Konstanty a enumy pro aplikaci OspfVisualiser
  * @author Jan Schovánek
@@ -20,12 +22,28 @@ public abstract class Constants {
     public static final String MULTILINK = "MULTILINK";
     /** symetricky spoj */
     public static final String SYMETRIC = "SYMETRIC";
-    /** maximalni pocet iteraci pro FR layout */
-    public static int LAYOUT_FR_MAX_ITERATIONS = 800;
-    /** vzdalenosti vrcholu od sebe */
-    public static double LAYOUT_ATTRACTION = 0.55; // 0.55, vzdalenosti vrcholu od sebe 45
-    /** vzdalenosti vrcholu na spoji od sebe */
-    public static double LAYOUT_REPULSION = 0.18; // 0.18, vzdalenosti vrcholu na spoji od sobe 15
+    /** název souboru v zip archivu určující název souboru s daty pro načtení OSPF modelu */
+    public static final String FILENAME_OSPF_DUMP = "ospfdump";
+    /** název souboru v zip archivu určující název souboru se jmény routerů */
+    public static final String FILENAME_ROUTER_NAMES = "router_names";
+    /** název souboru v zip archivu určující název souboru informacemi o síti */
+    public static final String FILENAME_TOPOLOGY = "ospf_database_network";
+    /** název souboru v zip archivu určující název souboru s geo souřadnicemi */
+    public static final String FILENAME_GEO_POSITIONS = "geo";
+    /** FR LAYOUT - maximalni pocet iteraci pro FR layout */
+    public static int LAYOUT_FR_MAX_ITERATIONS = 1500;
+    /** FR LAYOUT - vzdalenosti vrcholu od sebe */
+    public static double LAYOUT_ATTRACTION = 0.60; // 0.55, vzdalenosti vrcholu od sebe 45
+    /** FR LAYOUT - vzdalenosti vrcholu na spoji od sebe */
+    public static double LAYOUT_REPULSION = 0.28; // 0.18, vzdalenosti vrcholu na spoji od sobe 15
+    /** SPRING LAYOUT - */
+    public static double LAYOUT_STRETCH = 0.7;
+    /** SPRING LAYOUT - */
+    public static int LAYOUT_REPULSION_RANGE = 120;
+    /** SPRING LAYOUT - */
+    public static double LAYOUT_FORCE_MULTIPLIER = 0.85;
+    /** velikost layoutu */
+    public static Dimension LAYOUT_SIZE = new Dimension(2000, 2000);
     // konstanty pro vyber zdroje pro nacteni dat
     public static final int FROM_DATE_TO_DATE = 0;
     public static final int ZIP_SERVER = 1;
@@ -39,34 +57,49 @@ public abstract class Constants {
     public static final int ZIP = 2;
 
     /**
-     * Enum pro lokalizaci aplikace
+     * Výčet lokalizace aplikace
      */
     public enum LANGUAGE {
-	en_EN, cs_CZ;
+	en_EN,
+	    cs_CZ;
     }
 
     /**
-     * Enum pro nastavení pracovního režimu
+     * Výčet nastavení pracovního režimu
      */
     public enum MODE {
 	SHOW_NEIGHBORS,
-	COST_CHANGING,
-	SHORTEST_PATH,
-	GPS,
-	GPS_ALL,
-	ZOOM,
-	LOCK_ALL,
-	LOCK_VERTEX,
-	PICKING,
-	TRANSFORMING,
+	    COST_CHANGING,
+	    SHORTEST_PATH,
+	    GPS,
+	    GPS_ALL,
+	    ZOOM,
+	    LOCK_ALL,
+	    LOCK_VERTEX,
+	    PICKING,
+	    TRANSFORMING,
+	    ADD_VERTEXES,
+	    ADD_EDGES,
+	    ASYMETRIC_LINKS,
+	    SHORTEST_PATH_TWO_ROUTERS,
+	    IPV6,
+	    NONE,
+    }
+
+    public enum LAYOUT {
 	LAYOUT_FR_START,
-	LAYOUT_SPRING_START,
-	LAYOUT_SPRING_STOP,
-	ADD_VERTEXES,
-	ADD_EDGES,
-	ASYMETRIC_LINKS,
-	SHORTEST_PATH_TWO_ROUTERS,
-	IPV6,
-	NONE,
+	    LAYOUT_SPRING_START,
+	    LAYOUT_SPRING_STOP,
+	    LAYOUT_JS_START,
+    }
+
+    /**
+     * Výčet tvarů spoje
+     */
+    public enum EDGE_SHAPER {
+	QUAD_CURVE,
+	    LINE,
+	    BENT_LINE,
+	    CUBIC_CURVE
     }
 }

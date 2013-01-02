@@ -1,7 +1,6 @@
 package org.hkfree.ospf.gui.mappanel;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +16,8 @@ import javax.swing.JComponent;
 import org.hkfree.ospf.gui.pathstreedialog.ShortestPathTreeDialog;
 import org.hkfree.ospf.layout.JSLayout;
 import org.hkfree.ospf.model.Constants;
-import org.hkfree.ospf.model.Constants.MODE;
+import org.hkfree.ospf.model.Constants.EDGE_SHAPER;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
@@ -30,6 +30,8 @@ import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
 import org.hkfree.ospf.tools.ip.IpCalculator;
 
+import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.DelegateForest;
@@ -41,6 +43,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
 import edu.uci.ics.jung.visualization.util.Animator;
 
@@ -75,9 +78,9 @@ public class MapGraphComponent extends JComponent {
      * Konstruktor
      * @param mapDesignPanel
      */
-    public MapGraphComponent(MapPanel mapDesignPanel) {
+    public MapGraphComponent(MapPanel mapDesignPanel, EDGE_SHAPER edgeShaper) {
 	this.owner = mapDesignPanel;
-	initializeGraph();
+	initializeGraph(edgeShaper);
     }
 
 
@@ -111,22 +114,22 @@ public class MapGraphComponent extends JComponent {
     /**
      * Inicializuje graf
      */
-    private void initializeGraph() {
+    @SuppressWarnings("rawtypes")
+    private void initializeGraph(EDGE_SHAPER edgeShaper) {
 	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
-	layout = new JSLayout<RouterVertex, LinkEdge>(graph);
-	layout.setSize(new Dimension(2200, 2200));
-	((JSLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
-	((JSLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
-	((JSLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
+	layout.setSize(Constants.LAYOUT_SIZE);
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
-	vv.setBackground(Color.WHITE);
-	vv.setSize(2200, 2200);
+	((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+	((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+	((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
 	scaler = new CrossoverScalingControl();
 	graphMouse = new OspfModalGraphMouse<RouterVertex, LinkEdge>(this);
-	vv.setGraphMouse(graphMouse);
 	graphMouse.add(new MapGraphContextMenu(this));
 	graphMouse.add(new MapGraphMouseClickPlugin(this));
 	styleTransformer = new MapStyleTransformer(this);
+	vv.setGraphMouse(graphMouse);
+	vv.setBackground(Color.WHITE);
 	vv.getRenderContext().setVertexFillPaintTransformer(styleTransformer.getVertexFillPainter());
 	vv.getRenderContext().setVertexDrawPaintTransformer(styleTransformer.getVertexBorderPainter());
 	vv.getRenderContext().setVertexLabelTransformer(styleTransformer.getVertexLabeler());
@@ -138,6 +141,23 @@ public class MapGraphComponent extends JComponent {
 	vv.setEdgeToolTipTransformer(styleTransformer.getEdgeTooltiper());
 	vv.getRenderContext().setEdgeDrawPaintTransformer(styleTransformer.getEdgeLinePainter());
 	vv.getRenderContext().setEdgeStrokeTransformer(styleTransformer.getEdgeLineStroker());
+    }
+
+
+    /**
+     * Aktualizuje tvar spoje dle nastaveni
+     * @param edgeShaper
+     */
+    public void setEdgeShaper(EDGE_SHAPER edgeShaper) {
+	if (edgeShaper == EDGE_SHAPER.QUAD_CURVE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<RouterVertex, LinkEdge>());
+	if (edgeShaper == EDGE_SHAPER.LINE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<RouterVertex, LinkEdge>());
+	if (edgeShaper == EDGE_SHAPER.BENT_LINE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine<RouterVertex, LinkEdge>());
+	if (edgeShaper == EDGE_SHAPER.CUBIC_CURVE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.CubicCurve<RouterVertex, LinkEdge>());
+	vv.repaint();
     }
 
 
@@ -158,9 +178,9 @@ public class MapGraphComponent extends JComponent {
 	scaler.scale(vv, zoomValue, vv.getCenter());
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
-		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
+	        mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
 	layout.initialize();
-	vv.getModel().getRelaxer().setSleepTime(50);
+	// vv.getModel().getRelaxer().setSleepTime(500);
 	vv.getModel().getRelaxer().relax();
     }
 
@@ -175,7 +195,7 @@ public class MapGraphComponent extends JComponent {
 	    graph.removeVertex(rv);
 	}
 	graph.addVertex(center);
-	((JSLayout<RouterVertex, LinkEdge>) layout).setLocation(center, vv.getWidth() / 2, vv.getHeight() / 2);
+	((FRLayout<RouterVertex, LinkEdge>) layout).setLocation(center, vv.getWidth() / 2, vv.getHeight() / 2);
 	layout.lock(center, true);
 	center.setPermanentlyDisplayed(true);
 	List<RouterVertex> previousStepVertexes = new ArrayList<RouterVertex>();
@@ -198,7 +218,7 @@ public class MapGraphComponent extends JComponent {
 	scaler.scale(vv, zoomValue, vv.getCenter());
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
-		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
+	        mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
 	layout.initialize();
 	vv.getModel().getRelaxer().setSleepTime(50);
 	vv.getModel().getRelaxer().relax();
@@ -232,7 +252,7 @@ public class MapGraphComponent extends JComponent {
 	scaler.scale(vv, zoomValue, vv.getCenter());
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
-		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
+	        mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
     }
 
 
@@ -739,11 +759,11 @@ public class MapGraphComponent extends JComponent {
      */
     public void tryRecomputeShortestPaths() {
 	if (mapGraphCompMode == MapGraphComponentMode.SHOW_SHORTEST_PATH && shortestTreeCenter != null
-		&& shortestTreeCenter.isEnabled()) {
+	        && shortestTreeCenter.isEnabled()) {
 	    showShortestPath();
 	}
 	if (mapGraphCompMode == MapGraphComponentMode.TWO_ROUTERS_SHORTEST_PATH && firstShortestPathRV != null
-		&& secondShortestPathRV != null) {
+	        && secondShortestPathRV != null) {
 	    showShortestPathsBetweenRV(firstShortestPathRV, secondShortestPathRV);
 	}
     }
@@ -810,7 +830,7 @@ public class MapGraphComponent extends JComponent {
 	    rv.setPermanentlyDisplayed(true);
 	    rv.setExtraAddedVertex(true);
 	    rvPoint = transformClickedPointToGraphPoint(rvPoint);
-	    ((JSLayout<RouterVertex, LinkEdge>) layout).setLocation(rv, rvPoint.getX(), rvPoint.getY());
+	    layout.setLocation(rv, rvPoint);
 	}
     }
 
@@ -859,8 +879,8 @@ public class MapGraphComponent extends JComponent {
     public Map<RouterVertex, Point2D> getRouterVertexPositions() {
 	Map<RouterVertex, Point2D> positions = new HashMap<RouterVertex, Point2D>();
 	for (RouterVertex rv : graph.getVertices()) {
-	    positions.put(rv, new Point2D.Double(((JSLayout<RouterVertex, LinkEdge>) layout).getX(rv),
-		    ((JSLayout<RouterVertex, LinkEdge>) layout).getY(rv)));
+	    positions.put(rv, new Point2D.Double(((AbstractLayout<RouterVertex, LinkEdge>) layout).getX(rv),
+		    ((AbstractLayout<RouterVertex, LinkEdge>) layout).getY(rv)));
 	}
 	return positions;
     }
@@ -920,7 +940,7 @@ public class MapGraphComponent extends JComponent {
 		    continue;
 		}
 		if (rv.getName().toUpperCase().contains(name.toUpperCase())
-			|| rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
+		        || rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
 		    b = true;
 		}
 		// pokud je model null, hledat pouze v mapModelu
@@ -929,14 +949,14 @@ public class MapGraphComponent extends JComponent {
 		    // vyhledavani ve stubs
 		    for (StubLink sl : r.getStubs()) {
 			if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
-				IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
+			        IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
 			    b = true;
 			}
 		    }
 		    // vyhledavani v external lsa
 		    for (ExternalLSA el : r.getExternalLsa()) {
 			if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
-				IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
+			        IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
 			    b = true;
 			}
 		    }
@@ -958,8 +978,8 @@ public class MapGraphComponent extends JComponent {
     }
 
 
-    @SuppressWarnings("unchecked")
-    public void layouting(MODE mode) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void layouting(LAYOUT mode) {
 	try {
 	    Object[] constructorArgs = { graph };
 	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutNew = null;
@@ -975,22 +995,35 @@ public class MapGraphComponent extends JComponent {
 		    // vv.getModel().getRelaxer().relax();
 		    // vv.repaint();
 		    // } else {
-		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
+		    // layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
+		    // constructor = layoutNew.getConstructor(new Class[] { Graph.class });
+		    // o = constructor.newInstance(constructorArgs);
+		    // l = (Layout<RouterVertex, LinkEdge>) o;
+		    // l.setInitializer(vv.getGraphLayout());
+		    // ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+		    // ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+		    // ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+		    // l.setSize(new Dimension(2200, 2200));
+		    // lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+		    // animator = new Animator(lt);
+		    // animator.start();
+		    // vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+		    // vv.repaint();
+		    // layout = l;
+		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) FRLayout.class;
 		    constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 		    o = constructor.newInstance(constructorArgs);
-		    l = (Layout<RouterVertex, LinkEdge>) o;
-		    l.setInitializer(vv.getGraphLayout());
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
-		    l.setSize(new Dimension(2200, 2200));
-		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+		    layout = (Layout<RouterVertex, LinkEdge>) o;
+		    layout.setInitializer(vv.getGraphLayout());
+		    ((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+		    ((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+		    ((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+		    layout.setSize(Constants.LAYOUT_SIZE);
+		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), layout);
 		    animator = new Animator(lt);
 		    animator.start();
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		    vv.repaint();
-		    layout = l;
-		    // }
 		    break;
 		case LAYOUT_SPRING_START:
 		    if (layout instanceof SpringLayout<?, ?>) {
@@ -1001,10 +1034,10 @@ public class MapGraphComponent extends JComponent {
 			o = constructor.newInstance(constructorArgs);
 			l = (Layout<RouterVertex, LinkEdge>) o;
 			l.setInitializer(vv.getGraphLayout());
-			((SpringLayout<RouterVertex, LinkEdge>) l).setStretch(0.7);
-			((SpringLayout<RouterVertex, LinkEdge>) l).setRepulsionRange(120);
-			((SpringLayout<RouterVertex, LinkEdge>) l).setForceMultiplier(0.85);
-			l.setSize(new Dimension(2000, 2000));
+			((SpringLayout) l).setStretch(Constants.LAYOUT_STRETCH);
+			((SpringLayout) l).setRepulsionRange(Constants.LAYOUT_REPULSION_RANGE);
+			((SpringLayout) l).setForceMultiplier(Constants.LAYOUT_FORCE_MULTIPLIER);
+			l.setSize(Constants.LAYOUT_SIZE);
 			lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
 			animator = new Animator(lt);
 			animator.start();
@@ -1018,6 +1051,21 @@ public class MapGraphComponent extends JComponent {
 		    if (layout instanceof SpringLayout<?, ?>) {
 			vv.getModel().getRelaxer().pause();
 		    }
+		    break;
+		case LAYOUT_JS_START:
+		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
+		    constructor = layoutNew.getConstructor(new Class[] { Graph.class });
+		    o = constructor.newInstance(constructorArgs);
+		    layout = (Layout<RouterVertex, LinkEdge>) o;
+		    layout.setInitializer(vv.getGraphLayout());
+		    layout.setSize(Constants.LAYOUT_SIZE);
+		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), layout);
+		    animator = new Animator(lt);
+		    animator.start();
+		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+		    vv.repaint();
+		    break;
+		default:
 		    break;
 	    }
 	} catch (NoSuchMethodException e) {

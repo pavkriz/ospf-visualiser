@@ -92,6 +92,7 @@ public class OspfWinMenu extends JMenuBar {
 	mLayouts.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLayoutStartFR()));
 	mLayouts.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLayoutStartSpring()));
 	mLayouts.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLayoutStopSpring()));
+	mLayouts.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLayoutStartJS()));
 	mVertices.add(mLayouts);
 	mVertices.addSeparator();
 	mVertices.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionGPS()));

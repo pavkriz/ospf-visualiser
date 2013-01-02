@@ -13,7 +13,6 @@ import org.hkfree.ospf.model.ospf.Router;
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
-@SuppressWarnings("rawtypes")
 public class RouterListModel implements ListModel {
 
     private List<Router> routerList = null;

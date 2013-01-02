@@ -36,7 +36,9 @@ import edu.uci.ics.jung.visualization.control.ShearingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
 
 /**
- * Třída představující graphMouse - její metody jsou přepsány za účelem invertování ovládání zoomování
+ * Třída představující graphMouse
+ * metody jsou přepsány za účelem invertování ovládání zoomování
+ * a por zvyrazneni spoje nad kterym se nachazi kurzor mysi
  * @author Jakub Menzel
  * @author Jan Schovánek
  * @param <V>

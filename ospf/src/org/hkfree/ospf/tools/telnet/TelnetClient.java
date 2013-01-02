@@ -40,14 +40,14 @@ public class TelnetClient {
 
 
     /**
-     * Navázání spojení s routerem a přihlášení
+     * @throws TelnetException
+     * @throws IOException
+     *             Navázání spojení s routerem a přihlášení
      * @return příznak zda se spojení zdařilo
-     * @throws Exception
-     * @throws InterruptedException
      */
-    public StringBuilder initConnection() throws Exception {
+    public StringBuilder initConnection() throws IOException, TelnetException   {
 	if (timeout == 0) {
-	    throw new Exception("Timeout must be greater than 0 ms.");
+	    throw new TelnetException("Timeout must be greater than 0 ms.");
 	}
 	setSb(new StringBuilder());
 	SocketAddress sockAddr = new InetSocketAddress(host, port);
@@ -64,7 +64,7 @@ public class TelnetClient {
 	sendRecive("terminal length 0");
 	// podruhe jiz prijata data nesmi koncit zadosti o heslo
 	if (getSb().toString().endsWith("Password: ")) {
-	    throw new Exception("Telnet connection error.");
+	    throw new TelnetException("Telnet connection error.");
 	}
 	return getSb();
     }

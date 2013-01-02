@@ -9,7 +9,6 @@ import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
@@ -53,23 +52,23 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
 	this.getContentPane().setLayout(layout);
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
-	layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-		.addGroup(layout.createSequentialGroup()
-			.addComponent(btnAll, 100, 100, 150)
-			.addComponent(btnNone, 100, 100, 150))
+	layout.setHorizontalGroup(layout
+		.createParallelGroup(GroupLayout.Alignment.CENTER)
+		.addGroup(
+			layout.createSequentialGroup().addComponent(btnAll, 100, 100, 150)
+				.addComponent(btnNone, 100, 100, 150))
 		.addComponent(scrollPane, 300, 300, 300)
-		.addGroup(layout.createSequentialGroup()
-			.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-			.addComponent(btnOk, 100, 100, 100)
-			.addComponent(btnStorno, 100, 100, 100)));
-	layout.setVerticalGroup(layout.createSequentialGroup()
-		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-			.addComponent(btnAll)
-			.addComponent(btnNone))
+		.addGroup(
+			layout.createSequentialGroup()
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+					Short.MAX_VALUE).addComponent(btnOk, 100, 100, 100)
+				.addComponent(btnStorno, 100, 100, 100)));
+	layout.setVerticalGroup(layout
+		.createSequentialGroup()
+		.addGroup(
+			layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(btnAll).addComponent(btnNone))
 		.addComponent(scrollPane, 300, 300, 300)
-		.addGroup(layout.createParallelGroup()
-			.addComponent(btnOk)
-			.addComponent(btnStorno)));
+		.addGroup(layout.createParallelGroup().addComponent(btnOk).addComponent(btnStorno)));
 	this.setTitle(rb.getString("nsmcd.title"));
 	this.pack();
 	this.setLocationRelativeTo(null);
@@ -85,8 +84,8 @@ public class NSModelChooseDialog extends JDialog implements ActionListener {
      */
     public void loadModelsListItems(List<OspfModel> ospfModels) {
 	for (OspfModel model : ospfModels) {
-	    ((DefaultListModel<JCheckBox>) ospfModelsList.getModel()).addElement(new ModelCheckBoxItem(model.getModelName(),
-		    false, model));
+	    ((DefaultListModel) ospfModelsList.getModel()).addElement(new ModelCheckBoxItem(model.getModelName(), false,
+		    model));
 	}
     }
 

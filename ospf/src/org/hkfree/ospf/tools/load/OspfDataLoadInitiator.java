@@ -6,11 +6,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +34,7 @@ import org.hkfree.ospf.tools.rdns.FastReverseDNS;
 import org.hkfree.ospf.tools.rdns.IPEnumeration;
 import org.hkfree.ospf.tools.rdns.ReverseDNS;
 import org.hkfree.ospf.tools.telnet.TelnetClient;
+import org.hkfree.ospf.tools.telnet.TelnetException;
 
 /**
  * Třída sloužící k poskytnutí vstupů na základě nastavení pro parsování vstupních dat
@@ -61,11 +62,11 @@ public class OspfDataLoadInitiator {
      * Rozcestník - soubory ze severu vs. lokálního umístění
      * @param ospfModel
      * @param sourcePath
-     * @param stateDialog
-     * @param owner
-     * @throws Exception
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws TelnetException
      */
-    public void loadData(OspfModel ospfModel, String sourcePath) throws Exception {
+    public void loadData(OspfModel ospfModel, String sourcePath) throws IOException, TelnetException, InterruptedException {
 	switch (settings.getDataSourceType()) {
 	    case Constants.LOCAL:
 		loadDataFromLocalFiles(ospfModel, sourcePath);
@@ -87,31 +88,68 @@ public class OspfDataLoadInitiator {
      * Načte soubory z lokálního umístění
      * @param model
      * @param sourcePath
-     * @throws Exception
+     * @throws IOException
      */
-    private void loadDataFromLocalFiles(OspfModel model, String sourcePath) throws Exception {
+    private void loadDataFromLocalFiles(OspfModel model, String sourcePath) throws IOException {
+	InputStreamReader isr = null;
+	BufferedReader inBufRd = null;
 	switch (settings.getDataType()) {
 	    case Constants.FOLDER:
 		if (!sourcePath.substring(sourcePath.length()).equals("/")
-			&& !sourcePath.substring(sourcePath.length()).equals("\\")) {
+		        && !sourcePath.substring(sourcePath.length()).equals("\\")) {
 		    sourcePath += "/";
 		}
-		loadTopologyDataFromLocalFile(model, sourcePath);
-		loadNonTopologyDataFromLocalFile(model, sourcePath);
+		File f = new File(sourcePath + Constants.FILENAME_OSPF_DUMP);
+		if (f.exists()) {
+		    FileReader frdr = new FileReader(f);
+		    inBufRd = new BufferedReader(frdr);
+		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+		    OspfLoader.getTopologyFromData(model, inBufRd);
+		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		} else {
+		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+		    loadTopologyDataFromLocalFile(model, sourcePath);
+		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.8"));
+		    loadNonTopologyDataFromLocalFile(model, sourcePath);
+		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		}
+		((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.10"));
+		loadNamesGeoDataFromLocalFile(model, sourcePath);
+		((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 		break;
 	    case Constants.ZIP:
 		model.setModelName(new File(sourcePath).getName());
 		ZipInputStream zipInStream = null;
 		try {
 		    zipInStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(sourcePath)));
-		    loadTopologyDataFromZipFile(model, zipInStream);
-		} finally {
-		    if (zipInStream != null)
-			zipInStream.close();
-		}
-		try {
-		    zipInStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(sourcePath)));
-		    loadNonTopologyDataFromZipFile(model, zipInStream);
+		    isr = new InputStreamReader(zipInStream);
+		    inBufRd = new BufferedReader(isr);
+		    ZipEntry entry;
+		    while ((entry = zipInStream.getNextEntry()) != null) {
+			if (entry.getName().equals(Constants.FILENAME_OSPF_DUMP)) {
+			    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+			    OspfLoader.getTopologyFromData(model, inBufRd);
+			    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+			}
+		    }
+		    if (model.getRouters().isEmpty()) {
+			((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+			zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(
+			        new FileInputStream(sourcePath))));
+			loadTopologyDataFromZipFile(model, zipInStream);
+			((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+			((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.8"));
+			zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(
+			        new FileInputStream(sourcePath))));
+			loadNonTopologyDataFromZipFile(model, zipInStream);
+			((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    }
+		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.10"));
+		    zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(new FileInputStream(
+			    sourcePath))));
+		    loadNamesGeoDataFromZipFile(model, zipInStream);
+		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 		} finally {
 		    if (zipInStream != null)
 			zipInStream.close();
@@ -125,27 +163,39 @@ public class OspfDataLoadInitiator {
      * Načte soubory ze serveru
      * @param model
      * @param sourcePath
-     * @throws Exception
+     * @throws IOException
      */
-    private void loadDataFromRemoteServerFiles(OspfModel model, String sourcePath) throws Exception {
+    private void loadDataFromRemoteServerFiles(OspfModel model, String sourcePath) throws IOException {
 	if (settings.getDataType() == Constants.ZIP) {
 	    model.setModelName(sourcePath.substring(sourcePath.lastIndexOf("/") + 1));
-	    URL adresa = null;
+	    URL url = null;
 	    ZipInputStream zipInStream = null;
 	    try {
-		((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
-		adresa = new URL(sourcePath);
-		zipInStream = new ZipInputStream(new BufferedInputStream(adresa.openStream()));
-		loadTopologyDataFromZipFile(model, zipInStream);
-		((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
-	    } finally {
-		if (zipInStream != null)
-		    zipInStream.close();
-	    }
-	    try {
-		((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.8"));
-		zipInStream = new ZipInputStream(new BufferedInputStream(adresa.openStream()));
-		loadNonTopologyDataFromZipFile(model, zipInStream);
+		url = new URL(sourcePath);
+		zipInStream = new ZipInputStream(new BufferedInputStream(url.openStream()));
+		InputStreamReader isr = new InputStreamReader(zipInStream);
+		BufferedReader inBfrdRdr = new BufferedReader(isr);
+		ZipEntry entry;
+		while ((entry = zipInStream.getNextEntry()) != null) {
+		    if (entry.getName().equals(Constants.FILENAME_OSPF_DUMP)) {
+			((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+			OspfLoader.getTopologyFromData(model, inBfrdRdr);
+			((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    }
+		}
+		if (model.getRouters().isEmpty()) {
+		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+		    zipInStream = new ZipInputStream(new BufferedInputStream(url.openStream()));
+		    loadTopologyDataFromZipFile(model, zipInStream);
+		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.8"));
+		    zipInStream = new ZipInputStream(new BufferedInputStream(url.openStream()));
+		    loadNonTopologyDataFromZipFile(model, zipInStream);
+		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		}
+		((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.10"));
+		zipInStream = new ZipInputStream(new BufferedInputStream(url.openStream()));
+		loadNamesGeoDataFromZipFile(model, zipInStream);
 		((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	    } finally {
 		if (zipInStream != null)
@@ -161,9 +211,9 @@ public class OspfDataLoadInitiator {
      * Zpracuje soubor s topologií sítě ze ZIP souboru
      * @param model
      * @param zipInputStream
-     * @throws Exception
+     * @throws IOException
      */
-    private void loadTopologyDataFromZipFile(OspfModel model, ZipInputStream zipInputStream) throws Exception {
+    private void loadTopologyDataFromZipFile(OspfModel model, ZipInputStream zipInputStream) throws IOException {
 	InputStreamReader isr = null;
 	BufferedReader inBfrdRdr = null;
 	try {
@@ -171,7 +221,7 @@ public class OspfDataLoadInitiator {
 	    inBfrdRdr = new BufferedReader(isr);
 	    ZipEntry entry;
 	    while ((entry = zipInputStream.getNextEntry()) != null) {
-		if (entry.getName().equals(settings.fileNameTopology)) {
+		if (entry.getName().equals(Constants.FILENAME_TOPOLOGY)) {
 		    OspfLoader.loadTopology(model, inBfrdRdr);
 		}
 	    }
@@ -188,9 +238,9 @@ public class OspfDataLoadInitiator {
      * Zpracuje soubory s cenami ,jmény a pozicemi routerů ze ZIP souboru
      * @param model
      * @param zipInputStream
-     * @throws Exception
+     * @throws IOException
      */
-    private void loadNonTopologyDataFromZipFile(OspfModel model, ZipInputStream zipInputStream) throws Exception {
+    private void loadNonTopologyDataFromZipFile(OspfModel model, ZipInputStream zipInputStream) throws IOException {
 	InputStreamReader isr = null;
 	BufferedReader inBfrdRdr = null;
 	try {
@@ -198,11 +248,11 @@ public class OspfDataLoadInitiator {
 	    inBfrdRdr = new BufferedReader(isr);
 	    ZipEntry entry;
 	    while ((entry = zipInputStream.getNextEntry()) != null) {
-		if (!entry.getName().equals(settings.fileNameTopology)) {
-		    if (entry.getName().equals(settings.fileNameRouterNames)) {
-			OspfLoader.loadRouterNames(model, inBfrdRdr);
-		    } else if (entry.getName().equals(settings.fileNameGeoPositions)) {
-			OspfLoader.loadRouterGeoPositions(model, inBfrdRdr);
+		if (!entry.getName().equals(Constants.FILENAME_TOPOLOGY)) {
+		    if (entry.getName().equals(Constants.FILENAME_ROUTER_NAMES)) {
+			// nic
+		    } else if (entry.getName().equals(Constants.FILENAME_GEO_POSITIONS)) {
+			// nic
 		    } else {
 			OspfLoader.loadCosts(model, entry.getName(), inBfrdRdr);
 		    }
@@ -218,9 +268,41 @@ public class OspfDataLoadInitiator {
 
 
     /**
-     * Zpracuje soubor topologie z lokálního umístění
+     * Zpracuje soubory s cenami ,jmény a pozicemi routerů ze ZIP souboru
+     * @param model
+     * @param zipInputStream
+     * @throws IOException
      */
-    private void loadTopologyDataFromLocalFile(OspfModel model, String sourcePath) throws Exception {
+    private void loadNamesGeoDataFromZipFile(OspfModel model, ZipInputStream zipInputStream) throws IOException {
+	InputStreamReader isr = null;
+	BufferedReader inBfrdRdr = null;
+	try {
+	    isr = new InputStreamReader(zipInputStream);
+	    inBfrdRdr = new BufferedReader(isr);
+	    ZipEntry entry;
+	    while ((entry = zipInputStream.getNextEntry()) != null) {
+		if (entry.getName().equals(Constants.FILENAME_ROUTER_NAMES)) {
+		    OspfLoader.loadRouterNames(model, inBfrdRdr);
+		} else if (entry.getName().equals(Constants.FILENAME_GEO_POSITIONS)) {
+		    OspfLoader.loadRouterGeoPositions(model, inBfrdRdr);
+		} else {
+		    // nic
+		}
+	    }
+	} finally {
+	    if (inBfrdRdr != null)
+		inBfrdRdr.close();
+	    if (isr != null)
+		isr.close();
+	}
+    }
+
+
+    /**
+     * Zpracuje soubor topologie z lokálního umístění
+     * @throws IOException
+     */
+    private void loadTopologyDataFromLocalFile(OspfModel model, String sourcePath) throws IOException {
 	FileReader frdr = null;
 	BufferedReader inBfrdRdr = null;
 	Date date = new Date(System.currentTimeMillis());
@@ -228,7 +310,7 @@ public class OspfDataLoadInitiator {
 	model.setModelName(formatter.format(date) + "_single");
 	System.currentTimeMillis();
 	try {
-	    frdr = new FileReader(new File(sourcePath + settings.fileNameTopology));
+	    frdr = new FileReader(new File(sourcePath + Constants.FILENAME_TOPOLOGY));
 	    inBfrdRdr = new BufferedReader(frdr);
 	    OspfLoader.loadTopology(model, inBfrdRdr);
 	} finally {
@@ -244,9 +326,9 @@ public class OspfDataLoadInitiator {
      * Zpracuje soubory s cenami, názvy a pozicemi routerů z lokálního umístění
      * @param model
      * @param sourcePath
-     * @throws Exception
+     * @throws IOException
      */
-    private void loadNonTopologyDataFromLocalFile(OspfModel model, String sourcePath) throws Exception {
+    private void loadNonTopologyDataFromLocalFile(OspfModel model, String sourcePath) throws IOException {
 	FileReader frdr = null;
 	BufferedReader inBfrdRdr = null;
 	for (Router r : model.getRouters()) {
@@ -262,8 +344,20 @@ public class OspfDataLoadInitiator {
 		    frdr.close();
 	    }
 	}
+    }
+
+
+    /**
+     * Zpracuje soubory s cenami, názvy a pozicemi routerů z lokálního umístění
+     * @param model
+     * @param sourcePath
+     * @throws IOException
+     */
+    private void loadNamesGeoDataFromLocalFile(OspfModel model, String sourcePath) throws IOException {
+	FileReader frdr = null;
+	BufferedReader inBfrdRdr = null;
 	try {
-	    frdr = new FileReader(new File(sourcePath + settings.fileNameRouterNames));
+	    frdr = new FileReader(new File(sourcePath + Constants.FILENAME_ROUTER_NAMES));
 	    inBfrdRdr = new BufferedReader(frdr);
 	    OspfLoader.loadRouterNames(model, inBfrdRdr);
 	} finally {
@@ -273,7 +367,7 @@ public class OspfDataLoadInitiator {
 		frdr.close();
 	}
 	try {
-	    frdr = new FileReader(new File(sourcePath + settings.fileNameGeoPositions));
+	    frdr = new FileReader(new File(sourcePath + Constants.FILENAME_GEO_POSITIONS));
 	    inBfrdRdr = new BufferedReader(frdr);
 	    OspfLoader.loadRouterGeoPositions(model, inBfrdRdr);
 	} finally {
@@ -289,9 +383,10 @@ public class OspfDataLoadInitiator {
      * Načte soubory s logy výpadků ze serveru
      * @param model
      * @param sourcePath
-     * @throws Exception
+     * @throws IOException
+     * @throws ParseException
      */
-    public void loadLogsFromRemoteServerFiles(LinkFaultModel model, String sourcePath) throws Exception {
+    public void loadLogsFromRemoteServerFiles(LinkFaultModel model, String sourcePath) throws IOException, ParseException {
 	if (settings.getDataType() == Constants.ZIP) {
 	    URL adresa = null;
 	    GZIPInputStream gzipInStream = null;
@@ -314,8 +409,10 @@ public class OspfDataLoadInitiator {
      * @param model
      * @param gzipInStream
      * @throws IOException
+     * @throws ParseException
      */
-    private void loadLogsDataFromZipFile(LinkFaultModel model, GZIPInputStream gzipInStream) throws Exception {
+    private void loadLogsDataFromZipFile(LinkFaultModel model, GZIPInputStream gzipInStream) throws IOException,
+	    ParseException {
 	InputStreamReader isr = null;
 	BufferedReader inBfrdRdr = null;
 	try {
@@ -335,14 +432,17 @@ public class OspfDataLoadInitiator {
      * Stáhne data přes telnet
      * @param ospfModel
      * @param sourcePath
-     * @throws Exception
+     * @throws TelnetException
+     * @throws IOException
+     * @throws InterruptedException
      */
-    private void loadDataViaTelnet(OspfModel ospfModel, String sourcePath) throws Exception {
+    private void loadDataViaTelnet(OspfModel ospfModel, String sourcePath) throws IOException, TelnetException,
+	    InterruptedException {
 	StringBuilder data = new StringBuilder();
 	TelnetClient tc = null;
 	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.0"));
 	tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv4, settings.telnetPassword,
-		settings.telnetTimeout);
+	        settings.telnetTimeout);
 	tc.initConnection();
 	data.append(tc.getDataIPv4());
 	tc.close();
@@ -350,7 +450,7 @@ public class OspfDataLoadInitiator {
 	if (settings.telnetPortIPv6 != null) {
 	    try {
 		tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv6, settings.telnetPassword,
-			settings.telnetTimeout);
+		        settings.telnetTimeout);
 		tc.initConnection();
 		data.append(tc.getDataIPv6());
 		tc.close();
@@ -389,17 +489,17 @@ public class OspfDataLoadInitiator {
 	    // stazeni dat
 	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.0"));
 	    URL adresa = new URL(settings.cgiUrl);
-//	    InputStream is = adresa.openStream();
-//	    StringBuilder sb = new StringBuilder();
-//	    byte[] buff = new byte[8096];
-//	    int receiveLength = 0; // počet znaků přijatého řetězce
-//	    while ((receiveLength = is.read(buff)) != -1) {
-//		sb.append(new String(buff, 0, receiveLength));
-//	    }
+	    // InputStream is = adresa.openStream();
+	    // StringBuilder sb = new StringBuilder();
+	    // byte[] buff = new byte[8096];
+	    // int receiveLength = 0; // počet znaků přijatého řetězce
+	    // while ((receiveLength = is.read(buff)) != -1) {
+	    // sb.append(new String(buff, 0, receiveLength));
+	    // }
 	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	    // nacteni dat
 	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
-	    //OspfLoader.getTopologyFromData(model, new BufferedReader(new StringReader(sb.toString())));
+	    // OspfLoader.getTopologyFromData(model, new BufferedReader(new StringReader(sb.toString())));
 	    OspfLoader.getTopologyFromData(model, new BufferedReader(new InputStreamReader(adresa.openStream())));
 	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 	    // nacteni nazvu routeru

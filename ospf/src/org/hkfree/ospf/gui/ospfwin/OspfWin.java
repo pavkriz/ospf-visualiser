@@ -50,7 +50,7 @@ public class OspfWin extends JFrame {
     private JToolBar toolBar;
     private StatusBar statusBar;
     private StateDialog stateDialog;
-    private JComboBox<String> cbModels = null;
+    private JComboBox cbModels = null;
     private Map<String, MapPanel> models = null;
     private JSplitPane spPanel = null;
     private Dimension propSize = null;
@@ -89,7 +89,7 @@ public class OspfWin extends JFrame {
 	// toolbar
 	toolBar = new OspfWinToolBar(actionListener);
 	c.add(toolBar, BorderLayout.NORTH);
-	cbModels = new JComboBox<String>();
+	cbModels = new JComboBox();
 	cbModels.setVisible(false);
 	cbModels.setFont(new Font("Arial", Font.PLAIN, 10));
 	cbModels.addActionListener(new ActionListener() {
@@ -122,8 +122,9 @@ public class OspfWin extends JFrame {
 		    UIManager.put(key, f);
 		}
 	    }
+	    UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
 	    // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Exception e) {
 	    System.err.print(e.getMessage());
 	}
@@ -177,7 +178,7 @@ public class OspfWin extends JFrame {
      * @param model
      */
     public void addAndFillModelTabbedPane(String modelName, OspfModel model) {
-	MapPanel map = new MapPanel(model);
+	MapPanel map = new MapPanel(this, model);
 	map.processModelsAfterStart(true, null, 0);
 	addMapPanel(modelName, map);
     }
@@ -185,13 +186,13 @@ public class OspfWin extends JFrame {
 
     /**
      * Volá se po načtení mapModelu z NML souboru.
-     * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu. 
+     * Vytvoří záložku modelu a naplní příslušné komponenty daty modelu.
      * @param modelName
      * @param model
-     * @param rvPoints 
+     * @param rvPoints
      */
     public void addAndFillModelTabbedPane(String modelName, MapModel model, Map<RouterVertex, Point2D> rvPoints) {
-	MapPanel map = new MapPanel(model);
+	MapPanel map = new MapPanel(this, model);
 	map.getMapDesignWinManager().setRouterVertexPositions(rvPoints);
 	map.getMapDesignWinManager().processMapModelFromXml();
 	addMapPanel(modelName, map);
@@ -340,5 +341,10 @@ public class OspfWin extends JFrame {
 	boolean b = manager.getActualMDManager().getGraphComponent().isShowIPv6();
 	((OspfWinToolBar) toolBar).getIPv6ToggleButton().setSelected(b);
 	((OspfWinMenu) mainMenu).getIPv6CheckBoxItem().setSelected(b);
+    }
+
+
+    public OspfWinManager getManager() {
+	return manager;
     }
 }

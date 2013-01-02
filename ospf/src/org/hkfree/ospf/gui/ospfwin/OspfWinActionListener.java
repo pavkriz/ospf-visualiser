@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 
 import org.hkfree.ospf.gui.mappanel.MapManager;
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.tools.Factory;
 
@@ -27,6 +28,7 @@ public class OspfWinActionListener implements ActionListener {
     private Action actionPickingMode = null;
     private Action actionTransformingMode = null;
     private Action actionLayoutStartFR = null;
+    private Action actionLayoutStartJS = null;
     private Action actionLayoutStartSpring = null;
     private Action actionLayoutStopSpring = null;
     private Action actionZoom = null;
@@ -81,7 +83,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.SHOW_NEIGHBORS);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionShowNeighboursMode.putValue(AbstractAction.SHORT_DESCRIPTION,
@@ -95,7 +97,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.COST_CHANGING);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionCostChangingMode.putValue(AbstractAction.SHORT_DESCRIPTION,
@@ -109,7 +111,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.SHORTEST_PATH);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionShortestPath.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.SHORTEST_PATH + ".title"));
@@ -122,7 +124,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.GPS);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionGPS.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.GPS + ".title"));
@@ -147,7 +149,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.ZOOM);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionZoom.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ZOOM + ".title"));
@@ -172,7 +174,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.LOCK_VERTEX);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionLockMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.LOCK_VERTEX + ".title"));
@@ -185,7 +187,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(0, MODE.PICKING);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionPickingMode.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.PICKING + ".title"));
@@ -198,26 +200,39 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(0, MODE.TRANSFORMING);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION,
 		rb.getString("mode." + MODE.TRANSFORMING + ".title"));
 	actionTransformingMode.setEnabled(false);
-	actionLayoutStartFR = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_FR_START), new ImageIcon(getClass()
+	actionLayoutStartFR = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_FR_START), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "layout_fr_start.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.LAYOUT_FR_START);
+		winManager.getActualMDManager().getGraphComponent().layouting(LAYOUT.LAYOUT_FR_START);
 	    }
 	};
 	actionLayoutStartFR.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUT_FR_START + ".title"));
+		rb.getString("layout." + LAYOUT.LAYOUT_FR_START + ".title"));
 	actionLayoutStartFR.setEnabled(false);
-	actionLayoutStartSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_START), new ImageIcon(
+	actionLayoutStartJS = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_JS_START), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "layout_js_start.png"))) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.getActualMDManager().getGraphComponent().layouting(LAYOUT.LAYOUT_JS_START);
+	    }
+	};
+	actionLayoutStartJS.putValue(AbstractAction.SHORT_DESCRIPTION,
+		rb.getString("layout." + LAYOUT.LAYOUT_FR_START + ".title"));
+	actionLayoutStartJS.setEnabled(false);
+	actionLayoutStartSpring = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_SPRING_START), new ImageIcon(
 		getClass()
 			.getResource(Constants.URL_IMG_GUI + "layout_spring_start.png"))) {
 
@@ -225,13 +240,13 @@ public class OspfWinActionListener implements ActionListener {
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.LAYOUT_SPRING_START);
+		winManager.getActualMDManager().getGraphComponent().layouting(LAYOUT.LAYOUT_SPRING_START);
 	    }
 	};
 	actionLayoutStartSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUT_SPRING_START + ".title"));
+		rb.getString("layout." + LAYOUT.LAYOUT_SPRING_START + ".title"));
 	actionLayoutStartSpring.setEnabled(false);
-	actionLayoutStopSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_STOP), new ImageIcon(
+	actionLayoutStopSpring = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_SPRING_STOP), new ImageIcon(
 		getClass()
 			.getResource(Constants.URL_IMG_GUI + "layout_spring_stop.png"))) {
 
@@ -239,11 +254,11 @@ public class OspfWinActionListener implements ActionListener {
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().setMode(MODE.LAYOUT_SPRING_STOP);
+		winManager.getActualMDManager().getGraphComponent().layouting(LAYOUT.LAYOUT_SPRING_STOP);
 	    }
 	};
 	actionLayoutStopSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUT_SPRING_STOP + ".title"));
+		rb.getString("layout." + LAYOUT.LAYOUT_SPRING_STOP + ".title"));
 	actionLayoutStopSpring.setEnabled(false);
 	actionAddVertexes = new AbstractAction(rb.getString("mode." + MODE.ADD_VERTEXES), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "router_add.png"))) {
@@ -253,7 +268,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.ADD_VERTEXES);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionAddVertexes.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ADD_VERTEXES + ".title"));
@@ -266,7 +281,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.ADD_EDGES);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionAddEdges.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ADD_EDGES + ".title"));
@@ -279,7 +294,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.ASYMETRIC_LINKS);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionAsymetricLinksMode.putValue(AbstractAction.SHORT_DESCRIPTION,
@@ -293,7 +308,7 @@ public class OspfWinActionListener implements ActionListener {
 
 	    public void actionPerformed(ActionEvent e) {
 		winManager.setMode(1, MODE.SHORTEST_PATH_TWO_ROUTERS);
-		winManager.actualizeModesAndStatusBar();
+		winManager.actualizeModesAndStatusBarAndBySettings();
 	    }
 	};
 	actionTwoRoutersShortesPathMode.putValue(AbstractAction.SHORT_DESCRIPTION,
@@ -819,6 +834,11 @@ public class OspfWinActionListener implements ActionListener {
 
     public Action getActionLayoutStartFR() {
 	return actionLayoutStartFR;
+    }
+    
+    
+    public Action getActionLayoutStartJS() {
+	return actionLayoutStartJS;
     }
 
 
