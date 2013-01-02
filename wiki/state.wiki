@@ -1,5 +1,5 @@
 *2.1.2013*
-  * ukonceni vyvoje vlastniho FR layoutu - slepa vetev
+  * vlastni FR layout - je potreba vyresit priblizeni
   * moznost menit EdgeShaper v nastaveni
   * uprava net state dialogu
     * layoutu
