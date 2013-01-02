@@ -3,14 +3,11 @@ package org.hkfree.ospf.gui.mappanel;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
-import javax.swing.JPanel;
-
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
-import org.hkfree.ospf.tools.load.MapLoader;
 
 /**
  * Třída představující manažer okna návrhu sítě
@@ -19,7 +16,7 @@ import org.hkfree.ospf.tools.load.MapLoader;
  */
 public class MapManager {
 
-    private JPanel owner = null;
+    private MapPanel owner = null;
     private MapModel mapModel;
     private OspfModel ospfModel = null;
     private MapGraphComponent graphComponent = null;
@@ -33,7 +30,7 @@ public class MapManager {
      * Konstruktor
      * @param owner
      */
-    public MapManager(JPanel owner) {
+    public MapManager(MapPanel owner) {
 	this.owner = owner;
     }
 
@@ -101,7 +98,7 @@ public class MapManager {
      */
     public void loadMapModel() {
 	if (mapModel == null) {
-	    mapModel = MapLoader.convertWholeModel(ospfModel);
+	    mapModel = ospfModel.getConvertedWholeModelToMapaModel();
 	}
 	if (mapModel.hasMoreRouterWithGPSPositions()) {
 	    // ((MapDesignWin) owner).getMDWActionListener().getActionGPS().setEnabled(true);
@@ -178,11 +175,6 @@ public class MapManager {
 	    case TRANSFORMING:
 		graphComponent.setTransformingMode();
 		break;
-	    case LAYOUT_FR_START:
-	    case LAYOUT_SPRING_START:
-	    case LAYOUT_SPRING_STOP:
-		graphComponent.layouting(mode);
-		break;
 	    case ZOOM:
 		graphComponent.setZoomMode();
 		break;
@@ -224,10 +216,9 @@ public class MapManager {
 
 
     /**
-     * Vrací předka - MapDesignPanel
-     * @return
+     * Vrací předka - MapPanel
      */
-    public JPanel getOwner() {
+    public MapPanel getOwner() {
 	return owner;
     }
 }

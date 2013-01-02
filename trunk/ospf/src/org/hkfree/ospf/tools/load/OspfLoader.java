@@ -1,9 +1,8 @@
 package org.hkfree.ospf.tools.load;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,9 +161,10 @@ public class OspfLoader {
      * Metoda, která načte ze zadaného umístění logy o výpadcích
      * @param model
      * @param input
+     * @throws ParseException 
      * @throws IOException
      */
-    public static void loadOSPFLog(LinkFaultModel model, BufferedReader input) throws Exception {
+    public static void loadOSPFLog(LinkFaultModel model, BufferedReader input) throws IOException, ParseException  {
 	BufferedReader vstup = null;
 	SimpleDateFormat inputDateFormater = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	Pattern logPattern = Pattern
@@ -186,9 +186,11 @@ public class OspfLoader {
      * Metoda, která načte ze zadaného umístění pozice routerů
      * @param model
      * @param input
+     * @throws IOException 
+     * @throws NumberFormatException 
      * @throws Exception
      */
-    public static void loadRouterGeoPositions(OspfModel model, BufferedReader input) throws Exception {
+    public static void loadRouterGeoPositions(OspfModel model, BufferedReader input) throws NumberFormatException, IOException  {
 	BufferedReader vstup = null;
 	Pattern geoPattern = Pattern
 		.compile("^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+([0-9]+)\\s+([0-9]+)(.*)$");
@@ -349,13 +351,6 @@ public class OspfLoader {
 			    matcher.find();
 			    advRouter = matcher.group(0);
 			    while (!(radek = input.readLine()).contains("Network Mask"))
-//			    while (true) {
-//				radek = input.readLine();
-//				System.out.println(radek);
-//				if (radek.contains("Network Mask")) {
-//				    break;
-//				}
-//			    }
 				;
 			    matcher = maskPattern.matcher(radek);
 			    matcher.find();
@@ -369,7 +364,10 @@ public class OspfLoader {
 			    exLsa.setMask(mask);
 			    exLsa.setMetricType(metric);
 			    exLsa.setNetwork(linkName);
-			    model.getRouterByIp(advRouter).getExternalLsa().add(exLsa);
+			    //TODO zjistit proc se router nenajde
+			    if (model.getRouterByIp(advRouter) != null) {
+				model.getRouterByIp(advRouter).getExternalLsa().add(exLsa);
+			    }
 			}
 			break;
 		    case 4:
@@ -383,7 +381,6 @@ public class OspfLoader {
 			    l.setLinkIDv6(linkName);
 			    l.setSubnetMask(linkMask);
 			    modelIPv6.getLinks().add(l);
-			    // čtení řádků než narazí na Attached Router
 			    while (!((radek = input.readLine()).contains("Attached Router")))
 				;
 			    // načtení první IP jdoucí do spoje

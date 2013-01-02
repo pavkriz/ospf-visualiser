@@ -24,6 +24,7 @@ import org.hkfree.ospf.gui.costdifferencesdialog.CostDifferencesDialog;
 import org.hkfree.ospf.gui.linkfaultdialog.LinkFaultDialog;
 import org.hkfree.ospf.gui.ospfwin.StatusBar;
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.EDGE_SHAPER;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.netchange.CostDifference;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
@@ -59,8 +60,8 @@ public class NetStatesWin extends JFrame {
     /**
      * Konstruktor
      */
-    public NetStatesWin() {
-	graphComponent = new NSWGraphComponent();
+    public NetStatesWin(EDGE_SHAPER edgeShaper) {
+	graphComponent = new NSWGraphComponent(edgeShaper);
 	graphComponent.setOwner(this);
 	netStatesWinManager = new NetStatesWinManager(this);
 	netStatesWinManager.setGraphComponent(graphComponent);

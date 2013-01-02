@@ -211,4 +211,5 @@ public class MapStyleTransformer {
     public Transformer<LinkEdge, Stroke> getEdgeLineStroker() {
 	return edgeLineStroker;
     }
+
 }

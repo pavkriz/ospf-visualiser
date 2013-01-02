@@ -1,7 +1,6 @@
 package org.hkfree.ospf.gui.netstateswin;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -10,9 +9,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import org.hkfree.ospf.gui.mappanel.OspfModalGraphMouse;
-import org.hkfree.ospf.layout.JSLayout;
 import org.hkfree.ospf.model.Constants;
-import org.hkfree.ospf.model.Constants.MODE;
+import org.hkfree.ospf.model.Constants.EDGE_SHAPER;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
@@ -21,6 +20,7 @@ import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
 
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -29,6 +29,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
 import edu.uci.ics.jung.visualization.util.Animator;
 
@@ -57,8 +58,8 @@ public class NSWGraphComponent extends JComponent {
     /**
      * Konstruktor
      */
-    public NSWGraphComponent() {
-	initializeGraph();
+    public NSWGraphComponent(EDGE_SHAPER edgeShaper) {
+	initializeGraph(edgeShaper);
     }
 
 
@@ -97,7 +98,7 @@ public class NSWGraphComponent extends JComponent {
 	this.netChangeModel = model;
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(netChangeModel.getMinimumLatitude(), netChangeModel.getMaximumLatitude(),
-		netChangeModel.getMinimumLongtitude(), netChangeModel.getMaximumLongtitude());
+	        netChangeModel.getMinimumLongtitude(), netChangeModel.getMaximumLongtitude());
     }
 
 
@@ -122,16 +123,17 @@ public class NSWGraphComponent extends JComponent {
     /**
      * Inicializuje graf
      */
-    public void initializeGraph() {
+    @SuppressWarnings("rawtypes")
+    public void initializeGraph(EDGE_SHAPER edgeShaper) {
 	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
-	layout = new JSLayout<RouterVertex, LinkEdge>(graph);
-	layout.setSize(new Dimension(2200, 2200));
-	((JSLayout<RouterVertex, LinkEdge>) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
-	((JSLayout<RouterVertex, LinkEdge>) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
-	((JSLayout<RouterVertex, LinkEdge>) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
+	((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+	((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+	((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+	layout.setSize(Constants.LAYOUT_SIZE);
 	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
 	vv.setBackground(Color.WHITE);
-	vv.setSize(2000, 2000);
+	// vv.setSize(2000, 2000);
 	scaler = new CrossoverScalingControl();
 	graphMouse = new OspfModalGraphMouse<RouterVertex, LinkEdge>();
 	graphMouse.setMode(Mode.TRANSFORMING);
@@ -148,6 +150,14 @@ public class NSWGraphComponent extends JComponent {
 	vv.setEdgeToolTipTransformer(styleTransformer.getEdgeTooltiper());
 	vv.getRenderContext().setEdgeDrawPaintTransformer(styleTransformer.getEdgeLinePainter());
 	vv.getRenderContext().setEdgeStrokeTransformer(styleTransformer.getEdgeLineStroker());
+	if (edgeShaper == EDGE_SHAPER.QUAD_CURVE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<RouterVertex, LinkEdge>());
+	if (edgeShaper == EDGE_SHAPER.LINE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<RouterVertex, LinkEdge>());
+	if (edgeShaper == EDGE_SHAPER.BENT_LINE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine<RouterVertex, LinkEdge>());
+	if (edgeShaper == EDGE_SHAPER.CUBIC_CURVE)
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.CubicCurve<RouterVertex, LinkEdge>());
     }
 
 
@@ -459,50 +469,46 @@ public class NSWGraphComponent extends JComponent {
     }
 
 
-    @SuppressWarnings("unchecked")
-    public void layouting(MODE mode) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void layouting(LAYOUT lay) {
 	try {
 	    Object[] constructorArgs = { graph };
-	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutC = null;
+	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutNew = null;
 	    Constructor<? extends Layout<RouterVertex, LinkEdge>> constructor = null;
 	    Object o = null;
 	    Layout<RouterVertex, LinkEdge> l = null;
 	    LayoutTransition<RouterVertex, LinkEdge> lt = null;
 	    Animator animator = null;
-	    switch (mode) {
+	    switch (lay) {
 		case LAYOUT_FR_START:
-		    layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
-		    constructor = layoutC
-			    .getConstructor(new Class[] { Graph.class });
+		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) FRLayout.class;
+		    constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 		    o = constructor.newInstance(constructorArgs);
-		    l = (Layout<RouterVertex, LinkEdge>) o;
-		    l.setInitializer(vv.getGraphLayout());
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
-		    ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
-		    l.setSize(new Dimension(2200, 2200));
-		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+		    layout = (Layout<RouterVertex, LinkEdge>) o;
+		    layout.setInitializer(vv.getGraphLayout());
+		    ((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+		    ((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+		    ((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+		    layout.setSize(Constants.LAYOUT_SIZE);
+		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), layout);
 		    animator = new Animator(lt);
 		    animator.start();
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		    vv.repaint();
-		    layout = l;
 		    break;
 		case LAYOUT_SPRING_START:
 		    if (layout instanceof SpringLayout<?, ?>) {
 			vv.getModel().getRelaxer().relax();
 		    } else {
-			layoutC = (Class<? extends Layout<RouterVertex, LinkEdge>>) SpringLayout.class;
-			constructor = layoutC
-				.getConstructor(new Class[] { Graph.class });
+			layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) SpringLayout.class;
+			constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 			o = constructor.newInstance(constructorArgs);
 			l = (Layout<RouterVertex, LinkEdge>) o;
 			l.setInitializer(vv.getGraphLayout());
-			((SpringLayout<RouterVertex, LinkEdge>) l).setStretch(0.7);
-			((SpringLayout<RouterVertex, LinkEdge>) l).setRepulsionRange(120);
-			((SpringLayout<RouterVertex, LinkEdge>) l).setForceMultiplier(0.85);
-			l.setSize(new Dimension(2000, 2000));
-			// break;
+			((SpringLayout) l).setStretch(Constants.LAYOUT_STRETCH);
+			((SpringLayout) l).setRepulsionRange(Constants.LAYOUT_REPULSION_RANGE);
+			((SpringLayout) l).setForceMultiplier(Constants.LAYOUT_FORCE_MULTIPLIER);
+			l.setSize(Constants.LAYOUT_SIZE);
 			lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
 			animator = new Animator(lt);
 			animator.start();
@@ -516,6 +522,8 @@ public class NSWGraphComponent extends JComponent {
 		    if (layout instanceof SpringLayout<?, ?>) {
 			vv.getModel().getRelaxer().pause();
 		    }
+		    break;
+		default:
 		    break;
 	    }
 	} catch (NoSuchMethodException e) {

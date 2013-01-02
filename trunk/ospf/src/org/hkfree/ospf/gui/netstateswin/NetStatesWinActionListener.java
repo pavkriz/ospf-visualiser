@@ -9,6 +9,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.tools.Factory;
 
@@ -155,19 +156,19 @@ public class NetStatesWinActionListener implements ActionListener {
 	    }
 	};
 	actionZoom.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ZOOM + ".title"));
-	actionLayoutStartFR = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_FR_START), new ImageIcon(getClass()
+	actionLayoutStartFR = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_FR_START), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "layout_fr_start.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
-		netStatesWinManager.setMode(MODE.LAYOUT_FR_START);
+		netStatesWinManager.getGraphComponent().layouting(LAYOUT.LAYOUT_FR_START);
 	    }
 	};
 	actionLayoutStartFR.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUT_FR_START + ".title"));
-	actionLayoutStartSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_START), new ImageIcon(
+		rb.getString("layout." + LAYOUT.LAYOUT_FR_START + ".title"));
+	actionLayoutStartSpring = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_SPRING_START), new ImageIcon(
 		getClass()
 			.getResource(Constants.URL_IMG_GUI + "layout_spring_start.png"))) {
 
@@ -175,12 +176,12 @@ public class NetStatesWinActionListener implements ActionListener {
 
 
 	    public void actionPerformed(ActionEvent e) {
-		netStatesWinManager.setMode(MODE.LAYOUT_SPRING_START);
+		netStatesWinManager.getGraphComponent().layouting(LAYOUT.LAYOUT_SPRING_START);
 	    }
 	};
 	actionLayoutStartSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUT_SPRING_START + ".title"));
-	actionLayoutStopSpring = new AbstractAction(rb.getString("mode." + MODE.LAYOUT_SPRING_STOP), new ImageIcon(
+		rb.getString("layout." + LAYOUT.LAYOUT_SPRING_START + ".title"));
+	actionLayoutStopSpring = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_SPRING_STOP), new ImageIcon(
 		getClass()
 			.getResource(Constants.URL_IMG_GUI + "layout_spring_stop.png"))) {
 
@@ -188,11 +189,11 @@ public class NetStatesWinActionListener implements ActionListener {
 
 
 	    public void actionPerformed(ActionEvent e) {
-		netStatesWinManager.setMode(MODE.LAYOUT_SPRING_STOP);
+		netStatesWinManager.getGraphComponent().layouting(LAYOUT.LAYOUT_SPRING_STOP);
 	    }
 	};
 	actionLayoutStopSpring.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("mode." + MODE.LAYOUT_SPRING_STOP + ".title"));
+		rb.getString("layout." + LAYOUT.LAYOUT_SPRING_STOP + ".title"));
 	actionLockAll = new AbstractAction(rb.getString("mode." + MODE.LOCK_ALL), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "lock_all.png"))) {
 

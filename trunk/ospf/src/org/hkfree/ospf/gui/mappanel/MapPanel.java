@@ -2,6 +2,7 @@ package org.hkfree.ospf.gui.mappanel;
 
 import javax.swing.JPanel;
 
+import org.hkfree.ospf.gui.ospfwin.OspfWin;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
@@ -22,13 +23,15 @@ public class MapPanel extends JPanel {
     private MapGraphComponent graphComponent = null;
     private PropertiesPanel prop = null;
     private GraphZoomScrollPane graphPanel = null;
+    private OspfWin owner = null;
 
 
     /**
      * Konstruktor
      */
-    public MapPanel() {
-	graphComponent = new MapGraphComponent(this);
+    public MapPanel(OspfWin ospfWin) {
+	this.owner = ospfWin;
+	graphComponent = new MapGraphComponent(this, owner.getManager().getSettings().edgeShaper);
 	manager = new MapManager(this);
 	manager.setGraphComponent(graphComponent);
     }
@@ -37,8 +40,8 @@ public class MapPanel extends JPanel {
     /**
      * Konstruktor
      */
-    public MapPanel(OspfModel ospfModel) {
-	this();
+    public MapPanel(OspfWin ospfWin, OspfModel ospfModel) {
+	this(ospfWin);
 	manager.setOspfModel(ospfModel);
 	createComponents();
     }
@@ -47,10 +50,15 @@ public class MapPanel extends JPanel {
     /**
      * Konstruktor
      */
-    public MapPanel(MapModel mapModel) {
-	this();
+    public MapPanel(OspfWin ospfWin, MapModel mapModel) {
+	this(ospfWin);
 	manager.setMapModel(mapModel);
 	createComponents();
+    }
+
+
+    public OspfWin getOwner() {
+	return owner;
     }
 
 
@@ -88,6 +96,7 @@ public class MapPanel extends JPanel {
     public void processModelsAfterStart(boolean processWholeModel, Router center, int depth) {
 	manager.setLoadSettings(processWholeModel, center, depth);
 	manager.loadMapModel();
+	manager.getGraphComponent().setShowIPv6(false);
 	this.repaint();
     }
 

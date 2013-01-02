@@ -58,7 +58,7 @@ public class ModelSourceDialog extends JDialog {
     private JTextField tfRowZIPFileIdentification = new JTextField();
     private JTextField tfZIPRemoteAddressFieldPath = new JTextField();
     private JTextField tfTime = new JTextField();
-    private DefaultListModel<String> model = null;
+    private DefaultListModel model = null;
     private JFileChooser localFolderChooser = new JFileChooser();
     private JTabbedPane sourceTypeTabs = null;
     private DefaultMutableTreeNode remoteRootNode = null;
@@ -228,8 +228,8 @@ public class ModelSourceDialog extends JDialog {
 	cal.add(Calendar.DATE, -countDays);
 	final JTextField tfDateFrom = new JTextField(sdf.format(cal.getTime()));
 	final JTextField tfDateTo = new JTextField(sdf.format(new Date()));
-	model = new DefaultListModel<String>();
-	final JList<String> list = new JList<String>(model);
+	model = new DefaultListModel();
+	final JList list = new JList(model);
 	JScrollPane scroll = new JScrollPane(list);
 	scroll.setMaximumSize(MAX_SIZE_SCROLL);
 	JButton btnAdd = new JButton();

@@ -40,7 +40,7 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
     private JLabel depthLabel = new JLabel();
     private JLabel rSearchLabel = new JLabel();
     private JTextField rSearchTxt = new JTextField();
-    private JList<RouterListModel> routersJList = null;
+    private JList routersJList = null;
     private JScrollPane routerScrollPane = null;
     private RouterListModel routerListModel = null;
     private JSpinner neighbourDepth = new JSpinner();
@@ -55,7 +55,6 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
      * @param routerList
      * @param preselectedRouter
      */
-    @SuppressWarnings("unchecked")
     public MapStartStateDialog(List<Router> routerList, Router preselectedRouter) {
 	routerListModel = new RouterListModel(routerList);
 	radioGroup.add(wholeModelRB);
@@ -69,7 +68,7 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 	panel1.setBorder(BorderFactory.createTitledBorder(rb.getString("mdssd.4") + ":"));
 	rSearchLabel.setText(rb.getString("mdssd.3") + ":");
 	rSearchTxt.addActionListener(this);
-	routersJList = new JList<RouterListModel>(routerListModel);
+	routersJList = new JList(routerListModel);
 	routerScrollPane = new JScrollPane(routersJList);
 	depthLabel.setText(rb.getString("mdssd.2") + ":");
 	btnOk.setText(rb.getString("ok"));
@@ -87,50 +86,32 @@ public class MapStartStateDialog extends JDialog implements ActionListener {
 	panel1.setLayout(l0);
 	l0.setAutoCreateContainerGaps(true);
 	l0.setAutoCreateGaps(true);
-	l0.setHorizontalGroup(l0.createSequentialGroup()
-		.addGroup(l0.createParallelGroup()
-			.addGroup(l0.createSequentialGroup()
-				.addComponent(rSearchLabel)
-				.addComponent(rSearchTxt))
+	l0.setHorizontalGroup(l0.createSequentialGroup().addGroup(
+		l0.createParallelGroup()
+			.addGroup(l0.createSequentialGroup().addComponent(rSearchLabel).addComponent(rSearchTxt))
 			.addComponent(routerScrollPane)
-			.addGroup(l0.createSequentialGroup()
-				.addComponent(depthLabel)
-				.addComponent(neighbourDepth)
-			)));
+			.addGroup(l0.createSequentialGroup().addComponent(depthLabel).addComponent(neighbourDepth))));
 	l0.setVerticalGroup(l0.createSequentialGroup()
-		.addGroup(l0.createParallelGroup()
-			.addComponent(rSearchLabel)
-			.addComponent(rSearchTxt))
+		.addGroup(l0.createParallelGroup().addComponent(rSearchLabel).addComponent(rSearchTxt))
 		.addComponent(routerScrollPane)
-		.addGroup(l0.createParallelGroup()
-			.addComponent(depthLabel)
-			.addComponent(neighbourDepth)
-		));
+		.addGroup(l0.createParallelGroup().addComponent(depthLabel).addComponent(neighbourDepth)));
 	GroupLayout layout = new GroupLayout(this.getContentPane());
 	this.setLayout(layout);
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
-	layout.setHorizontalGroup(layout.createSequentialGroup()
-		.addGroup(
-			layout.createParallelGroup()
-				.addComponent(wholeModelRB)
-				.addComponent(startRouterRB)
-				.addComponent(panel1)
-				.addGroup(
-					layout.createSequentialGroup()
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-							GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(btnOk, 100, 100, 100)
-						.addComponent(btnStorno, 100, 100, 100)))
-		);
-	layout.setVerticalGroup(layout.createSequentialGroup()
-		.addComponent(wholeModelRB)
-		.addComponent(startRouterRB).addGap(30)
-		.addComponent(panel1)
-		.addGroup(layout.createParallelGroup()
-			.addComponent(btnStorno)
-			.addComponent(btnOk))
-		);
+	layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(
+		layout.createParallelGroup()
+			.addComponent(wholeModelRB)
+			.addComponent(startRouterRB)
+			.addComponent(panel1)
+			.addGroup(
+				layout.createSequentialGroup()
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+						Short.MAX_VALUE).addComponent(btnOk, 100, 100, 100)
+					.addComponent(btnStorno, 100, 100, 100))));
+	layout.setVerticalGroup(layout.createSequentialGroup().addComponent(wholeModelRB).addComponent(startRouterRB)
+		.addGap(30).addComponent(panel1)
+		.addGroup(layout.createParallelGroup().addComponent(btnStorno).addComponent(btnOk)));
 	this.setTitle(rb.getString("mdssd.title"));
 	// this.setSize(440, 400);
 	this.pack();

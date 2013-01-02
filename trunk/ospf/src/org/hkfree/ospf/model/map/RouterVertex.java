@@ -33,6 +33,7 @@ public class RouterVertex {
     private boolean isSecondRVOfTwoRVShortestPath = false;
     private boolean isFounded = false;
     private boolean isVisible = true;
+    
 
 
     /**

@@ -107,18 +107,6 @@ public class SettingsManager {
 	if (propUser.getProperty("language") == null) {
 	    propUser.setProperty("language", propDef.getProperty("language"));
 	}
-	if (propUser.getProperty("fileNameRouterNames") == null) {
-	    propUser.setProperty("fileNameRouterNames", propDef.getProperty("fileNameRouterNames"));
-	}
-	if (propUser.getProperty("fileNameTopology") == null) {
-	    propUser.setProperty("fileNameTopology", propDef.getProperty("fileNameTopology"));
-	}
-	if (propUser.getProperty("fileNameGeoPositions") == null) {
-	    propUser.setProperty("fileNameGeoPositions", propDef.getProperty("fileNameGeoPositions"));
-	}
-	if (propUser.getProperty("remoteFileIdentification") == null) {
-	    propUser.setProperty("remoteFileIdentification", propDef.getProperty("remoteFileIdentification"));
-	}
 	if (propUser.getProperty("modelZipRemotePathBetween") == null) {
 	    propUser.setProperty("modelZipRemotePathBetween", propDef.getProperty("modelZipRemotePathBetween"));
 	}
@@ -139,6 +127,9 @@ public class SettingsManager {
 	}
 	if (propUser.getProperty("cgiRDNSServer") == null) {
 	    propUser.setProperty("cgiRDNSServer", propDef.getProperty("cgiRDNSServer"));
+	}
+	if (propUser.getProperty("edgeShaper") == null) {
+	    propUser.setProperty("edgeShaper", propDef.getProperty("edgeShaper"));
 	}
 	propUser.setProperty("appVersion", Constants.APP_VERSION);
 	propUser.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
@@ -189,15 +180,12 @@ public class SettingsManager {
 	settings.modelZipLocalPath = prop.getProperty("modelZipLocalPath");
 	settings.telnetUrl = prop.getProperty("telnetUrl");
 	settings.telnetPortIPv4 = Integer.valueOf(prop.getProperty("telnetPortIPv4"));
-	settings.telnetPortIPv6 = prop.getProperty("telnetPortIPv6").isEmpty() ? null : Integer.valueOf(prop.getProperty("telnetPortIPv6"));
+	settings.telnetPortIPv6 = prop.getProperty("telnetPortIPv6").isEmpty() ? null : Integer.valueOf(prop
+	        .getProperty("telnetPortIPv6"));
 	settings.telnetPassword = prop.getProperty("telnetPassword");
 	settings.telnetTimeout = Integer.valueOf(prop.getProperty("telnetTimeout"));
 	settings.telnetRDNSServer = prop.getProperty("telnetRDNSServer");
 	settings.language = Constants.LANGUAGE.valueOf(prop.getProperty("language"));
-	settings.fileNameRouterNames = prop.getProperty("fileNameRouterNames");
-	settings.fileNameTopology = prop.getProperty("fileNameTopology");
-	settings.fileNameGeoPositions = prop.getProperty("fileNameGeoPositions");
-	settings.remoteFileIdentification = prop.getProperty("remoteFileIdentification");
 	settings.modelZipRemotePathBetween = prop.getProperty("modelZipRemotePathBetween");
 	settings.modelTimeBetween = prop.getProperty("modelTimeBetween");
 	settings.countDaysBack = Integer.valueOf(prop.getProperty("countDaysBack"));
@@ -205,6 +193,7 @@ public class SettingsManager {
 	settings.closeLogDialog = Boolean.parseBoolean(prop.getProperty("closeLogDialog"));
 	settings.cgiUrl = prop.getProperty("cgiUrl");
 	settings.cgiRDNSServer = prop.getProperty("cgiRDNSServer");
+	settings.edgeShaper = Constants.EDGE_SHAPER.valueOf(prop.getProperty("edgeShaper"));
     }
 
 
@@ -231,10 +220,6 @@ public class SettingsManager {
 	prop.setProperty("telnetTimeout", String.valueOf(settings.telnetTimeout));
 	prop.setProperty("telnetRDNSServer", settings.telnetRDNSServer);
 	prop.setProperty("language", settings.language.toString());
-	prop.setProperty("fileNameRouterNames", settings.fileNameRouterNames);
-	prop.setProperty("fileNameTopology", settings.fileNameTopology);
-	prop.setProperty("fileNameGeoPositions", settings.fileNameGeoPositions);
-	prop.setProperty("remoteFileIdentification", settings.remoteFileIdentification);
 	prop.setProperty("modelZipRemotePathBetween", settings.modelZipRemotePathBetween);
 	prop.setProperty("modelTimeBetween", settings.modelTimeBetween);
 	prop.setProperty("countDaysBack", String.valueOf(settings.countDaysBack));
@@ -242,6 +227,7 @@ public class SettingsManager {
 	prop.setProperty("closeLogDialog", String.valueOf(settings.closeLogDialog));
 	prop.setProperty("cgiUrl", settings.cgiUrl);
 	prop.setProperty("cgiRDNSServer", settings.cgiRDNSServer);
+	prop.setProperty("edgeShaper", settings.edgeShaper.toString());
 	prop.setProperty("appVersion", Constants.APP_VERSION);
 	prop.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }

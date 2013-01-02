@@ -89,7 +89,7 @@ public class OspfWinManager {
     /**
      * Aktualizuje mody u všech komponent grafu a popisky ve statusbaru
      */
-    protected void actualizeModesAndStatusBar() {
+    protected void actualizeModesAndStatusBarAndBySettings() {
 	if (getAllMDManager().isEmpty()) {
 	    // pokud není žádná mapa, vymazat status bar
 	    ((OspfWin) owner).getStatusBar().clear();
@@ -104,6 +104,8 @@ public class OspfWinManager {
 	((OspfWin) owner).getStatusBar().setStatus(0, rb.getString("mode." + mode0));
 	((OspfWin) owner).getStatusBar().setStatus(1, rb.getString("mode." + mode1));
 	((OspfWin) owner).getStatusBar().setToolTip(1, rb.getString("mode." + mode1 + ".toolTip"));
+	// aktualizace dle nastaveni
+	actualizeBySettings();
     }
 
 
@@ -129,6 +131,7 @@ public class OspfWinManager {
 	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionAsymetricLinksMode().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionTwoRoutersShortesPathMode().setEnabled(b);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartJS().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartFR().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartSpring().setEnabled(b);
 	((OspfWin) owner).getOspfWinActListener().getActionLayoutStopSpring().setEnabled(b);
@@ -220,7 +223,7 @@ public class OspfWinManager {
 	    }
 	    ospfModely.addAll(newModels);
 	    checkActionsEnable();
-	    actualizeModesAndStatusBar();
+	    actualizeModesAndStatusBarAndBySettings();
 	}
 	// otevreni okna stavu site s nactenymi modely
 	else if (settings.fromDateToDateLoadTo.equals(AppSettings.NET_STATE_WINDOW)) {
@@ -238,7 +241,7 @@ public class OspfWinManager {
 			netChangeLoader.setNetChangeModel(netChangeModel);
 			netChangeLoader.loadNetChanges(ospfChangeModel);
 			netChangeModel.sortNetStatesByDate();
-			NetStatesWin netStatesWin = new NetStatesWin();
+			NetStatesWin netStatesWin = new NetStatesWin(settings.edgeShaper);
 			netStatesWin.setNetChangeModel(netChangeModel);
 			netStatesWin.setVisible(true);
 			netStatesWin.processModelsAfterStart();
@@ -345,12 +348,13 @@ public class OspfWinManager {
      */
     private void loadMapModelFromXML(File inputFile) {
 	if (inputFile.exists()) {
-//	    MapModel mapModel = new MapModel();
+	    // MapModel mapModel = new MapModel();
 	    MapXMLLoader mapXmlLoader = new MapXMLLoader();
 	    mapXmlLoader.setInputFile(inputFile);
 	    mapXmlLoader.loadModelFromDocument();
-//	    mapModel = mapXmlLoader.getMapModel();
-	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapXmlLoader.getMapModel(), mapXmlLoader.getRVertexPositions());
+	    // mapModel = mapXmlLoader.getMapModel();
+	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapXmlLoader.getMapModel(),
+		    mapXmlLoader.getRVertexPositions());
 	}
     }
 
@@ -375,7 +379,7 @@ public class OspfWinManager {
 			netChangeLoader.setNetChangeModel(netChangeModel);
 			netChangeLoader.loadNetChanges(ospfChangeModel);
 			netChangeModel.sortNetStatesByDate();
-			NetStatesWin netStatesWin = new NetStatesWin();
+			NetStatesWin netStatesWin = new NetStatesWin(settings.edgeShaper);
 			netStatesWin.setNetChangeModel(netChangeModel);
 			netStatesWin.setVisible(true);
 			netStatesWin.processModelsAfterStart();
@@ -673,7 +677,7 @@ public class OspfWinManager {
     /**
      * Vrací nastavení aplikace
      */
-    protected AppSettings getSettings() {
+    public AppSettings getSettings() {
 	return this.settings;
     }
 
@@ -689,7 +693,7 @@ public class OspfWinManager {
 		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(true, null, 0);
 	    } else {
 		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(false, dialog.getSelectedRouter(),
-			dialog.getNeighboursDepth());
+		        dialog.getNeighboursDepth());
 	    }
 	    owner.repaint();
 	}
@@ -730,5 +734,15 @@ public class OspfWinManager {
 
     public void actualizeIPv6mode() {
 	((OspfWin) owner).actualizeIPv6mode();
+    }
+
+
+    /**
+     * Aktualizace po změně v nastavení
+     */
+    public void actualizeBySettings() {
+	for (MapManager mm : getAllMDManager()) {
+	    mm.getGraphComponent().setEdgeShaper(settings.edgeShaper);
+	}
     }
 }

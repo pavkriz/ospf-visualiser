@@ -36,7 +36,7 @@ public class OspfRoutersPanel extends JPanel {
     public static final int ENDS_WITH_STEXT = 3;
     private OspfModel ospfModel = null;
     private JScrollPane spRouters;
-    private JList<RouterListModel> listOfRouters = new JList<RouterListModel>();
+    private JList listOfRouters = new JList();
     private RouterListModel routerListModel = null;
     private JTextField routerText = new JTextField();
     private ButtonGroup routerTextRadioGroup = new ButtonGroup();
@@ -159,7 +159,6 @@ public class OspfRoutersPanel extends JPanel {
     /**
      * Vyplní komponenty
      */
-    @SuppressWarnings("unchecked")
     public void fillOspfRoutersList() {
 	routerListModel = new RouterListModel(ospfModel.getRouters());
 	listOfRouters.setModel(routerListModel);

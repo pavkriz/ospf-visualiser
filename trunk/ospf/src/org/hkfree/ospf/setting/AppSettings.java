@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.Constants.EDGE_SHAPER;
 import org.hkfree.ospf.model.Constants.LANGUAGE;
 
 /**
@@ -39,16 +40,13 @@ public class AppSettings {
     public int telnetTimeout;// =5000
     public String telnetRDNSServer;// =lab.hkfree.org
     public LANGUAGE language;
-    public String fileNameRouterNames;// =router_names
-    public String remoteFileIdentification;// =file
-    public String fileNameTopology;// =ospf_database_network
-    public String fileNameGeoPositions;// =geo
     public String modelTimeBetween;// =20-00
     public int countDaysBack; // =7
     public String fromDateToDateLoadTo; // =MAP_PANEL
     public boolean closeLogDialog; // =true
     public String cgiUrl; // =
     public String cgiRDNSServer; // =lab.hkfree.org
+    public EDGE_SHAPER edgeShaper; // =0
 
 
     /**

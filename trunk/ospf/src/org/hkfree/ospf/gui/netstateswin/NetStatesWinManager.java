@@ -279,11 +279,6 @@ public class NetStatesWinManager {
 //   	    case TRANSFORMING:
 //   		graphComponent.setTransformingMode();
 //   		break;
-   	    case LAYOUT_FR_START:
-   	    case LAYOUT_SPRING_START:
-   	    case LAYOUT_SPRING_STOP:
-   		graphComponent.layouting(mode);
-   		break;
    	    case ZOOM:
    		graphComponent.setZoomMode();
    		break;

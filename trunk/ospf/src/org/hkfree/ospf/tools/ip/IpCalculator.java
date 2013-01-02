@@ -123,8 +123,7 @@ public class IpCalculator {
      */
     public static boolean networkContains(String network, int mask, String search) {
 	if (network.contains(":")) {
-	    // return networkContainsIPv6(network, mask, search);
-	    return false;
+	    return networkContainsIPv6(network, mask, search);
 	} else {
 	    return networkContainsIPv4(network, mask, search);
 	}
@@ -166,7 +165,9 @@ public class IpCalculator {
     * @param search hledany retezec
     */
     private static boolean networkContainsIPv6(String network, int mask, String search) {
-	return true;
+	// TODO zjistit zda by se to vubec pouzivalo
+	return false;
+//	return true;
     }
 
 
