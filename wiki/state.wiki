@@ -1,7 +1,9 @@
 *2.1.2013*
   * ukonceni vyvoje vlastniho FR layoutu - slepa vetev
   * moznost menit EdgeShaper v nastaveni
-  * uprava layoutu v net state dialogu
+  * uprava net state dialogu
+    * layoutu
+    * edge shape
 
 *21.12.2012*
   * oprava vyhledavani - pri nacteni nml nehleda v ospfmodelu, jen v mapamodelu
