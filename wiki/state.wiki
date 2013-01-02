@@ -5,6 +5,7 @@
     * layoutu
     * edge shape
   * oprava zobrazeni routeru s IPv6 po inicializaci grafu - uz se neukazuji
+  * oprava - zruseni nazvu souboru v properties a nahrazeni konstantami
 
 *21.12.2012*
   * oprava vyhledavani - pri nacteni nml nehleda v ospfmodelu, jen v mapamodelu
