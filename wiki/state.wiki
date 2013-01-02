@@ -8,7 +8,7 @@
   * oprava - zruseni nazvu souboru v properties a nahrazeni konstantami
   * uprava nacitani dat - primarne nacteni souboru ospfdump, k tomu geo a nazvy
     * vzdalene ZIP
-    * lokalne ZIP - todo
+    * lokalne ZIP
     * lokalne soubory - todo
 
 *21.12.2012*
