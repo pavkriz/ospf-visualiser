@@ -5,6 +5,7 @@ Spuštění vyžaduje Javu JRE >= 1.6.
 Postup:
   * stáhnout soubor ospfVERZE.jar a spustit jej
   * spuštění z příkazové řadky: <code>java -jar ospfVERZE.jar</code>
+  * připomínky je možné zadat v záložce Issues
 
 = Verze =
 
