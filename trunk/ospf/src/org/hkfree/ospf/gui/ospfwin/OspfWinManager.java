@@ -110,40 +110,42 @@ public class OspfWinManager {
 
 
     /**
-     * Nastaví en/disable akce dle počtu záložek (modelů)
+     * Nastaví en/dis able akce dle naečtených modelů
      */
     protected void checkActionsEnable() {
-	boolean b = ospfModely.isEmpty() ? false : true;
-	if (!b && !((OspfWin) owner).getAllMDManager().isEmpty()) {
-	    b = true;
-	}
-	((OspfWin) owner).getOspfWinActListener().getActionCenterRouter().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionCloseActualModel().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionShowInfoTable().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionExportModelToXGMML().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionExportModelToSVG().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionComputeRouterImportance().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionComputeLinkImportance().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionSaveToXML().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionSearchRouter().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionAddVertexes().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionAsymetricLinksMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionTwoRoutersShortesPathMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartJS().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartFR().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartSpring().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStopSpring().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionTransformingMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionPickingMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionLockMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionLockAll().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionZoom().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionShortestPath().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionCostChangingMode().setEnabled(b);
-	((OspfWin) owner).getOspfWinActListener().getActionShowNeighboursMode().setEnabled(b);
-	if (b && getActualMDManager().getOspfModel() != null) {
+	boolean modelExist = !getAllMDManager().isEmpty();
+	// boolean modelExist = ospfModely.isEmpty() ? false : true;
+	// if (!modelExist && !((OspfWin) owner).getAllMDManager().isEmpty()) {
+	// modelExist = true;
+	// }
+	((OspfWin) owner).getOspfWinActListener().getActionCenterRouter().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionCloseActualModel().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionShowInfoTable().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionExportModelToXGMML().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionExportModelToSVG().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionComputeRouterImportance().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionComputeLinkImportance().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionSaveToXML().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionSearchRouter().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionAddVertexes().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionAsymetricLinksMode().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionTwoRoutersShortesPathMode().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartJS().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartFR().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartSpring().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionLayoutStopSpring().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionTransformingMode().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionPickingMode().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionLockMode().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionLockAll().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionZoom().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionShortestPath().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionCostChangingMode().setEnabled(modelExist);
+	((OspfWin) owner).getOspfWinActListener().getActionShowNeighboursMode().setEnabled(modelExist);
+	// if (modelExist && getActualMDManager().getOspfModel() != null) {
+	if (modelExist && getActualMDManager() != null && getActualMDManager().getOspfModel() != null) {
 	    // GPS - kontrola zda jsou souřadnice pro daný model načteny
 	    // IPv6 - kontrola zda jsou data načtena
 	    boolean gpsLoaded = getActualMDManager().getOspfModel().isGpsLoaded();
@@ -152,12 +154,12 @@ public class OspfWinManager {
 	    boolean ipv6Loaded = getActualMDManager().getOspfModel().isIpv6Loaded();
 	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(ipv6Loaded);
 	} else {
-	    ((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(b);
-	    ((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(b);
-	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(b);
+	    ((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(modelExist);
+	    ((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(modelExist);
+	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(modelExist);
 	}
 	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModely.size() < 2 ? false : true);
-	if (!b) {
+	if (!modelExist) {
 	    ((OspfWin) owner).getStatusBar().clear();
 	}
     }
@@ -355,6 +357,7 @@ public class OspfWinManager {
 	    // mapModel = mapXmlLoader.getMapModel();
 	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapXmlLoader.getMapModel(),
 		    mapXmlLoader.getRVertexPositions());
+	    checkActionsEnable();
 	}
     }
 
@@ -401,16 +404,18 @@ public class OspfWinManager {
      * Zavře aktuálně vybranou záložku a odstraní model, který v ní je zobrazen
      */
     protected void closeActualModel() {
-	if (ospfModely.isEmpty()) {
+	if (getAllMDManager().isEmpty()) {
 	    // pokud je seznam s modely prazdny, neni co zavirat
 	    ((OspfWin) owner).getStatusBar().clear();
 	} else {
-	    // jinak se zavre vybrany model
+	    // jinak je nacten model site
 	    OspfModel modelToRemove = getActualMDManager().getOspfModel();
+	    if (modelToRemove != null) {
+		// pokud model site obsahuje ospfModel, smaze se
+		ospfModely.remove(modelToRemove);
+	    }
 	    ((OspfWin) owner).closeActiveModelTabbedPane();
-	    ospfModely.remove(modelToRemove);
 	}
-	checkActionsEnable();
     }
 
 
