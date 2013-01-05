@@ -8,6 +8,32 @@ Postup:
 
 = Verze =
 
+== ospf3.0.3 (5.1.2013) ==
+  * přidání tlačítek zoom +/- do okna na status bar
+  * úprava telnetu
+    * zrychlení přijetí dat
+    * zrychlení načítání názvů routerů při použití defaultní rDNS (použití vláken)
+    * port IPv6 nepovinný, pokud je nevyplněn, nepřipojuje se
+  * možnosti rozmístění routerů v mapě
+    * FR layout - ukončení po několika krocích iterace, defaultní po načtení modelu
+    * SpringLayout - neustálé rozmísťování, možnost spustit/vypnout
+    * JS layout - dostupné přes menu, pouze vývojová verze
+  * úprava načítání dat
+    * možnost načítat data z výstupu CGI skriptu
+    * načítání subnet + external LSA
+  * vyhledávání i v rozsahu podsítích (pro IPv4)
+  * postranní panel zobrazuje také external LSA
+  * toggle tlačítko na zobrazení/skrytí IPv6
+  * tlačítka s nedostupnými funkcemi disablována
+  * opravy
+    * zvýraznění asymetrických spojů
+    * nalezení suffixu v názvech routerů a oříznutí
+    * hint ve vyhledávacím poli
+    * načítání NML souboru
+  * možnost změnit tvar spoje
+    * v nastavení výběrem z roletky
+
+
 == ospf3.0.2 (20.9.2012) ==
   * celková změna GUI na jedno okno + okno pro sledování stavů sítě v čase
   * úprava vyhledávání v mapě (dle ID nebo názvu routeru - non-case senzitivní)
