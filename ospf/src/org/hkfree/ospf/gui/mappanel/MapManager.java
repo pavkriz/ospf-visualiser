@@ -207,7 +207,6 @@ public class MapManager {
 		break;
 	    case IPV6:
 		graphComponent.setShowIPv6(!graphComponent.isShowIPv6());
-		graphComponent.setShowIPv6(graphComponent.isShowIPv6());
 		break;
 	    default:
 		break;
