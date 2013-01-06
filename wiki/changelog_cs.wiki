@@ -95,7 +95,8 @@ Postup:
     * při potvrzení načítání dat modelu se uloží také způsob načítání dat
 
 Snímek z programu Cytoscape s načteným modelem:
-<img src="http://ospf-visualiser.googlecode.com/files/scn_cytoscape.png" />
+<img src="http://ospf-visualiser.googlecode.com/svn/wiki/scn_cytoscape.png" />
+
 
 == starší verze ==
 Starší verze byly popisovány na adrese http://lab.hkfree.org/ospfmap/
