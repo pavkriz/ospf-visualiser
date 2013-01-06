@@ -69,7 +69,7 @@ How to:
     * when you confirm dialog for loading model data the way of loading data is saved
 
 Screenshot from Cytoscape with loaded model:
-<img src="http://ospf-visualiser.googlecode.com/files/scn_cytoscape.png" />
+<img src="http://ospf-visualiser.googlecode.com/svn/wiki/scn_cytoscape.png" />
 
 == older versions ==
 Older versions were described here: http://lab.hkfree.org/ospfmap/
