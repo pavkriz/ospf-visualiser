@@ -10,6 +10,7 @@ Postup:
 = Verze =
 
 == ospf3.0.3 (5.1.2013) ==
+  * <font color="red">asdf</font>
   * přidání tlačítek zoom +/- do okna na status bar
   * úprava telnetu
     * zrychlení přijetí dat
