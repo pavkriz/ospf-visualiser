@@ -10,7 +10,7 @@ Postup:
 = Verze =
 
 == ospf3.0.3 (5.1.2013) ==
-<font color="red"><b>AKTUALIZACE:</b> Pokud při prvním spuštění nastavena chyba, pomůže smazání složky .ospf-visualiser z domovského adresáře</font>
+<font color="red"><b>AKTUALIZACE:</b> Pokud při prvním spuštění nastavena chyba, pomůže smazání složky ".ospf-visualiser" z domovského adresáře</font>
   * přidání tlačítek zoom +/- do okna na status bar
   * úprava telnetu
     * zrychlení přijetí dat
