@@ -539,7 +539,7 @@ public class OspfWinActionListener implements ActionListener {
 	actionIPv6Toggle.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode.IPV6.title"));
 	actionIPv6Toggle.setEnabled(false);
     }
-
+    
 
     /**
      * Vrací akci nastavení režimu zobrazování sousedů

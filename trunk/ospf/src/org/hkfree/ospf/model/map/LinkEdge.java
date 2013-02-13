@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Stroke;
+import java.io.Serializable;
 import java.util.ResourceBundle;
 
 import org.hkfree.ospf.gui.mappanel.MapGraphComponent;
@@ -18,8 +19,10 @@ import edu.uci.ics.jung.visualization.RenderContext;
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
-public class LinkEdge {
+public class LinkEdge implements Serializable {
 
+    private static final long serialVersionUID = -6326761512343098201L;
+    
     private ResourceBundle rb = Factory.getRb();
     private MapGraphComponent graphComponent = null;
     private RouterVertex routerVertex1 = new RouterVertex();
