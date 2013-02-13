@@ -103,20 +103,20 @@ public class OspfDataLoadInitiator {
 		if (f.exists()) {
 		    FileReader frdr = new FileReader(f);
 		    inBufRd = new BufferedReader(frdr);
-		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 		    OspfLoader.getTopologyFromData(model, inBufRd);
 		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
 		} else {
-		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 		    loadTopologyDataFromLocalFile(model, sourcePath);
-		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
-		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.8"));
+		    winManager.getOwner().getStateDialog().operationSucceeded();
+		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.8"));
 		    loadNonTopologyDataFromLocalFile(model, sourcePath);
-		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    winManager.getOwner().getStateDialog().operationSucceeded();
 		}
-		((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.10"));
+		winManager.getOwner().getStateDialog().addText(rb.getString("stated.10"));
 		loadNamesGeoDataFromLocalFile(model, sourcePath);
-		((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		winManager.getOwner().getStateDialog().operationSucceeded();
 		break;
 	    case Constants.ZIP:
 		model.setModelName(new File(sourcePath).getName());
@@ -128,28 +128,28 @@ public class OspfDataLoadInitiator {
 		    ZipEntry entry;
 		    while ((entry = zipInStream.getNextEntry()) != null) {
 			if (entry.getName().equals(Constants.FILENAME_OSPF_DUMP)) {
-			    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+			    winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 			    OspfLoader.getTopologyFromData(model, inBufRd);
-			    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+			    winManager.getOwner().getStateDialog().operationSucceeded();
 			}
 		    }
 		    if (model.getRouters().isEmpty()) {
-			((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+			winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 			zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(
 			        new FileInputStream(sourcePath))));
 			loadTopologyDataFromZipFile(model, zipInStream);
-			((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
-			((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.8"));
+			winManager.getOwner().getStateDialog().operationSucceeded();
+			winManager.getOwner().getStateDialog().addText(rb.getString("stated.8"));
 			zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(
 			        new FileInputStream(sourcePath))));
 			loadNonTopologyDataFromZipFile(model, zipInStream);
-			((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+			winManager.getOwner().getStateDialog().operationSucceeded();
 		    }
-		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.10"));
+		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.10"));
 		    zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(new FileInputStream(
 			    sourcePath))));
 		    loadNamesGeoDataFromZipFile(model, zipInStream);
-		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    winManager.getOwner().getStateDialog().operationSucceeded();
 		} finally {
 		    if (zipInStream != null)
 			zipInStream.close();
@@ -178,25 +178,25 @@ public class OspfDataLoadInitiator {
 		ZipEntry entry;
 		while ((entry = zipInStream.getNextEntry()) != null) {
 		    if (entry.getName().equals(Constants.FILENAME_OSPF_DUMP)) {
-			((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+			winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 			OspfLoader.getTopologyFromData(model, inBfrdRdr);
-			((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+			winManager.getOwner().getStateDialog().operationSucceeded();
 		    }
 		}
 		if (model.getRouters().isEmpty()) {
-		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.7"));
+		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 		    zipInStream = new ZipInputStream(new BufferedInputStream(url.openStream()));
 		    loadTopologyDataFromZipFile(model, zipInStream);
-		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
-		    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.8"));
+		    winManager.getOwner().getStateDialog().operationSucceeded();
+		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.8"));
 		    zipInStream = new ZipInputStream(new BufferedInputStream(url.openStream()));
 		    loadNonTopologyDataFromZipFile(model, zipInStream);
-		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    winManager.getOwner().getStateDialog().operationSucceeded();
 		}
-		((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.10"));
+		winManager.getOwner().getStateDialog().addText(rb.getString("stated.10"));
 		zipInStream = new ZipInputStream(new BufferedInputStream(url.openStream()));
 		loadNamesGeoDataFromZipFile(model, zipInStream);
-		((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		winManager.getOwner().getStateDialog().operationSucceeded();
 	    } finally {
 		if (zipInStream != null)
 		    zipInStream.close();
@@ -440,7 +440,7 @@ public class OspfDataLoadInitiator {
 	    InterruptedException {
 	StringBuilder data = new StringBuilder();
 	TelnetClient tc = null;
-	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.0"));
+	winManager.getOwner().getStateDialog().addText(rb.getString("stated.0"));
 	tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv4, settings.telnetPassword,
 	        settings.telnetTimeout);
 	tc.initConnection();
@@ -487,7 +487,7 @@ public class OspfDataLoadInitiator {
     private void loadDataFromCgiScript(OspfModel model, String sourcePath) throws InterruptedException {
 	try {
 	    // stazeni dat
-	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.0"));
+	    winManager.getOwner().getStateDialog().addText(rb.getString("stated.0"));
 	    URL adresa = new URL(settings.cgiUrl);
 	    // InputStream is = adresa.openStream();
 	    // StringBuilder sb = new StringBuilder();
@@ -496,20 +496,20 @@ public class OspfDataLoadInitiator {
 	    // while ((receiveLength = is.read(buff)) != -1) {
 	    // sb.append(new String(buff, 0, receiveLength));
 	    // }
-	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    winManager.getOwner().getStateDialog().operationSucceeded();
 	    // nacteni dat
-	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
+	    winManager.getOwner().getStateDialog().addText(rb.getString("stated.1"));
 	    // OspfLoader.getTopologyFromData(model, new BufferedReader(new StringReader(sb.toString())));
 	    OspfLoader.getTopologyFromData(model, new BufferedReader(new InputStreamReader(adresa.openStream())));
-	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    winManager.getOwner().getStateDialog().operationSucceeded();
 	    // nacteni nazvu routeru
-	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.3"));
+	    winManager.getOwner().getStateDialog().addText(rb.getString("stated.3"));
 	    loadNames(model);
-	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    winManager.getOwner().getStateDialog().operationSucceeded();
 	    // nalezeni a prirazeni suffixu z nazvu routeru
-	    ((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.9"));
+	    winManager.getOwner().getStateDialog().addText(rb.getString("stated.9"));
 	    findAndSetSuffix(model);
-	    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	    winManager.getOwner().getStateDialog().operationSucceeded();
 	    // nazev modelu
 	    Date date = new Date(System.currentTimeMillis());
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd--HH-mm");

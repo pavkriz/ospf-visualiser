@@ -1,11 +1,15 @@
 package org.hkfree.ospf.tools.geo;
 
+import java.io.Serializable;
+
 /**
  * Třída reprezentující geografickou souřadnici bodu
  * @author Jakub Menzel
  */
-public class GPSPoint {
+public class GPSPoint implements Serializable {
 
+    private static final long serialVersionUID = -7865956655358961791L;
+    
     private double latitude = 0;
     private double longtitude = 0;
 

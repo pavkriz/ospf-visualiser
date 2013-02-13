@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 
 import org.hkfree.ospf.gui.about.AboutApplicationDialog;
@@ -54,7 +53,7 @@ import org.hkfree.ospf.tools.save.MapXMLSaver;
 public class OspfWinManager {
 
     private ResourceBundle rb = Factory.getRb();
-    private JFrame owner = null;
+    private OspfWin owner = null;
     private List<OspfModel> ospfModely = new ArrayList<OspfModel>();
     private LinkFaultModel linkFaultModel = new LinkFaultModel();
     private NetChangeModel netChangeModel = null;
@@ -70,7 +69,7 @@ public class OspfWinManager {
      * z puvodniho
      * @param owner
      */
-    public OspfWinManager(JFrame owner) {
+    public OspfWinManager(OspfWin owner) {
 	this.owner = owner;
 	try {
 	    settingsManager = new SettingsManager(settings);
@@ -196,7 +195,7 @@ public class OspfWinManager {
 	OspfDataLoadInitiator loadInitiator = new OspfDataLoadInitiator(settings, this);
 	List<OspfModel> newModels = new ArrayList<OspfModel>();
 	// inicializace logu nacteni dat
-	((OspfWin) getOwner()).getStateDialog().init();
+	getOwner().getStateDialog().init();
 	for (String sourcePath : settings.getFilePaths()) {
 	    newModels.add(new OspfModel());
 	    OspfModel actualModel = newModels.get(newModels.size() - 1);
@@ -204,8 +203,8 @@ public class OspfWinManager {
 		loadInitiator.loadData(actualModel, sourcePath);
 		actualModel.removeNonCompletelyLoadedLinksAndRouters();
 	    } catch (Exception e) {
-		((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
-		((OspfWin) getOwner()).getStateDialog().operationFailed();
+		getOwner().showErrorMessage(rb.getString("error"), e.getMessage());
+		getOwner().getStateDialog().operationFailed();
 	    }
 	    // pokud model obsahuje spoje, provede v nem upravy
 	    if (!actualModel.getLinks().isEmpty()) {
@@ -217,7 +216,7 @@ public class OspfWinManager {
 		newModels.remove(actualModel);
 	    }
 	}
-	((OspfWin) getOwner()).getStateDialog().addText(rb.getString("stated.5"));
+	getOwner().getStateDialog().addText(rb.getString("stated.5"));
 	// pridani novych modelu do zalozek
 	if (settings.fromDateToDateLoadTo.equals(AppSettings.MAP_PANEL)) {
 	    for (OspfModel om : newModels) {
@@ -567,19 +566,9 @@ public class OspfWinManager {
 
     /**
      * Vrací vlastníka
-     * @return JFrame
      */
-    public JFrame getOwner() {
+    public OspfWin getOwner() {
 	return owner;
-    }
-
-
-    /**
-     * Nastavuje vlastníka
-     * @param owner
-     */
-    public void setOwner(JFrame owner) {
-	this.owner = owner;
     }
 
 
@@ -751,3 +740,4 @@ public class OspfWinManager {
 	}
     }
 }
+

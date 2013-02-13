@@ -3,6 +3,7 @@ package org.hkfree.ospf.model.map;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
+import java.io.Serializable;
 
 import org.hkfree.ospf.tools.geo.GPSPoint;
 
@@ -13,8 +14,10 @@ import edu.uci.ics.jung.visualization.RenderContext;
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
-public class RouterVertex {
+public class RouterVertex implements Serializable {
 
+    private static final long serialVersionUID = 7625919799208623090L;
+    
     private String description = "";
     private String name = "";
     private boolean isMultilink = false;

@@ -27,6 +27,14 @@ import org.hkfree.ospf.tools.ip.IpCalculator;
  */
 public class OspfLoader {
 
+    private static String patternIP = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
+    private static String patternMask = "^.*/([0-9]{1,2})";
+    private static String patternCost = "^.*:\\s*([0-9]{1,})";
+    private static String patternName = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+(.+)$";
+    private static String patternGeo = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+([0-9]+)\\s+([0-9]+)(.*)$";
+    private static String patternLog = "^([0-9]{4}/[0-9]{2}/[0-9]{2}\\s+[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+.+id\\((.+)\\).+ar.+$";
+
+
     /**
      * Metoda, která načte ze zadaného umístění topologii sítě routerů
      * @throws IOException
@@ -34,9 +42,9 @@ public class OspfLoader {
     public static void loadTopology(OspfModel model, BufferedReader input) throws IOException {
 	BufferedReader vstup = null;
 	String radek = "";
-	Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+	Pattern ipPattern = Pattern.compile(patternIP);
 	Matcher ipMatcher = null;
-	Pattern maskPattern = Pattern.compile("^.*/([0-9]{1,2})");
+	Pattern maskPattern = Pattern.compile(patternMask);
 	Matcher maskMatcher = null;
 	vstup = input;
 	while ((radek = vstup.readLine()) != null) {
@@ -79,9 +87,11 @@ public class OspfLoader {
 	BufferedReader infoUzlu = null;
 	Router router = null;
 	String radek;
-	Pattern costPattern = Pattern.compile("^.*:\\s([0-9]{1,})");
+	// Pattern costPattern = Pattern.compile("^.*:\\s([0-9]{1,})");
+	Pattern costPattern = Pattern.compile(patternCost);
 	Matcher costMatcher = null;
-	Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+	Pattern ipPattern = Pattern.compile(patternIP);
+	// Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
 	Matcher ipMatcher = null;
 	int cena;
 	List<Link> act_spoje = new ArrayList<Link>();
@@ -139,7 +149,7 @@ public class OspfLoader {
     public static void loadRouterNames(OspfModel model, BufferedReader input) throws IOException {
 	BufferedReader vstup = null;
 	String radek = "", ip = "", name = "";
-	Pattern namePattern = Pattern.compile("^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+(.+)$");
+	Pattern namePattern = Pattern.compile(patternName);
 	Matcher nameMatcher = null;
 	vstup = input;
 	while ((radek = vstup.readLine()) != null) {
@@ -161,14 +171,13 @@ public class OspfLoader {
      * Metoda, která načte ze zadaného umístění logy o výpadcích
      * @param model
      * @param input
-     * @throws ParseException 
+     * @throws ParseException
      * @throws IOException
      */
-    public static void loadOSPFLog(LinkFaultModel model, BufferedReader input) throws IOException, ParseException  {
+    public static void loadOSPFLog(LinkFaultModel model, BufferedReader input) throws IOException, ParseException {
 	BufferedReader vstup = null;
 	SimpleDateFormat inputDateFormater = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-	Pattern logPattern = Pattern
-		.compile("^([0-9]{4}/[0-9]{2}/[0-9]{2}\\s+[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+.+id\\((.+)\\).+ar.+$");
+	Pattern logPattern = Pattern.compile(patternLog);
 	Matcher logMatcher = null;
 	vstup = input;
 	String line = "";
@@ -186,14 +195,14 @@ public class OspfLoader {
      * Metoda, která načte ze zadaného umístění pozice routerů
      * @param model
      * @param input
-     * @throws IOException 
-     * @throws NumberFormatException 
+     * @throws IOException
+     * @throws NumberFormatException
      * @throws Exception
      */
-    public static void loadRouterGeoPositions(OspfModel model, BufferedReader input) throws NumberFormatException, IOException  {
+    public static void loadRouterGeoPositions(OspfModel model, BufferedReader input) throws NumberFormatException,
+	    IOException {
 	BufferedReader vstup = null;
-	Pattern geoPattern = Pattern
-		.compile("^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+([0-9]+)\\s+([0-9]+)(.*)$");
+	Pattern geoPattern = Pattern.compile(patternGeo);
 	Matcher geoMatcher = null;
 	vstup = input;
 	GeoCoordinatesTransformator geoCoorTransormator = new GeoCoordinatesTransformator();
@@ -217,15 +226,16 @@ public class OspfLoader {
 	    IOException {
 	try {
 	    // zapis dat do souboru
-//	     BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
-//	     String s;
-//	     BufferedReader input2 = new BufferedReader(input);
-//	     while ((s = input2.readLine()) != null) {
-//	     out.write(s + "\n");
-//	     }
-//	     out.close();
-	     
+	    // BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
+	    // String s;
+	    // BufferedReader input2 = new BufferedReader(input);
+	    // while ((s = input2.readLine()) != null) {
+	    // out.write(s + "\n");
+	    // }
+	    // out.close();
 	    OspfModel modelIPv6 = new OspfModel();
+	    String routerId = null;
+	    String routerName = null;
 	    String linkStateId = null;
 	    String linkId = null;
 	    String linkData = null;
@@ -234,14 +244,17 @@ public class OspfLoader {
 	    String neighborInterface = null;
 	    String neighborRouter = null;
 	    String advRouter = null;
-	    int metric = -1;
-	    int mask = -1;
+	    int metricType = -1;
 	    int cost = -1;
+	    int mask = -1;
 	    int numberOfLinks;
 	    String radek = null;
-	    Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
-	    Pattern maskPattern = Pattern.compile("^.*/([0-9]{1,2})");
-	    Pattern costPattern = Pattern.compile("^.*:\\s*([0-9]{1,})");
+	    Pattern ipPattern = Pattern.compile(patternIP);
+	    Pattern maskPattern = Pattern.compile(patternMask);
+	    Pattern costPattern = Pattern.compile(patternCost);
+	    Pattern namePattern = Pattern.compile(patternName);
+	    Pattern geoPattern = Pattern.compile(patternGeo);
+	    GeoCoordinatesTransformator geoCoorTransormator = new GeoCoordinatesTransformator();
 	    Matcher matcher = null;
 	    // prikazy
 	    String cmd1 = "Net Link States"; // "show ip ospf database network"
@@ -251,23 +264,38 @@ public class OspfLoader {
 	    // String cmd5 = "show ipv6 ospf6 database router detail";
 	    String cmd6 = "AS Scoped Link State Database"; // "show ipv6 ospf6 database as-external detail"
 	    String cmd7 = "Area Scoped Link State Database"; // pozdeji bude urceno a jaka data jde
+	    String cmd8 = "router names"; // nacitani nazvu routeru
+	    String cmd9 = "geo positions"; // nacitani geo souradnic routeru
 	    boolean isStub = false;
 	    int cmd = 0;
 	    while ((radek = input.readLine()) != null) {
 		if (radek.contains(cmd1)) {
-		    cmd = 1; continue;
-		} 
+		    cmd = 1;
+		    continue;
+		}
 		if (radek.contains(cmd2)) {
-		    cmd = 2; continue;
-		} 
+		    cmd = 2;
+		    continue;
+		}
 		if (radek.contains(cmd3)) {
-		    cmd = 3; continue;
+		    cmd = 3;
+		    continue;
 		}
 		if (radek.contains(cmd6)) {
-		    cmd = 6; continue;
+		    cmd = 6;
+		    continue;
 		}
 		if (radek.contains(cmd7)) {
-		    cmd = 7; continue;
+		    cmd = 7;
+		    continue;
+		}
+		if (radek.contains(cmd8)) {
+		    cmd = 8;
+		    continue;
+		}
+		if (radek.contains(cmd9)) {
+		    cmd = 9;
+		    continue;
 		}
 		switch (cmd) {
 		    case 1:
@@ -355,16 +383,22 @@ public class OspfLoader {
 			    matcher = maskPattern.matcher(radek);
 			    matcher.find();
 			    mask = Integer.valueOf(matcher.group(1));
-			    while (!(radek = input.readLine()).contains("Metric Type")) 
+			    while (!(radek = input.readLine()).contains("Metric Type"))
 				;
 			    matcher = costPattern.matcher(radek);
 			    matcher.find();
-			    metric = Integer.valueOf(matcher.group(1));
+			    metricType = Integer.valueOf(matcher.group(1));
+			    while (!(radek = input.readLine()).contains("Metric"))
+				;
+			    matcher = costPattern.matcher(radek);
+			    matcher.find();
+			    cost = Integer.valueOf(matcher.group(1));
 			    ExternalLSA exLsa = new ExternalLSA();
 			    exLsa.setMask(mask);
-			    exLsa.setMetricType(metric);
+			    exLsa.setCost(cost);
+			    exLsa.setMetricType(metricType);
 			    exLsa.setNetwork(linkName);
-			    //TODO zjistit proc se router nenajde
+			    // TODO zjistit proc se router nenajde
 			    if (model.getRouterByIp(advRouter) != null) {
 				model.getRouterByIp(advRouter).getExternalLsa().add(exLsa);
 			    }
@@ -426,13 +460,13 @@ public class OspfLoader {
 			} else if (radek.contains("Metric")) {
 			    matcher = costPattern.matcher(radek);
 			    matcher.find();
-			    metric = Integer.valueOf(matcher.group(1));
+			    cost = Integer.valueOf(matcher.group(1));
 			} else if (radek.contains("Prefix") && !radek.contains("Options")) {
 			    linkName = radek.substring(radek.indexOf(':') + 2, radek.indexOf('/'));
 			    mask = Integer.valueOf(radek.substring(radek.indexOf('/') + 1));
 			    ExternalLSA exLsa = new ExternalLSA();
 			    exLsa.setMask(mask);
-			    exLsa.setMetricType(metric);
+			    exLsa.setCost(cost);
 			    exLsa.setNetwork(linkName);
 			    if (model.getRouterByIp(advRouter) != null) {
 				model.getRouterByIp(advRouter).getExternalLsa().add(exLsa);
@@ -448,6 +482,32 @@ public class OspfLoader {
 			    cmd = 4;
 			} else if (radek.contains("Type: Router")) {
 			    cmd = 5;
+			}
+			break;
+		    case 8:
+			// nacitani nazvu routeru
+			matcher = namePattern.matcher(radek);
+			matcher.find();
+			if (matcher.matches()) {
+			    routerId = matcher.group(1);
+			    routerName = matcher.group(2);
+			    for (Router r : model.getRouters()) {
+				if (r.getId().equals(routerId) && !routerId.equals(routerName))
+				    r.setName(routerName);
+			    }
+			}
+			break;
+		    case 9:
+			// nacitani geo souradnic
+			matcher = geoPattern.matcher(radek);
+			matcher.find();
+			if (matcher.matches()) {
+			    model.setGpsLoaded(true);
+			    Router r = model.getRouterByIp(matcher.group(1));
+			    if (r != null) {
+				r.setGpsPosition(geoCoorTransormator.transformJTSKToWGS(Integer.valueOf(matcher.group(2)),
+				        Integer.valueOf(matcher.group(3))));
+			    }
 			}
 			break;
 		}

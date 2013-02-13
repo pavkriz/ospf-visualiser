@@ -9,6 +9,7 @@ public class ExternalLSA {
     private String network = null;
     private int mask = -1;
     private int metricType = -1;
+    private int cost = -1;
 
 
     public String getNetwork() {
@@ -41,8 +42,12 @@ public class ExternalLSA {
     }
 
 
-    @Override
-    public String toString() {
-	return "ExternalLSA [network=" + network + ", mask=" + mask + ", metricType=" + metricType + "]";
+    public int getCost() {
+	return cost;
+    }
+
+
+    public void setCost(int cost) {
+	this.cost = cost;
     }
 }

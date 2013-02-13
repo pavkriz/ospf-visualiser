@@ -1,13 +1,16 @@
 package org.hkfree.ospf.tools.geo;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 /**
  * Třída sloužící pro přepočet geografických souřadnic bodu na souřadnice v mapě sítě
  * @author Jakub Menzel
  */
-public class GPSPointConverter {
+public class GPSPointConverter implements Serializable {
 
+    private static final long serialVersionUID = 5826793853415799232L;
+    
     private double canvasWidth = 0;
     private double canvasHeight = 0;
     private GPSPoint centerGPSPoint = null;

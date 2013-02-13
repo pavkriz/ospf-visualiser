@@ -19,6 +19,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.RouterVertex;
@@ -44,8 +45,10 @@ import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
  * @param <V>
  * @param <E>
  */
-public class OspfModalGraphMouse<V, E> extends AbstractModalGraphMouse implements ModalGraphMouse, ItemSelectable {
+public class OspfModalGraphMouse<V, E> extends AbstractModalGraphMouse implements ModalGraphMouse, ItemSelectable, Serializable {
 
+    private static final long serialVersionUID = -6553269221133983493L;
+    
     MapGraphComponent owner;
     LinkEdge edgeHovered;
 

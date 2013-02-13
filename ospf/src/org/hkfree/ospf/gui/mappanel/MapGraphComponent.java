@@ -2,6 +2,7 @@ package org.hkfree.ospf.gui.mappanel;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -45,6 +46,8 @@ import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
+import edu.uci.ics.jung.visualization.layout.PersistentLayout;
+import edu.uci.ics.jung.visualization.layout.PersistentLayoutImpl;
 import edu.uci.ics.jung.visualization.util.Animator;
 
 /**
@@ -876,6 +879,7 @@ public class MapGraphComponent extends JComponent {
      * Vrátí pozice routerů na plátně, které se v grafu nacházejí
      * @return map
      */
+    @SuppressWarnings("unchecked")
     public Map<RouterVertex, Point2D> getRouterVertexPositions() {
 	Map<RouterVertex, Point2D> positions = new HashMap<RouterVertex, Point2D>();
 	for (RouterVertex rv : graph.getVertices()) {
@@ -990,26 +994,6 @@ public class MapGraphComponent extends JComponent {
 	    Animator animator = null;
 	    switch (mode) {
 		case LAYOUT_FR_START:
-		    // if (layout instanceof JSLayout<?, ?>) {
-		    // vv.getModel().getRelaxer().prerelax();
-		    // vv.getModel().getRelaxer().relax();
-		    // vv.repaint();
-		    // } else {
-		    // layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
-		    // constructor = layoutNew.getConstructor(new Class[] { Graph.class });
-		    // o = constructor.newInstance(constructorArgs);
-		    // l = (Layout<RouterVertex, LinkEdge>) o;
-		    // l.setInitializer(vv.getGraphLayout());
-		    // ((JSLayout<RouterVertex, LinkEdge>) l).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
-		    // ((JSLayout<RouterVertex, LinkEdge>) l).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
-		    // ((JSLayout<RouterVertex, LinkEdge>) l).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
-		    // l.setSize(new Dimension(2200, 2200));
-		    // lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
-		    // animator = new Animator(lt);
-		    // animator.start();
-		    // vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
-		    // vv.repaint();
-		    // layout = l;
 		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) FRLayout.class;
 		    constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 		    o = constructor.newInstance(constructorArgs);
@@ -1111,5 +1095,35 @@ public class MapGraphComponent extends JComponent {
 	    }
 	}
 	vv.repaint();
+    }
+    
+
+    
+    
+
+    public void serializovat() {
+	try {
+	    PersistentLayout<RouterVertex, LinkEdge> pl = new PersistentLayoutImpl<RouterVertex, LinkEdge>(layout);
+	    pl.persist("testik01.ser");
+	    pl.restore("testik01.ser");
+	    
+	    layout = pl;
+	    
+//	    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
+//	                fileName));
+//	        oos.writeObject(map);
+//	        oos.close();
+	    
+//	    FileOutputStream fileOut = new FileOutputStream("sertest.ser");
+//	    ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//	    out.writeObject(g.getVertices());
+//	    out.close();
+//	    fileOut.close();
+	} catch (IOException ex) {
+	    ex.printStackTrace();
+	} catch (ClassNotFoundException e) {
+	    e.printStackTrace();
+        }
+	
     }
 }
