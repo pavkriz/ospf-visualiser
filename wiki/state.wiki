@@ -1,3 +1,6 @@
+*20.2.2013*
+  * ziskani dat z lltd, vytvoreni xml a odeslani na server
+
 *13.2.2013*
   * nacitani names+geo pres cgi
 
