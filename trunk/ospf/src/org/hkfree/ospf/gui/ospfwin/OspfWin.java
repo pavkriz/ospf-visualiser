@@ -123,8 +123,8 @@ public class OspfWin extends JFrame {
 		}
 	    }
 	    UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-//	    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-//	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+	    // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Exception e) {
 	    System.err.print(e.getMessage());
 	}

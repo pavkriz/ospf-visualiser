@@ -12,11 +12,13 @@ import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.hkfree.ospf.gui.about.AboutApplicationDialog;
 import org.hkfree.ospf.gui.about.TipsDialog;
 import org.hkfree.ospf.gui.importancedialog.LinkImportanceDialog;
 import org.hkfree.ospf.gui.importancedialog.RouterImportanceDialog;
+import org.hkfree.ospf.gui.lltddialog.LLTDSummaryDialog;
 import org.hkfree.ospf.gui.loadedlogslistdialog.LoadedLogsListDialog;
 import org.hkfree.ospf.gui.mappanel.MapManager;
 import org.hkfree.ospf.gui.mappanel.MapPanel;
@@ -30,6 +32,7 @@ import org.hkfree.ospf.gui.summarydialog.OspfModelSummaryDialog;
 import org.hkfree.ospf.gui.summarydialog.OspfWinModelTabbedPane;
 import org.hkfree.ospf.model.Constants.MODE;
 import org.hkfree.ospf.model.linkfault.LinkFaultModel;
+import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
 import org.hkfree.ospf.model.ospf.OspfModel;
@@ -39,11 +42,13 @@ import org.hkfree.ospf.setting.AppSettings;
 import org.hkfree.ospf.setting.SettingsManager;
 import org.hkfree.ospf.tools.Exporter;
 import org.hkfree.ospf.tools.Factory;
+import org.hkfree.ospf.tools.load.LLTDLoader;
 import org.hkfree.ospf.tools.load.MapXMLLoader;
 import org.hkfree.ospf.tools.load.NetChangeLoader;
 import org.hkfree.ospf.tools.load.OspfChangeLoader;
 import org.hkfree.ospf.tools.load.OspfDataLoadInitiator;
 import org.hkfree.ospf.tools.save.MapXMLSaver;
+import org.xml.sax.SAXException;
 
 /**
  * Třída představující manažer okna návrhu sítě
@@ -54,7 +59,8 @@ public class OspfWinManager {
 
     private ResourceBundle rb = Factory.getRb();
     private OspfWin owner = null;
-    private List<OspfModel> ospfModely = new ArrayList<OspfModel>();
+    private List<OspfModel> ospfModels = new ArrayList<OspfModel>();
+    private List<LLTDModel> lltdModels = new ArrayList<LLTDModel>();
     private LinkFaultModel linkFaultModel = new LinkFaultModel();
     private NetChangeModel netChangeModel = null;
     private AppSettings settings = new AppSettings();
@@ -157,7 +163,7 @@ public class OspfWinManager {
 	    ((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(modelExist);
 	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(modelExist);
 	}
-	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModely.size() < 2 ? false : true);
+	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModels.size() < 2 ? false : true);
 	if (!modelExist) {
 	    ((OspfWin) owner).getStatusBar().clear();
 	}
@@ -222,7 +228,7 @@ public class OspfWinManager {
 	    for (OspfModel om : newModels) {
 		((OspfWin) owner).addAndFillModelTabbedPane(om.getModelName(), om);
 	    }
-	    ospfModely.addAll(newModels);
+	    ospfModels.addAll(newModels);
 	    checkActionsEnable();
 	    actualizeModesAndStatusBarAndBySettings();
 	}
@@ -365,8 +371,8 @@ public class OspfWinManager {
      * Otevře okno zobrazní stavu sítě v čase
      */
     protected void showNetStatesWin() {
-	if (ospfModely.size() > 1) {
-	    NSModelChooseDialog modelChooseDialog = new NSModelChooseDialog(ospfModely);
+	if (ospfModels.size() > 1) {
+	    NSModelChooseDialog modelChooseDialog = new NSModelChooseDialog(ospfModels);
 	    if (modelChooseDialog.selectionConfirmed()) {
 		if (modelChooseDialog.getSelectedOspfModels().size() > 1) {
 		    OspfChangeModel ospfChangeModel = new OspfChangeModel();
@@ -411,7 +417,7 @@ public class OspfWinManager {
 	    OspfModel modelToRemove = getActualMDManager().getOspfModel();
 	    if (modelToRemove != null) {
 		// pokud model site obsahuje ospfModel, smaze se
-		ospfModely.remove(modelToRemove);
+		ospfModels.remove(modelToRemove);
 	    }
 	    ((OspfWin) owner).closeActiveModelTabbedPane();
 	}
@@ -474,7 +480,7 @@ public class OspfWinManager {
     /**
      * Zobrazí dialog "Tipy"
      */
-    public void showTipsDialog() {
+    protected void showTipsDialog() {
 	TipsDialog dialog = new TipsDialog(owner, settings.language);
 	dialog.setVisible(true);
     }
@@ -495,6 +501,15 @@ public class OspfWinManager {
     protected void showOspfModelSummaryDialog() {
 	OspfModel model = getActualMDManager().getOspfModel();
 	OspfModelSummaryDialog dialog = new OspfModelSummaryDialog(owner, new OspfWinModelTabbedPane(model), model);
+	dialog.setVisible(true);
+    }
+
+
+    /**
+     * Zobrazí okno s přehledem načtených LLTD dat a práce s nimi
+     */
+    protected void showLLTDDialog() {
+	LLTDSummaryDialog dialog = new LLTDSummaryDialog(owner, this);
 	dialog.setVisible(true);
     }
 
@@ -739,5 +754,26 @@ public class OspfWinManager {
 	    mm.getGraphComponent().setEdgeShaper(settings.edgeShaper);
 	}
     }
-}
 
+
+    /**
+     * Načte LLTD data
+     */
+    public void loadLLTDData() {
+	try {
+	    lltdModels = LLTDLoader.loadLLTDData();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	} catch (ParserConfigurationException e) {
+	    e.printStackTrace();
+	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	} catch (SAXException e) {
+	    e.printStackTrace();
+	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	}
+    }
+
+
+    public void addLLTDtoOspfModels() {}
+}

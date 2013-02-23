@@ -46,11 +46,11 @@ public class SettingsDialog extends JDialog implements ActionListener {
      * @param appSettings současné nastavení aplikace
      * @param rb popisky v nastaveném jazyce
      */
-    public SettingsDialog(Frame okno, OspfWinManager ospfWinManager, AppSettings appSettings) {
-	super(okno);
+    public SettingsDialog(Frame frame, OspfWinManager ospfWinManager, AppSettings appSettings) {
+	super(frame);
 	this.settings = appSettings;
 	this.manager = ospfWinManager;
-	createGUI(okno);
+	createGUI();
 	this.setTitle(rb.getString("sd.title"));
 	this.setIconImage(this.getToolkit().getImage(getClass().getResource(Constants.URL_IMG_GUI + "nastaveni.png")));
 	this.pack();
@@ -62,10 +62,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 
     /**
      * Vytvoření GUI
-     * @param okno předek
-     * @param rb popisky v nastaveném jazyce
      */
-    private void createGUI(Frame okno) {
+    private void createGUI() {
 	// naplneni obrazky s jazyky
 	ImageIcon[] images = new ImageIcon[LANGUAGE.values().length];
 	for (int i = 0; i < LANGUAGE.values().length; i++) {

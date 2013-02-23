@@ -60,6 +60,7 @@ public class OspfWinMenu extends JMenuBar {
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLoadData()));
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLoadLog()));
 	mData.addSeparator();
+	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionShowLLTD()));
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionShowLoadedLogs()));
 	mData.addSeparator();
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionSaveToXML()));
