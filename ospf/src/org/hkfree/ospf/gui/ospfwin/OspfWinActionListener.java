@@ -60,6 +60,7 @@ public class OspfWinActionListener implements ActionListener {
     private Action actionShowInfoTable = null;
     private Action actionTips = null;
     private Action actionIPv6Toggle = null;
+    private Action actionShowLLTDSummary = null;
 
 
     /**
@@ -488,7 +489,7 @@ public class OspfWinActionListener implements ActionListener {
 	};
 	actionSearchRouter.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mdwtb.1"));
 	actionSearchRouter.setEnabled(false);
-	actionShowInfoTable = new AbstractAction(rb.getString("menu.data.summary"), new ImageIcon(getClass().getResource(
+	actionShowInfoTable = new AbstractAction(rb.getString("menu.map.summary"), new ImageIcon(getClass().getResource(
 		Constants.URL_IMG_GUI + "summary.png"))) {
 
 	    private static final long serialVersionUID = 1L;
@@ -538,6 +539,17 @@ public class OspfWinActionListener implements ActionListener {
 	};
 	actionIPv6Toggle.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode.IPV6.title"));
 	actionIPv6Toggle.setEnabled(false);
+	actionShowLLTDSummary = new AbstractAction(rb.getString("menu.data.lltd")/* , new ImageIcon(getClass().getResource(
+		Constants.URL_IMG_GUI + "nastaveni.png"))*/) {
+
+	    private static final long serialVersionUID = 1L;
+
+
+	    public void actionPerformed(ActionEvent e) {
+		winManager.showLLTDDialog();
+	    }
+	};
+	actionShowLLTDSummary.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.program.settings.title"));
     }
     
 
@@ -854,5 +866,10 @@ public class OspfWinActionListener implements ActionListener {
 
     public Action getActionIPv6Toggle() {
 	return actionIPv6Toggle;
+    }
+    
+    
+    public Action getActionShowLLTD() {
+	return actionShowLLTDSummary;
     }
 }
