@@ -879,7 +879,6 @@ public class MapGraphComponent extends JComponent {
      * Vrátí pozice routerů na plátně, které se v grafu nacházejí
      * @return map
      */
-    @SuppressWarnings("unchecked")
     public Map<RouterVertex, Point2D> getRouterVertexPositions() {
 	Map<RouterVertex, Point2D> positions = new HashMap<RouterVertex, Point2D>();
 	for (RouterVertex rv : graph.getVertices()) {
@@ -1096,34 +1095,27 @@ public class MapGraphComponent extends JComponent {
 	}
 	vv.repaint();
     }
-    
 
-    
-    
 
     public void serializovat() {
 	try {
 	    PersistentLayout<RouterVertex, LinkEdge> pl = new PersistentLayoutImpl<RouterVertex, LinkEdge>(layout);
 	    pl.persist("testik01.ser");
 	    pl.restore("testik01.ser");
-	    
 	    layout = pl;
-	    
-//	    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-//	                fileName));
-//	        oos.writeObject(map);
-//	        oos.close();
-	    
-//	    FileOutputStream fileOut = new FileOutputStream("sertest.ser");
-//	    ObjectOutputStream out = new ObjectOutputStream(fileOut);
-//	    out.writeObject(g.getVertices());
-//	    out.close();
-//	    fileOut.close();
+	    // ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
+	    // fileName));
+	    // oos.writeObject(map);
+	    // oos.close();
+	    // FileOutputStream fileOut = new FileOutputStream("sertest.ser");
+	    // ObjectOutputStream out = new ObjectOutputStream(fileOut);
+	    // out.writeObject(g.getVertices());
+	    // out.close();
+	    // fileOut.close();
 	} catch (IOException ex) {
 	    ex.printStackTrace();
 	} catch (ClassNotFoundException e) {
 	    e.printStackTrace();
-        }
-	
+	}
     }
 }

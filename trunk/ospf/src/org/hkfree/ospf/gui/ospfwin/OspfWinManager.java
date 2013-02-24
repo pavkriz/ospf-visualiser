@@ -509,7 +509,7 @@ public class OspfWinManager {
      * Zobrazí okno s přehledem načtených LLTD dat a práce s nimi
      */
     protected void showLLTDDialog() {
-	LLTDSummaryDialog dialog = new LLTDSummaryDialog(owner, this);
+	LLTDSummaryDialog dialog = new LLTDSummaryDialog(owner, this, lltdModels);
 	dialog.setVisible(true);
     }
 
@@ -761,7 +761,7 @@ public class OspfWinManager {
      */
     public void loadLLTDData() {
 	try {
-	    lltdModels = LLTDLoader.loadLLTDData();
+	    LLTDLoader.loadLLTDData(lltdModels);
 	} catch (IOException e) {
 	    e.printStackTrace();
 	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());

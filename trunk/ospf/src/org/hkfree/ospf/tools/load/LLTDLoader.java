@@ -36,12 +36,13 @@ public class LLTDLoader {
 
     /**
      * Stažení a načteni LLTD dat
+     * @param lltdModels 
      * @param lltdModels
      * @throws IOException
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public static List<LLTDModel> loadLLTDData() throws IOException, ParserConfigurationException,
+    public static void loadLLTDData(List<LLTDModel> lltdModels) throws IOException, ParserConfigurationException,
 	    SAXException {
 	List<LLTDModel> result = new ArrayList<LLTDModel>();
 	// stazeni dat
@@ -59,7 +60,8 @@ public class LLTDLoader {
 	for (String modelString : modelsLines) {
 	    result.add(loadModel(modelString));
 	}
-	return result;
+	lltdModels.clear();
+	lltdModels.addAll(result);
     }
 
 
@@ -73,22 +75,22 @@ public class LLTDLoader {
      */
     private static LLTDModel loadModel(String line) throws ParserConfigurationException, SAXException, IOException {
 	LLTDModel model = new LLTDModel();
-	Pattern pattern = Pattern.compile("<\\?xml.*</lltd>");
-	Matcher matcher = pattern.matcher(line);
-	matcher.find();
-	String modelS = matcher.group(0);
-	DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-	Document doc = newDocumentBuilder.parse(new ByteArrayInputStream(modelS.getBytes()));
-	// normalize text representation, doporucuje se to...
-	doc.getDocumentElement().normalize();
-	NodeList elems = doc.getElementsByTagName("device");
-	NodeList links = doc.getElementsByTagName("relation");
-	model.setDate(new Date(Long.valueOf(doc.getDocumentElement().getAttribute("millis"))));
-	model.setPublicIP(doc.getDocumentElement().getAttribute("publicIP"));
 	List<Device> devices = new ArrayList<Device>();
 	List<Relation> relations = new ArrayList<Relation>();
 	Device d = null;
 	Relation r = null;
+	// ziskani XML ze stringu
+	Pattern pattern = Pattern.compile("<\\?xml.*</lltd>");
+	Matcher matcher = pattern.matcher(line);
+	matcher.find();
+	DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+	Document doc = newDocumentBuilder.parse(new ByteArrayInputStream(matcher.group(0).getBytes()));
+	doc.getDocumentElement().normalize();
+	// ziskani modelu z XML
+	NodeList elems = doc.getElementsByTagName("device");
+	NodeList links = doc.getElementsByTagName("relation");
+	model.setDate(new Date(Long.valueOf(doc.getDocumentElement().getAttribute("millis"))));
+	model.setPublicIP(doc.getDocumentElement().getAttribute("publicIP"));
 	for (int i = 0; i < elems.getLength(); i++) {
 	    Element e = (Element) elems.item(i);
 	    d = new Device();
@@ -112,13 +114,18 @@ public class LLTDLoader {
     }
 
 
+    /**
+     * Vrací zařízení dle jeho názvu (mac adresy)
+     * @param name mach adresa zařízení
+     * @param devices seznam všech zařízení
+     * @return null pokud nenajde (nemělo by nastat), jinak zařízení
+     */
     private static Device getDevice(String name, List<Device> devices) {
 	for (Device d : devices) {
 	    if (d.getSource().equals(name)) {
 		return d;
 	    }
 	}
-	System.out.println(name);
 	return null;
     }
 }
