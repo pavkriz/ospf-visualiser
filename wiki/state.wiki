@@ -1,3 +1,7 @@
+*24.2.2013*
+  * dialog zobrazujici seznamu LLTD modelu
+  * dialog pro zobrazeni mapy LLTD modely
+
 *23.2.2013*
   * nacitani dat ze serveru, parsovani do modelu v ospf-visualiseru
 
