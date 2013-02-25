@@ -1,3 +1,6 @@
+*25.2.2013*
+  * dialog zobrazujici LLTD graf
+
 *24.2.2013*
   * dialog zobrazujici seznamu LLTD modelu
   * dialog pro zobrazeni mapy LLTD modely
