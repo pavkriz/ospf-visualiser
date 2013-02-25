@@ -25,7 +25,7 @@ import org.hkfree.ospf.tools.Factory;
 
 /**
  * Dialog zobrazující přehled načtených LLTD modelu, umožňuje nahrát modely a zařadit je do OSPF modelů.
- * Také lze jednotlivé modely prohlížet
+ * Je možné zobrazit mapy modelů.
  * @author Jan Schovánek
  */
 public class LLTDSummaryDialog extends JDialog implements ActionListener {
