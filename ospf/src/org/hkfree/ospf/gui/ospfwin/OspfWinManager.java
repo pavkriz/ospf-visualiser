@@ -269,6 +269,8 @@ public class OspfWinManager {
 	if (settings.closeLogDialog) {
 	    ((OspfWin) getOwner()).getStateDialog().close();
 	}
+	// zarazeni LLTD dat do nove nacteneho modelu
+	addLLTDtoOspfModels();
     }
 
 
@@ -703,7 +705,7 @@ public class OspfWinManager {
 		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(true, null, 0);
 	    } else {
 		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(false, dialog.getSelectedRouter(),
-		        dialog.getNeighboursDepth());
+			dialog.getNeighboursDepth());
 	    }
 	    owner.repaint();
 	}
@@ -783,7 +785,7 @@ public class OspfWinManager {
 	Set<LLTDModel> ms = new HashSet<LLTDModel>(lltdModels);
 	// prochazeni vsech OSPF modelu
 	for (OspfModel ospf : ospfModels) {
-	    //zarazeni lltd modelu k routerum
+	    // zarazeni lltd modelu k routerum
 	    ospf.addLLTD(ms);
 	}
     }
