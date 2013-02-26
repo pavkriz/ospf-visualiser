@@ -1,3 +1,6 @@
+*26.2.2013*
+  * pridani LLTD modelu k routerum v OSPF modelech
+
 *25.2.2013*
   * dialog zobrazujici LLTD graf
 
