@@ -34,7 +34,6 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
     private ResourceBundle rb = Factory.getRb();
     private OspfWinManager manager = null;
     private JButton btnLoadData = new JButton();
-    private JButton btnAddToModels = new JButton();
     private List<LLTDModel> lltdModels = null;
     private JTable table = null;
 
@@ -57,12 +56,10 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
      * Vytvoření GUI
      */
     private void createGUI() {
-	// tlacitko pro nacteni dat
+	// tlacitko pro nacteni dat a jejich zatrizeni do ospf modelu
 	btnLoadData.setText(rb.getString("lltdsd.0"));
+	btnLoadData.setToolTipText(rb.getString("lltdsd.1"));
 	btnLoadData.addActionListener(this);
-	// tlacitko pro zaraznei LLTD modelu do OSPF modlu
-	btnAddToModels.setText(rb.getString("lltdsd.1"));
-	btnAddToModels.addActionListener(this);
 	// tabulka obsahujici nactene LLTD modely
 	table = new JTable();
 	table.setFillsViewportHeight(true);
@@ -75,16 +72,14 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
 	layout.setHorizontalGroup(layout.createSequentialGroup()
-	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-	                .addComponent(scrollPane)
-	                .addGroup(layout.createSequentialGroup()
-	                        .addComponent(btnLoadData)
-	                        .addComponent(btnAddToModels))));
+		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(scrollPane)
+			.addGroup(layout.createSequentialGroup()
+				.addComponent(btnLoadData))));
 	layout.setVerticalGroup(layout.createSequentialGroup()
-	        .addComponent(scrollPane)
-	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-	                .addComponent(btnLoadData)
-	                .addComponent(btnAddToModels)));
+		.addComponent(scrollPane)
+		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			.addComponent(btnLoadData)));
     }
 
 
@@ -113,7 +108,7 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 		JTable table = (JTable) e.getSource();
 		int modelRow = Integer.valueOf(e.getActionCommand());
 		LLTDDialog dialog = new LLTDDialog(
-		        getModelByPublicIP((String) ((DefaultTableModel) table.getModel()).getValueAt(modelRow, 0)));
+			getModelByPublicIP((String) ((DefaultTableModel) table.getModel()).getValueAt(modelRow, 0)));
 		dialog.setVisible(true);
 	    }
 	};
@@ -141,7 +136,6 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	if (e.getSource() == btnLoadData) {
 	    manager.loadLLTDData();
 	    actualizeTable();
-	} else if (e.getSource() == btnAddToModels) {
 	    manager.addLLTDtoOspfModels();
 	}
     }

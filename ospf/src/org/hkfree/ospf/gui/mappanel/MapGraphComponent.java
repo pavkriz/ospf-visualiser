@@ -19,6 +19,7 @@ import org.hkfree.ospf.layout.JSLayout;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.Constants.EDGE_SHAPER;
 import org.hkfree.ospf.model.Constants.LAYOUT;
+import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
@@ -181,7 +182,7 @@ public class MapGraphComponent extends JComponent {
 	scaler.scale(vv, zoomValue, vv.getCenter());
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
-	        mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
+		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
 	layout.initialize();
 	// vv.getModel().getRelaxer().setSleepTime(500);
 	vv.getModel().getRelaxer().relax();
@@ -221,7 +222,7 @@ public class MapGraphComponent extends JComponent {
 	scaler.scale(vv, zoomValue, vv.getCenter());
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
-	        mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
+		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
 	layout.initialize();
 	vv.getModel().getRelaxer().setSleepTime(50);
 	vv.getModel().getRelaxer().relax();
@@ -255,7 +256,7 @@ public class MapGraphComponent extends JComponent {
 	scaler.scale(vv, zoomValue, vv.getCenter());
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
-	        mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
+		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
     }
 
 
@@ -762,11 +763,11 @@ public class MapGraphComponent extends JComponent {
      */
     public void tryRecomputeShortestPaths() {
 	if (mapGraphCompMode == MapGraphComponentMode.SHOW_SHORTEST_PATH && shortestTreeCenter != null
-	        && shortestTreeCenter.isEnabled()) {
+		&& shortestTreeCenter.isEnabled()) {
 	    showShortestPath();
 	}
 	if (mapGraphCompMode == MapGraphComponentMode.TWO_ROUTERS_SHORTEST_PATH && firstShortestPathRV != null
-	        && secondShortestPathRV != null) {
+		&& secondShortestPathRV != null) {
 	    showShortestPathsBetweenRV(firstShortestPathRV, secondShortestPathRV);
 	}
     }
@@ -943,7 +944,7 @@ public class MapGraphComponent extends JComponent {
 		    continue;
 		}
 		if (rv.getName().toUpperCase().contains(name.toUpperCase())
-		        || rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
+			|| rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
 		    b = true;
 		}
 		// pokud je model null, hledat pouze v mapModelu
@@ -952,14 +953,14 @@ public class MapGraphComponent extends JComponent {
 		    // vyhledavani ve stubs
 		    for (StubLink sl : r.getStubs()) {
 			if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
-			        IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
+				IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
 			    b = true;
 			}
 		    }
 		    // vyhledavani v external lsa
 		    for (ExternalLSA el : r.getExternalLsa()) {
 			if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
-			        IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
+				IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
 			    b = true;
 			}
 		    }
@@ -1117,5 +1118,15 @@ public class MapGraphComponent extends JComponent {
 	} catch (ClassNotFoundException e) {
 	    e.printStackTrace();
 	}
+    }
+
+
+    /**
+     * Vrací LLTD modely pro router dle jeho názvu (názvu v mapě)
+     * @param routerName
+     * @return
+     */
+    public Set<LLTDModel> getLLTDmodels(String routerName) {
+	return ((Router) owner.getMapDesignWinManager().getOspfModel().getRouterByName(routerName)).getLltdModels();
     }
 }

@@ -5,10 +5,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
+import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.tools.Factory;
@@ -248,6 +251,25 @@ public class MapGraphContextMenu extends AbstractPopupGraphMousePlugin implement
 			}
 		    });
 		}
+		// *************************************************
+		popup.addSeparator();
+		JMenu pm = new JMenu(rb.getString("mdgcm.16"));
+		Set<LLTDModel> lltds = owner.getLLTDmodels(routerVertex.getName());
+		for (LLTDModel model : lltds) {
+		    pm.add(new AbstractAction(model.getPublicIP()) {
+
+			private static final long serialVersionUID = 1L;
+
+
+			public void actionPerformed(ActionEvent e) {
+			    owner.getOwner().getMapDesignWinManager()
+				    .showLLTDDialog(routerVertex.getName(), e.getActionCommand());
+			    vv.repaint();
+			}
+		    });
+		}
+		pm.setEnabled(!lltds.isEmpty());
+		popup.add(pm);
 		popup.show(vv, e.getX(), e.getY());
 	    }
 	}
