@@ -2,13 +2,17 @@ package org.hkfree.ospf.model.ospf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.tools.Factory;
 import org.hkfree.ospf.tools.geo.GPSPoint;
+import org.hkfree.ospf.tools.ip.IpCalculator;
 import org.hkfree.ospf.tools.ip.IpComparator;
 
 /**
@@ -84,6 +88,20 @@ public class OspfModel {
 			    s.routersToString() });
 	}
 	return text;
+    }
+
+
+    /**
+     * Vrací router dle jména (popisku v mapě)
+     * @param routerName
+     * @return
+     */
+    public Router getRouterByName(String routerName) {
+	for (Router u : routers) {
+	    if (u.getName().equals(routerName) || u.getId().equals(routerName))
+		return u;
+	}
+	return null;
     }
 
 
@@ -274,8 +292,8 @@ public class OspfModel {
     public void setGpsLoaded(boolean gpsLoaded) {
 	this.gpsLoaded = gpsLoaded;
     }
-    
-    
+
+
     /**
      * Převede celý OspfModel na MapaModel a vrátí jej
      */
@@ -338,5 +356,48 @@ public class OspfModel {
 	    }
 	}
 	return mapModel;
+    }
+
+
+    /**
+     * Zařazení LLTD modelů k jednotlivým routerům,
+     * dle toho jestli dany router propaguje danou sit
+     * @param models
+     */
+    public void addLLTD(Set<LLTDModel> models) {
+	for (Router r : routers) {
+	    Set<LLTDModel> modelsAdd = new HashSet<LLTDModel>();
+	    for (LLTDModel m : models) {
+		if (containsRouterSubnet(r, m.getPublicIP())) {
+		    modelsAdd.add(m);
+		}
+		r.setLltdModels(modelsAdd);
+	    }
+	}
+    }
+
+
+    /**
+     * Vraci true, pokud router prograuje danou podsit
+     * @param r router
+     * @param publicIP podsit
+     * @return
+     */
+    private boolean containsRouterSubnet(Router r, String publicIP) {
+	publicIP = publicIP.toUpperCase();
+	for (StubLink sl : r.getStubs()) {
+	    if (sl.getLinkID().toUpperCase().contains(publicIP) ||
+		    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), publicIP)) {
+		return true;
+	    }
+	}
+	// vyhledavani v external lsa
+	for (ExternalLSA el : r.getExternalLsa()) {
+	    if (el.getNetwork().toUpperCase().contains(publicIP) ||
+		    IpCalculator.networkContains(el.getNetwork(), el.getMask(), publicIP)) {
+		return true;
+	    }
+	}
+	return false;
     }
 }

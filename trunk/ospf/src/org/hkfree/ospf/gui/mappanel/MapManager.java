@@ -3,7 +3,9 @@ package org.hkfree.ospf.gui.mappanel;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
+import org.hkfree.ospf.gui.lltddialog.LLTDDialog;
 import org.hkfree.ospf.model.Constants.MODE;
+import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.map.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfModel;
@@ -219,5 +221,23 @@ public class MapManager {
      */
     public MapPanel getOwner() {
 	return owner;
+    }
+
+
+    /**
+     * Zobrazí LLTD dialog
+     * @param routerName název router v grafu
+     * @param lltdName název lltd modelu k zobrazení
+     */
+    public void showLLTDDialog(String routerName, String lltdName) {
+	LLTDModel model = null;
+	Router r = ospfModel.getRouterByName(routerName);
+	for (LLTDModel m : r.getLltdModels()) {
+	    if (m.getPublicIP().equals(lltdName)) {
+		model = m;
+	    }
+	}
+	LLTDDialog dialog = new LLTDDialog(model);
+	dialog.setVisible(true);
     }
 }

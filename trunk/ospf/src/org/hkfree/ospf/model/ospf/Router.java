@@ -3,6 +3,7 @@ package org.hkfree.ospf.model.ospf;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.tools.geo.GPSPoint;
 
 /**
@@ -18,6 +19,7 @@ public class Router {
     private GPSPoint gpsPosition = null;
     private Set<ExternalLSA> externalLsa = new HashSet<ExternalLSA>();
     private Set<StubLink> stubs = new HashSet<StubLink>();
+    private Set<LLTDModel> lltdModels = new HashSet<LLTDModel>();
 
 
     public Router(String id) {
@@ -94,5 +96,15 @@ public class Router {
 
     public void setExternalLsa(Set<ExternalLSA> externalLsa) {
 	this.externalLsa = externalLsa;
+    }
+
+
+    public Set<LLTDModel> getLltdModels() {
+	return lltdModels;
+    }
+
+
+    public void setLltdModels(Set<LLTDModel> lltdModels) {
+	this.lltdModels = lltdModels;
     }
 }

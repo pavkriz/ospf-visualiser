@@ -36,7 +36,7 @@ public class LLTDLoader {
 
     /**
      * Stažení a načteni LLTD dat
-     * @param lltdModels 
+     * @param lltdModels
      * @param lltdModels
      * @throws IOException
      * @throws SAXException
@@ -126,6 +126,10 @@ public class LLTDLoader {
 		return d;
 	    }
 	}
-	return null;
+	// muze se stat ze se zarizeni nenajde
+	// vytvori se nove (aby bylo mozne sestavit graf)
+	Device d = new Device();
+	d.setSource(name);
+	return d;
     }
 }

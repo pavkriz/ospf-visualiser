@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -775,5 +776,15 @@ public class OspfWinManager {
     }
 
 
-    public void addLLTDtoOspfModels() {}
+    /**
+     * Zatřízení LLTD modelů do OSPF modelů (k routerům)
+     */
+    public void addLLTDtoOspfModels() {
+	Set<LLTDModel> ms = new HashSet<LLTDModel>(lltdModels);
+	// prochazeni vsech OSPF modelu
+	for (OspfModel ospf : ospfModels) {
+	    //zarazeni lltd modelu k routerum
+	    ospf.addLLTD(ms);
+	}
+    }
 }
