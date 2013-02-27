@@ -32,6 +32,7 @@ public class StateDialog extends JDialog {
     private JScrollPane sp = null;
     private ColorPane cp = null;
     private Long time = null;
+    private OspfWin owner = null;
 
 
     /**
@@ -41,6 +42,7 @@ public class StateDialog extends JDialog {
      */
     public StateDialog(OspfWin owner) {
 	super(owner);
+	this.owner = owner;
 	createGUI();
 	this.setTitle(rb.getString("stated.title"));
 	this.setLocationRelativeTo(null);
@@ -116,10 +118,12 @@ public class StateDialog extends JDialog {
 
 
     /**
-     * Smaže výpis a uzavře okno
+     * Uzavře logovací dialog pokud je v nastavení definováno automatické zavírání
      */
-    public void close() {
-	this.setVisible(false);
+    public void closeIfCloseable() {
+	if (owner.getManager().getSettings().closeLogDialog) {
+	    this.setVisible(false);
+	}
     }
 
     /**

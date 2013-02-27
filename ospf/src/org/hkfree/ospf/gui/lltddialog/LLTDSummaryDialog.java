@@ -19,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.hkfree.ospf.gui.ospfwin.OspfWin;
 import org.hkfree.ospf.gui.ospfwin.OspfWinManager;
 import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.tools.Factory;
@@ -72,14 +73,14 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
 	layout.setHorizontalGroup(layout.createSequentialGroup()
-		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-			.addComponent(scrollPane)
-			.addGroup(layout.createSequentialGroup()
-				.addComponent(btnLoadData))));
+	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+	                .addComponent(scrollPane)
+	                .addGroup(layout.createSequentialGroup()
+	                        .addComponent(btnLoadData))));
 	layout.setVerticalGroup(layout.createSequentialGroup()
-		.addComponent(scrollPane)
-		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-			.addComponent(btnLoadData)));
+	        .addComponent(scrollPane)
+	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	                .addComponent(btnLoadData)));
     }
 
 
@@ -108,7 +109,7 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 		JTable table = (JTable) e.getSource();
 		int modelRow = Integer.valueOf(e.getActionCommand());
 		LLTDDialog dialog = new LLTDDialog(
-			getModelByPublicIP((String) ((DefaultTableModel) table.getModel()).getValueAt(modelRow, 0)));
+		        getModelByPublicIP((String) ((DefaultTableModel) table.getModel()).getValueAt(modelRow, 0)));
 		dialog.setVisible(true);
 	    }
 	};
@@ -134,9 +135,19 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 	if (e.getSource() == btnLoadData) {
+	    // stazeni dat
+	    manager.getOwner().getStateDialog().init();
+	    manager.getOwner().getStateDialog().addText(rb.getString("stated.11"));
 	    manager.loadLLTDData();
-	    actualizeTable();
+	    manager.getOwner().getStateDialog().operationSucceeded();
+	    // zarazeni lltd modelu k ospf modelum k routerum
+	    manager.getOwner().getStateDialog().addText(rb.getString("stated.12"));
 	    manager.addLLTDtoOspfModels();
+	    manager.getOwner().getStateDialog().operationSucceeded();
+	    // zavreni dialogu s vypisem logu o nacteni dat
+	    ((OspfWin) getOwner()).getStateDialog().closeIfCloseable();
+	    // aktualizace tabulky s vypisem nactenych lltd modelu
+	    actualizeTable();
 	}
     }
 }

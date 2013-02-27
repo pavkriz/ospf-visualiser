@@ -231,7 +231,7 @@ public class OspfWinActionListener implements ActionListener {
 	    }
 	};
 	actionLayoutStartJS.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("layout." + LAYOUT.LAYOUT_FR_START + ".title"));
+		rb.getString("layout." + LAYOUT.LAYOUT_JS_START + ".title"));
 	actionLayoutStartJS.setEnabled(false);
 	actionLayoutStartSpring = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_SPRING_START), new ImageIcon(
 		getClass()
