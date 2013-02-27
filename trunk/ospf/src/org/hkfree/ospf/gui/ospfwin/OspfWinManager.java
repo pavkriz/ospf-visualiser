@@ -265,12 +265,14 @@ public class OspfWinManager {
 	    }
 	}
 	((OspfWin) getOwner()).getStateDialog().operationSucceeded();
-	// zavreni dialogu s vypisem logu o nacteni dat
-	if (settings.closeLogDialog) {
-	    ((OspfWin) getOwner()).getStateDialog().close();
-	}
 	// zarazeni LLTD dat do nove nacteneho modelu
-	addLLTDtoOspfModels();
+	if (!lltdModels.isEmpty()) {
+	    getOwner().getStateDialog().addText(rb.getString("stated.12"));
+	    addLLTDtoOspfModels();
+	    ((OspfWin) getOwner()).getStateDialog().operationSucceeded();
+	}
+	// zavreni dialogu s vypisem logu o nacteni dat
+	((OspfWin) getOwner()).getStateDialog().closeIfCloseable();
     }
 
 
@@ -705,7 +707,7 @@ public class OspfWinManager {
 		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(true, null, 0);
 	    } else {
 		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(false, dialog.getSelectedRouter(),
-			dialog.getNeighboursDepth());
+		        dialog.getNeighboursDepth());
 	    }
 	    owner.repaint();
 	}
