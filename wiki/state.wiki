@@ -1,3 +1,6 @@
+*27.2.2013*
+  * logovani LLTD
+
 *26.2.2013*
   * pridani LLTD modelu k routerum v OSPF modelech
 
