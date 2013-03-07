@@ -1099,25 +1099,26 @@ public class MapGraphComponent extends JComponent {
 
 
     public void serializovat() {
-	try {
-	    PersistentLayout<RouterVertex, LinkEdge> pl = new PersistentLayoutImpl<RouterVertex, LinkEdge>(layout);
-	    pl.persist("testik01.ser");
-	    pl.restore("testik01.ser");
-	    layout = pl;
-	    // ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-	    // fileName));
-	    // oos.writeObject(map);
-	    // oos.close();
-	    // FileOutputStream fileOut = new FileOutputStream("sertest.ser");
-	    // ObjectOutputStream out = new ObjectOutputStream(fileOut);
-	    // out.writeObject(g.getVertices());
-	    // out.close();
-	    // fileOut.close();
-	} catch (IOException ex) {
-	    ex.printStackTrace();
-	} catch (ClassNotFoundException e) {
-	    e.printStackTrace();
-	}
+//	try {
+//	    	//trapny pokus o serializaci
+//	    PersistentLayout<RouterVertex, LinkEdge> pl = new PersistentLayoutImpl<RouterVertex, LinkEdge>(layout);
+//	    pl.persist("testik01.ser");
+//	    pl.restore("testik01.ser");
+//	    layout = pl;
+//	    // ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
+//	    // fileName));
+//	    // oos.writeObject(map);
+//	    // oos.close();
+//	    // FileOutputStream fileOut = new FileOutputStream("sertest.ser");
+//	    // ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//	    // out.writeObject(g.getVertices());
+//	    // out.close();
+//	    // fileOut.close();
+//	} catch (IOException ex) {
+//	    ex.printStackTrace();
+//	} catch (ClassNotFoundException e) {
+//	    e.printStackTrace();
+//	}
     }
 
 
@@ -1129,4 +1130,5 @@ public class MapGraphComponent extends JComponent {
     public Set<LLTDModel> getLLTDmodels(String routerName) {
 	return ((Router) owner.getMapDesignWinManager().getOspfModel().getRouterByName(routerName)).getLltdModels();
     }
+    
 }
