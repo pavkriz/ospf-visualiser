@@ -1,5 +1,6 @@
 *18.3.2013*
   * uprava nacitani cgi - tvar nazvu routeru z rdns
+  * LLTD tracerouter
 
 *27.2.2013*
   * logovani LLTD
