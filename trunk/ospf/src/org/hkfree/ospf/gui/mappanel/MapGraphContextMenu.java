@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
@@ -256,17 +257,19 @@ public class MapGraphContextMenu extends AbstractPopupGraphMousePlugin implement
 		JMenu pm = new JMenu(rb.getString("mdgcm.16"));
 		Set<LLTDModel> lltds = owner.getLLTDmodels(routerVertex.getName());
 		for (LLTDModel model : lltds) {
-		    pm.add(new AbstractAction(model.getPublicIP()) {
+		    JCheckBoxMenuItem i = new JCheckBoxMenuItem(model.getPublicIP(), model.isShow());
+		    i.setAction(new AbstractAction(model.getPublicIP()) {
 
 			private static final long serialVersionUID = 1L;
 
 
 			public void actionPerformed(ActionEvent e) {
 			    owner.getOwner().getMapDesignWinManager()
-				    .showLLTDDialog(routerVertex.getName(), e.getActionCommand());
+				    .showOrHideLLTDDialog(routerVertex.getName(), e.getActionCommand());
 			    vv.repaint();
 			}
 		    });
+		    pm.add(i);
 		}
 		pm.setEnabled(!lltds.isEmpty());
 		popup.add(pm);

@@ -22,7 +22,6 @@ import edu.uci.ics.jung.visualization.RenderContext;
 public class LinkEdge implements Serializable {
 
     private static final long serialVersionUID = -6326761512343098201L;
-    
     private ResourceBundle rb = Factory.getRb();
     private MapGraphComponent graphComponent = null;
     private RouterVertex routerVertex1 = new RouterVertex();
@@ -43,6 +42,7 @@ public class LinkEdge implements Serializable {
     private boolean edgeOfFirstPath = false;
     private boolean edgeOfSecondPath = false;
     private boolean hover = false;
+    private boolean lltd = false;
 
 
     // private boolean showIPv6 = false;
@@ -369,6 +369,16 @@ public class LinkEdge implements Serializable {
     }
 
 
+    public void setLltd(boolean lltd) {
+	this.lltd = lltd;
+    }
+
+
+    public boolean isLltd() {
+	return lltd;
+    }
+
+
     /**
      * Vrací příznak zda se jedná o symetrický spoj
      * @return
@@ -411,6 +421,9 @@ public class LinkEdge implements Serializable {
      * @return
      */
     public String getLabel() {
+	if (isLltd()) {
+	   return "LLTD label";
+	}
 	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
 	    return null;
 	}
@@ -446,6 +459,9 @@ public class LinkEdge implements Serializable {
      * @return string
      */
     public String getLinkDescription() {
+	if (isLltd()) {
+	    return "LLTD popisek";
+	}
 	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
 	    return null;
 	}
@@ -502,6 +518,9 @@ public class LinkEdge implements Serializable {
      * @return
      */
     public Paint getLineColor(int mode) {
+	if (isLltd()) {
+	    return Color.MAGENTA;
+	}
 	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
 	    return null;
 	}
@@ -537,6 +556,9 @@ public class LinkEdge implements Serializable {
      * @return síla štětce
      */
     public Stroke getStroker() {
+	if (isLltd()) {
+	    return RenderContext.DOTTED;
+	}
 	if (!graphComponent.isShowIPv6() && !isIPv4() && isIPv6()) {
 	    return null;
 	}

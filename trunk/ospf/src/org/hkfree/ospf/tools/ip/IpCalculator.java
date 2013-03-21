@@ -1,5 +1,9 @@
 package org.hkfree.ospf.tools.ip;
 
+import org.hkfree.ospf.model.ospf.ExternalLSA;
+import org.hkfree.ospf.model.ospf.Router;
+import org.hkfree.ospf.model.ospf.StubLink;
+
 /**
  * Třída obsluhující operace s IP (výpočet adresy sítě, broadcastu, převod masky mezi tvary)
  * @author Jakub Menzel
@@ -159,15 +163,16 @@ public class IpCalculator {
     }
 
 
-    /** Zjisti zda podsit IPv6 s maskou obsahuje hledanou sit
-    * @param network sit
-    * @param mask maska site
-    * @param search hledany retezec
-    */
+    /**
+     * Zjisti zda podsit IPv6 s maskou obsahuje hledanou sit
+     * @param network sit
+     * @param mask maska site
+     * @param search hledany retezec
+     */
     private static boolean networkContainsIPv6(String network, int mask, String search) {
-	// TODO zjistit zda by se to vubec pouzivalo
+	// TODO zjistit zda by se to vubec pouzivalo, jakoze asi ne
 	return false;
-//	return true;
+	// return true;
     }
 
 
@@ -181,6 +186,46 @@ public class IpCalculator {
     private static boolean isBetweenInclude(int min, int max, int num) {
 	if (num >= min && num <= max) {
 	    return true;
+	}
+	return false;
+    }
+
+
+    /**
+     * Vrací ip adresu routeru v klasickém tvaru
+     * @param ipArpa ip adresa rotueru v převráceném tvaru končící ".in-addr.arpa."
+     * @return klasický tvar ip adresy
+     */
+    public static String getIpFromIpArpa(String ipArpa) {
+	String result = "";
+	String[] arpas = ipArpa.substring(0, ipArpa.indexOf(".in-addr.arpa.")).split("\\.");
+	for (int i = 0; i < arpas.length; i++) {
+	    result += arpas[arpas.length - i - 1] + ".";
+	}
+	return result.substring(0, result.length() - 1);
+    }
+
+
+    /**
+     * Vraci true, pokud router prograuje danou podsit
+     * @param r router
+     * @param ip podsit
+     * @return
+     */
+    public static boolean containsRouterSubnet(Router r, String ip) {
+	ip = ip.toUpperCase();
+	for (StubLink sl : r.getStubs()) {
+	    if (sl.getLinkID().toUpperCase().contains(ip) ||
+		    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), ip)) {
+		return true;
+	    }
+	}
+	// vyhledavani v external lsa
+	for (ExternalLSA el : r.getExternalLsa()) {
+	    if (el.getNetwork().toUpperCase().contains(ip) ||
+		    IpCalculator.networkContains(el.getNetwork(), el.getMask(), ip)) {
+		return true;
+	    }
 	}
 	return false;
     }

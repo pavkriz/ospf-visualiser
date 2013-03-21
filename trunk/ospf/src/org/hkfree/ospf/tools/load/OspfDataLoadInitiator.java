@@ -22,7 +22,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.hkfree.ospf.gui.ospfwin.OspfWin;
 import org.hkfree.ospf.gui.ospfwin.OspfWinManager;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.linkfault.LinkFaultModel;
@@ -96,7 +95,7 @@ public class OspfDataLoadInitiator {
 	switch (settings.getDataType()) {
 	    case Constants.FOLDER:
 		if (!sourcePath.substring(sourcePath.length()).equals("/")
-		        && !sourcePath.substring(sourcePath.length()).equals("\\")) {
+			&& !sourcePath.substring(sourcePath.length()).equals("\\")) {
 		    sourcePath += "/";
 		}
 		File f = new File(sourcePath + Constants.FILENAME_OSPF_DUMP);
@@ -105,7 +104,7 @@ public class OspfDataLoadInitiator {
 		    inBufRd = new BufferedReader(frdr);
 		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 		    OspfLoader.getTopologyFromData(model, inBufRd);
-		    ((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+		    winManager.getOwner().getStateDialog().operationSucceeded();
 		} else {
 		    winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 		    loadTopologyDataFromLocalFile(model, sourcePath);
@@ -136,12 +135,12 @@ public class OspfDataLoadInitiator {
 		    if (model.getRouters().isEmpty()) {
 			winManager.getOwner().getStateDialog().addText(rb.getString("stated.7"));
 			zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(
-			        new FileInputStream(sourcePath))));
+				new FileInputStream(sourcePath))));
 			loadTopologyDataFromZipFile(model, zipInStream);
 			winManager.getOwner().getStateDialog().operationSucceeded();
 			winManager.getOwner().getStateDialog().addText(rb.getString("stated.8"));
 			zipInStream = new ZipInputStream(new BufferedInputStream(new BufferedInputStream(
-			        new FileInputStream(sourcePath))));
+				new FileInputStream(sourcePath))));
 			loadNonTopologyDataFromZipFile(model, zipInStream);
 			winManager.getOwner().getStateDialog().operationSucceeded();
 		    }
@@ -442,7 +441,7 @@ public class OspfDataLoadInitiator {
 	TelnetClient tc = null;
 	winManager.getOwner().getStateDialog().addText(rb.getString("stated.0"));
 	tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv4, settings.telnetPassword,
-	        settings.telnetTimeout);
+		settings.telnetTimeout);
 	tc.initConnection();
 	data.append(tc.getDataIPv4());
 	tc.close();
@@ -450,7 +449,7 @@ public class OspfDataLoadInitiator {
 	if (settings.telnetPortIPv6 != null) {
 	    try {
 		tc = new TelnetClient(settings.telnetUrl, settings.telnetPortIPv6, settings.telnetPassword,
-		        settings.telnetTimeout);
+			settings.telnetTimeout);
 		tc.initConnection();
 		data.append(tc.getDataIPv6());
 		tc.close();
@@ -458,19 +457,19 @@ public class OspfDataLoadInitiator {
 		e.printStackTrace();
 	    }
 	}
-	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	winManager.getOwner().getStateDialog().operationSucceeded();
 	// nacteni modelu z prijatych dat
-	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.1"));
+	winManager.getOwner().getStateDialog().addText(rb.getString("stated.1"));
 	OspfLoader.getTopologyFromData(ospfModel, new BufferedReader(new StringReader(data.toString())));
-	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	winManager.getOwner().getStateDialog().operationSucceeded();
 	// nacteni nazvu routeru
-	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.3"));
+	winManager.getOwner().getStateDialog().addText(rb.getString("stated.3"));
 	loadNames(ospfModel);
-	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	winManager.getOwner().getStateDialog().operationSucceeded();
 	// nalezeni a prirazeni suffixu z nazvu routeru
-	((OspfWin) winManager.getOwner()).getStateDialog().addText(rb.getString("stated.9"));
+	winManager.getOwner().getStateDialog().addText(rb.getString("stated.9"));
 	findAndSetSuffix(ospfModel);
-	((OspfWin) winManager.getOwner()).getStateDialog().operationSucceeded();
+	winManager.getOwner().getStateDialog().operationSucceeded();
 	// nazev modelu
 	Date date = new Date(System.currentTimeMillis());
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm");

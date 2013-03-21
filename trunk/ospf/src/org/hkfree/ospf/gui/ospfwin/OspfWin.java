@@ -21,7 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -47,10 +46,10 @@ public class OspfWin extends JFrame {
     private OspfWinManager manager = null;
     private OspfWinActionListener actionListener = null;
     private OspfWinMenu mainMenu;
-    private JToolBar toolBar;
+    private OspfWinToolBar toolBar;
     private StatusBar statusBar;
     private StateDialog stateDialog;
-    private JComboBox cbModels = null;
+    private JComboBox<String> cbModels = null;
     private Map<String, MapPanel> models = null;
     private JSplitPane spPanel = null;
     private Dimension propSize = null;
@@ -89,7 +88,7 @@ public class OspfWin extends JFrame {
 	// toolbar
 	toolBar = new OspfWinToolBar(actionListener);
 	c.add(toolBar, BorderLayout.NORTH);
-	cbModels = new JComboBox();
+	cbModels = new JComboBox<String>();
 	cbModels.setVisible(false);
 	cbModels.setFont(new Font("Arial", Font.PLAIN, 10));
 	cbModels.addActionListener(new ActionListener() {
@@ -122,9 +121,9 @@ public class OspfWin extends JFrame {
 		    UIManager.put(key, f);
 		}
 	    }
-	    //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+	    // UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
 	    // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-	     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Exception e) {
 	    System.err.print(e.getMessage());
 	}
@@ -137,7 +136,7 @@ public class OspfWin extends JFrame {
      */
     private void actualizeContent() {
 	manager.checkActionsEnable();
-	MapPanel mp = ((MapPanel) models.get(cbModels.getSelectedItem()));
+	MapPanel mp = models.get(cbModels.getSelectedItem());
 	spPanel.setRightComponent(null);
 	if (((JPanel) spPanel.getLeftComponent()).getComponentCount() > 1) {
 	    ((JPanel) spPanel.getLeftComponent()).remove(1);
@@ -164,8 +163,8 @@ public class OspfWin extends JFrame {
 
 
 	    public void actionPerformed(ActionEvent e) {
-		((OspfWinToolBar) toolBar).getTfFind().requestFocus();
-		((OspfWinToolBar) toolBar).getTfFind().selectAll();
+		toolBar.getTfFind().requestFocus();
+		toolBar.getTfFind().selectAll();
 	    }
 	});
     }
@@ -304,7 +303,7 @@ public class OspfWin extends JFrame {
      * @return
      */
     protected String getSearhString() {
-	return ((OspfWinToolBar) toolBar).getTfFind().getText();
+	return toolBar.getTfFind().getText();
     }
 
 
@@ -329,7 +328,7 @@ public class OspfWin extends JFrame {
 	if (cbModels.getSelectedItem() == null) {
 	    return null;
 	}
-	return ((MapPanel) models.get(cbModels.getSelectedItem().toString())).getMapDesignWinManager();
+	return models.get(cbModels.getSelectedItem().toString()).getMapDesignWinManager();
     }
 
 
@@ -339,8 +338,8 @@ public class OspfWin extends JFrame {
      */
     public void actualizeIPv6mode() {
 	boolean b = manager.getActualMDManager().getGraphComponent().isShowIPv6();
-	((OspfWinToolBar) toolBar).getIPv6ToggleButton().setSelected(b);
-	((OspfWinMenu) mainMenu).getIPv6CheckBoxItem().setSelected(b);
+	toolBar.getIPv6ToggleButton().setSelected(b);
+	mainMenu.getIPv6CheckBoxItem().setSelected(b);
     }
 
 

@@ -43,7 +43,7 @@ public class ShortestPathTreeDialog extends JDialog {
      */
     public ShortestPathTreeDialog(Forest<RouterVertex, EdgeOfSPT> graph, final RouterVertex rootVertex) {
 	this.graph = graph;
-	layout = new TreeLayout<RouterVertex, EdgeOfSPT>((Forest<RouterVertex, EdgeOfSPT>) this.graph);
+	layout = new TreeLayout<RouterVertex, EdgeOfSPT>(this.graph);
 	vv = new VisualizationViewer<RouterVertex, EdgeOfSPT>(layout);
 	OspfModalGraphMouse<RouterVertex, EdgeOfSPT> graphMouse = new OspfModalGraphMouse<RouterVertex, EdgeOfSPT>();
 	graphMouse.setMode(Mode.TRANSFORMING);

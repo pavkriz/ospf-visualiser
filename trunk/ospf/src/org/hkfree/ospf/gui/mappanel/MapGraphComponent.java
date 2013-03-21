@@ -2,7 +2,6 @@ package org.hkfree.ospf.gui.mappanel;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -19,7 +18,9 @@ import org.hkfree.ospf.layout.JSLayout;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.Constants.EDGE_SHAPER;
 import org.hkfree.ospf.model.Constants.LAYOUT;
+import org.hkfree.ospf.model.lltd.Device;
 import org.hkfree.ospf.model.lltd.LLTDModel;
+import org.hkfree.ospf.model.lltd.Relation;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
 import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
@@ -47,8 +48,6 @@ import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
-import edu.uci.ics.jung.visualization.layout.PersistentLayout;
-import edu.uci.ics.jung.visualization.layout.PersistentLayoutImpl;
 import edu.uci.ics.jung.visualization.util.Animator;
 
 /**
@@ -1098,27 +1097,92 @@ public class MapGraphComponent extends JComponent {
     }
 
 
-    public void serializovat() {
-//	try {
-//	    	//trapny pokus o serializaci
-//	    PersistentLayout<RouterVertex, LinkEdge> pl = new PersistentLayoutImpl<RouterVertex, LinkEdge>(layout);
-//	    pl.persist("testik01.ser");
-//	    pl.restore("testik01.ser");
-//	    layout = pl;
-//	    // ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-//	    // fileName));
-//	    // oos.writeObject(map);
-//	    // oos.close();
-//	    // FileOutputStream fileOut = new FileOutputStream("sertest.ser");
-//	    // ObjectOutputStream out = new ObjectOutputStream(fileOut);
-//	    // out.writeObject(g.getVertices());
-//	    // out.close();
-//	    // fileOut.close();
-//	} catch (IOException ex) {
-//	    ex.printStackTrace();
-//	} catch (ClassNotFoundException e) {
-//	    e.printStackTrace();
-//	}
+    /**
+     * Zobrazí nebo skyje LLTD model u routeru
+     * @param model
+     */
+    public void showOrHideLltdModel(Router router, LLTDModel model) {
+	RouterVertex rvBase = findRouterVertex(router.getName());
+	RouterVertex rvLast = null;
+	model.setShow(!model.isShow());
+	if (model.isShow()) {
+	    // pridani routeru a spoju z traceroutu
+	    for (int i = 0; i < model.getTraceroute().size(); i++) {
+		String ip = model.getTraceroute().get(i);
+		boolean con = IpCalculator.containsRouterSubnet(router, ip);
+		RouterVertex rv = new RouterVertex();
+		rv.setName(ip);
+		rv.setLltd(true);
+		graph.addVertex(rv);
+		LinkEdge le = new LinkEdge();
+		le.setRouterVertex1(i == 0 ? rvBase : findRouterVertex(model.getTraceroute().get(i - 1)));
+		le.setRouterVertex2(rv);
+		le.setActuallyLive(true);
+		le.setLltd(true);
+		graph.addEdge(le, le.getRVertex1(), le.getRVertex2());
+		if (con) {
+		    rvLast = rv;
+		    break;
+		}
+	    }
+	    // pridani zarizeni
+	    for (Device d : model.getDevices()) {
+		RouterVertex rv = new RouterVertex();
+		rv.setName(d.getSource());
+		rv.setLltd(true);
+		graph.addVertex(rv);
+	    }
+	    LinkEdge led = new LinkEdge();
+		led.setRouterVertex1(rvLast);
+		led.setRouterVertex2(findLltdVertex(model.getDevices().get(0).getSource()));
+		led.setActuallyLive(true);
+		led.setLltd(true);
+		graph.addEdge(led, led.getRVertex1(), led.getRVertex2());
+	    
+	    // pridani spoju
+	    for (Relation r : model.getRelations()) {
+		RouterVertex rv1 = findLltdVertex(r.getFrom().getSource());
+		if (rv1 == null) {
+		    rv1 = new RouterVertex();
+		    rv1.setName(r.getFrom().getSource());
+		    rv1.setLltd(true);
+		    graph.addVertex(rv1);
+		}
+		RouterVertex rv2 = findLltdVertex(r.getTo().getSource());
+		if (rv2 == null) {
+		    rv2 = new RouterVertex();
+		    rv2.setName(r.getFrom().getSource());
+		    rv2.setLltd(true);
+		    graph.addVertex(rv2);
+		}
+		LinkEdge le = new LinkEdge();
+		le.setRouterVertex1(rv1);
+		le.setRouterVertex2(rv2);
+		le.setActuallyLive(true);
+		le.setLltd(true);
+		graph.addEdge(le, le.getRVertex1(), le.getRVertex2());
+	    }
+	} else {}
+    }
+
+
+    private RouterVertex findLltdVertex(String mac) {
+	for (RouterVertex rv : graph.getVertices()) {
+	    if (rv.isLltd() && rv.getName().equals(mac)) {
+		return rv;
+	    }
+	}
+	return null;
+    }
+
+
+    private RouterVertex findRouterVertex(String name) {
+	for (RouterVertex rv : graph.getVertices()) {
+	    if (rv.getName().equals(name)) {
+		return rv;
+	    }
+	}
+	return null;
     }
 
 
@@ -1130,5 +1194,4 @@ public class MapGraphComponent extends JComponent {
     public Set<LLTDModel> getLLTDmodels(String routerName) {
 	return ((Router) owner.getMapDesignWinManager().getOspfModel().getRouterByName(routerName)).getLltdModels();
     }
-    
 }

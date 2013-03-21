@@ -29,24 +29,6 @@ public class ModelCheckBoxItem extends JCheckBox {
 
 
     /**
-     * Vrací příznak, zda je zaškrtnutý
-     * @return boolean
-     */
-    public boolean isSelected() {
-	return super.isSelected();
-    }
-
-
-    /**
-     * Nastavuje zaškrtnutí
-     * @param selected
-     */
-    public void setSelected(boolean selected) {
-	super.setSelected(selected);
-    }
-
-
-    /**
      * Vrací název modelu
      * @return modelName
      */
