@@ -366,10 +366,17 @@ public class OspfModel {
      */
     public void addLLTD(Set<LLTDModel> models) {
 	for (Router r : routers) {
+	    // prochazeni routeru
 	    Set<LLTDModel> modelsAdd = new HashSet<LLTDModel>();
 	    for (LLTDModel m : models) {
-		if (containsRouterSubnet(r, m.getPublicIP())) {
-		    modelsAdd.add(m);
+		// prochazeni lltd modelu
+		for (String ip : m.getTraceroute()) {
+		    // prochazeni ip adres z traceroutu
+		    if (IpCalculator.containsRouterSubnet(r, ip)) {
+			// pokud ip z traceroutu je propagovana routerem, lltd model se prida
+			modelsAdd.add(m);
+			break;
+		    }
 		}
 		r.setLltdModels(modelsAdd);
 	    }
@@ -377,27 +384,5 @@ public class OspfModel {
     }
 
 
-    /**
-     * Vraci true, pokud router prograuje danou podsit
-     * @param r router
-     * @param publicIP podsit
-     * @return
-     */
-    private boolean containsRouterSubnet(Router r, String publicIP) {
-	publicIP = publicIP.toUpperCase();
-	for (StubLink sl : r.getStubs()) {
-	    if (sl.getLinkID().toUpperCase().contains(publicIP) ||
-		    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), publicIP)) {
-		return true;
-	    }
-	}
-	// vyhledavani v external lsa
-	for (ExternalLSA el : r.getExternalLsa()) {
-	    if (el.getNetwork().toUpperCase().contains(publicIP) ||
-		    IpCalculator.networkContains(el.getNetwork(), el.getMask(), publicIP)) {
-		return true;
-	    }
-	}
-	return false;
-    }
+    
 }

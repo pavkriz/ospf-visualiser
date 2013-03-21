@@ -159,7 +159,9 @@ public class RemoteSourceTreeLoader {
 	    e.printStackTrace();
 	} finally {
 	    try {
-		reader.close();
+		if (reader != null) {
+		    reader.close();
+		}
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    }

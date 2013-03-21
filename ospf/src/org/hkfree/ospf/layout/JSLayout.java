@@ -27,11 +27,11 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     private double temperature;
     private int currentIteration;
     private int maxIterations = 700;
-    private Map<V, FRVertexData> frVertexData =
-	    LazyMap.decorate(new HashMap<V, FRVertexData>(), new Factory<FRVertexData>() {
+    private Map<V, JSVertexData> jsVertexData =
+	    LazyMap.decorate(new HashMap<V, JSVertexData>(), new Factory<JSVertexData>() {
 
-	        public FRVertexData create() {
-		    return new FRVertexData();
+	        public JSVertexData create() {
+		    return new JSVertexData();
 	        }
 	    });
     // private double attraction_multiplier = 0.75;
@@ -57,7 +57,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 
     @Override
     public void setSize(Dimension size) {
-	if (initialized == false)
+	if (!initialized)
 	    setInitializer(new RandomLocationTransformer<V>(size));
 	super.setSize(size);
 	double t = size.width / 50.0;
@@ -138,7 +138,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	double konst = 10;
 	velocity_maximum *= konst;
 	friction *= konst;
-	FRVertexData fvd = frVertexData.get(v);
+	JSVertexData fvd = jsVertexData.get(v);
 	if (fvd == null)
 	    return;
 	fvd.forceVelocityX += (fvd.forceCoulombX + fvd.forceHarmonicX) * 0.1;
@@ -180,7 +180,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 
 
     protected void calcAttraction(V v1) {
-	FRVertexData fvd1 = frVertexData.get(v1);
+	JSVertexData fvd1 = jsVertexData.get(v1);
 	if (fvd1 == null)
 	    return;
 	fvd1.forceHarmonicX = 0;
@@ -213,7 +213,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 
 
     protected void calcRepulsion(V v1) {
-	FRVertexData fvd1 = frVertexData.get(v1);
+	JSVertexData fvd1 = jsVertexData.get(v1);
 	if (fvd1 == null)
 	    return;
 	fvd1.forceCoulombX = 0;
@@ -277,7 +277,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	return false;
     }
 
-    protected static class FRVertexData extends Point2D.Double {
+    protected static class JSVertexData extends Point2D.Double {
 
 	private static final long serialVersionUID = 1L;
 	protected double forceCoulombX = 0.0d;

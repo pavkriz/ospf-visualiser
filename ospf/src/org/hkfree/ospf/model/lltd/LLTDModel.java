@@ -12,8 +12,10 @@ import java.util.List;
 public class LLTDModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private boolean show = false;
     private String publicIP = null;
     private Date date = null;
+    private List<String> traceroute = null;
     private List<Device> devices = null;
     private List<Relation> relations = null;
 
@@ -61,8 +63,29 @@ public class LLTDModel implements Serializable {
     }
 
 
+    public List<String> getTraceroute() {
+	return traceroute;
+    }
+
+
+    public void setTraceroute(List<String> traceroute) {
+	this.traceroute = traceroute;
+    }
+
+
+    public boolean isShow() {
+	return show;
+    }
+
+
+    public void setShow(boolean show) {
+	this.show = show;
+    }
+
+
     @Override
     public String toString() {
-	return "LLTD [publicIP=" + publicIP + ", date=" + date + ", devices=" + devices + ", relations=" + relations + "]";
+	return "LLTDModel [publicIP=" + publicIP + ", date=" + date + ", traceroute=" + traceroute + ", devices=" + devices
+		+ ", relations=" + relations + "]";
     }
 }

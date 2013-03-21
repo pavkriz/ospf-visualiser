@@ -29,14 +29,12 @@ public class LocalSourceTreeLoader {
     }
 
 
-    @SuppressWarnings("finally")
     public DefaultMutableTreeNode loadTree() {
 	DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(path);
 	try {
 	    readAndParsePaths(rootNode, path);
-	} catch (Exception ex) {} finally {
-	    return rootNode;
-	}
+	} catch (Exception ex) {}
+	return rootNode;
     }
 
 

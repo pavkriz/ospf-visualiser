@@ -75,6 +75,7 @@ public class LLTDLoader {
      */
     private static LLTDModel loadModel(String line) throws ParserConfigurationException, SAXException, IOException {
 	LLTDModel model = new LLTDModel();
+	List<String> traceroute = new ArrayList<String>();
 	List<Device> devices = new ArrayList<Device>();
 	List<Relation> relations = new ArrayList<Relation>();
 	Device d = null;
@@ -87,10 +88,17 @@ public class LLTDLoader {
 	Document doc = newDocumentBuilder.parse(new ByteArrayInputStream(matcher.group(0).getBytes()));
 	doc.getDocumentElement().normalize();
 	// ziskani modelu z XML
+	NodeList ips = doc.getElementsByTagName("traceroute");
 	NodeList elems = doc.getElementsByTagName("device");
 	NodeList links = doc.getElementsByTagName("relation");
 	model.setDate(new Date(Long.valueOf(doc.getDocumentElement().getAttribute("millis"))));
 	model.setPublicIP(doc.getDocumentElement().getAttribute("publicIP"));
+	// nacitani IP adres z traceroutu
+	for (int i = 0; i < ips.getLength(); i++) {
+	    Element e = (Element) ips.item(i);
+	    traceroute.add(e.getElementsByTagName("ip").item(0).getTextContent());
+	}
+	// nacitani zarizeni
 	for (int i = 0; i < elems.getLength(); i++) {
 	    Element e = (Element) elems.item(i);
 	    d = new Device();
@@ -100,6 +108,7 @@ public class LLTDLoader {
 	    d.setIpv6(e.getElementsByTagName("ipv6").item(0).getTextContent());
 	    devices.add(d);
 	}
+	// nacitani vztahu (spoju)
 	for (int i = 0; i < links.getLength(); i++) {
 	    Element e = (Element) links.item(i);
 	    r = new Relation();
@@ -108,6 +117,7 @@ public class LLTDLoader {
 	    r.setMedium(e.getElementsByTagName("medium").item(0).getTextContent());
 	    relations.add(r);
 	}
+	model.setTraceroute(traceroute);
 	model.setDevices(devices);
 	model.setRelations(relations);
 	return model;

@@ -22,7 +22,6 @@ import org.hkfree.ospf.gui.importancedialog.RouterImportanceDialog;
 import org.hkfree.ospf.gui.lltddialog.LLTDSummaryDialog;
 import org.hkfree.ospf.gui.loadedlogslistdialog.LoadedLogsListDialog;
 import org.hkfree.ospf.gui.mappanel.MapManager;
-import org.hkfree.ospf.gui.mappanel.MapPanel;
 import org.hkfree.ospf.gui.mappanel.MapStartStateDialog;
 import org.hkfree.ospf.gui.netstateswin.NSModelChooseDialog;
 import org.hkfree.ospf.gui.netstateswin.NetStatesWin;
@@ -59,7 +58,7 @@ import org.xml.sax.SAXException;
 public class OspfWinManager {
 
     private ResourceBundle rb = Factory.getRb();
-    private OspfWin owner = null;
+    private OspfWin ospfWin = null;
     private List<OspfModel> ospfModels = new ArrayList<OspfModel>();
     private List<LLTDModel> lltdModels = new ArrayList<LLTDModel>();
     private LinkFaultModel linkFaultModel = new LinkFaultModel();
@@ -77,7 +76,7 @@ public class OspfWinManager {
      * @param owner
      */
     public OspfWinManager(OspfWin owner) {
-	this.owner = owner;
+	this.ospfWin = owner;
 	try {
 	    settingsManager = new SettingsManager(settings);
 	    // načte nastavení aplikace a nastavení načítání dat
@@ -87,7 +86,7 @@ public class OspfWinManager {
 		    3, 5));
 	    rb = ResourceBundle.getBundle("org.hkfree.ospf.lng.ospf", locale);
 	} catch (Exception e) {
-	    ((OspfWin) owner).showErrorMessage(rb == null ? "Error" : rb.getString("error"), e.getMessage());
+	    owner.showErrorMessage(rb == null ? "Error" : rb.getString("error"), e.getMessage());
 	}
     }
 
@@ -98,7 +97,7 @@ public class OspfWinManager {
     protected void actualizeModesAndStatusBarAndBySettings() {
 	if (getAllMDManager().isEmpty()) {
 	    // pokud není žádná mapa, vymazat status bar
-	    ((OspfWin) owner).getStatusBar().clear();
+	    ospfWin.getStatusBar().clear();
 	    return;
 	}
 	// aktualizuje režimy všech grafů
@@ -107,9 +106,9 @@ public class OspfWinManager {
 	    man.setMode(this.mode1);
 	}
 	// aktualizace statusbaru
-	((OspfWin) owner).getStatusBar().setStatus(0, rb.getString("mode." + mode0));
-	((OspfWin) owner).getStatusBar().setStatus(1, rb.getString("mode." + mode1));
-	((OspfWin) owner).getStatusBar().setToolTip(1, rb.getString("mode." + mode1 + ".toolTip"));
+	ospfWin.getStatusBar().setStatus(0, rb.getString("mode." + mode0));
+	ospfWin.getStatusBar().setStatus(1, rb.getString("mode." + mode1));
+	ospfWin.getStatusBar().setToolTip(1, rb.getString("mode." + mode1 + ".toolTip"));
 	// aktualizace dle nastaveni
 	actualizeBySettings();
     }
@@ -121,52 +120,52 @@ public class OspfWinManager {
     protected void checkActionsEnable() {
 	boolean modelExist = !getAllMDManager().isEmpty();
 	// boolean modelExist = ospfModely.isEmpty() ? false : true;
-	// if (!modelExist && !((OspfWin) owner).getAllMDManager().isEmpty()) {
+	// if (!modelExist && !owner.getAllMDManager().isEmpty()) {
 	// modelExist = true;
 	// }
-	((OspfWin) owner).getOspfWinActListener().getActionCenterRouter().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionCloseActualModel().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionShowInfoTable().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionExportModelToXGMML().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionExportModelToSVG().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionComputeRouterImportance().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionComputeLinkImportance().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionSaveToXML().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionSearchRouter().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionAddVertexes().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionAddEdges().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionAsymetricLinksMode().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionTwoRoutersShortesPathMode().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartJS().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartFR().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStartSpring().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionLayoutStopSpring().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionTransformingMode().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionPickingMode().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionLockMode().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionLockAll().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionZoom().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionShortestPath().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionCostChangingMode().setEnabled(modelExist);
-	((OspfWin) owner).getOspfWinActListener().getActionShowNeighboursMode().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionCenterRouter().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionCloseActualModel().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionShowInfoTable().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionExportModelToXGMML().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionExportModelToSVG().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionComputeRouterImportance().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionComputeLinkImportance().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionSaveToXML().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionSearchRouter().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionAddEdges().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionAddVertexes().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionAddEdges().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionAsymetricLinksMode().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionTwoRoutersShortesPathMode().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionLayoutStartJS().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionLayoutStartFR().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionLayoutStartSpring().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionLayoutStopSpring().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionTransformingMode().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionPickingMode().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionLockMode().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionLockAll().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionZoom().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionShortestPath().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionCostChangingMode().setEnabled(modelExist);
+	ospfWin.getOspfWinActListener().getActionShowNeighboursMode().setEnabled(modelExist);
 	// if (modelExist && getActualMDManager().getOspfModel() != null) {
 	if (modelExist && getActualMDManager() != null && getActualMDManager().getOspfModel() != null) {
 	    // GPS - kontrola zda jsou souřadnice pro daný model načteny
 	    // IPv6 - kontrola zda jsou data načtena
 	    boolean gpsLoaded = getActualMDManager().getOspfModel().isGpsLoaded();
-	    ((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(gpsLoaded);
-	    ((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(gpsLoaded);
+	    ospfWin.getOspfWinActListener().getActionGPS().setEnabled(gpsLoaded);
+	    ospfWin.getOspfWinActListener().getActionGPSAll().setEnabled(gpsLoaded);
 	    boolean ipv6Loaded = getActualMDManager().getOspfModel().isIpv6Loaded();
-	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(ipv6Loaded);
+	    ospfWin.getOspfWinActListener().getActionIPv6Toggle().setEnabled(ipv6Loaded);
 	} else {
-	    ((OspfWin) owner).getOspfWinActListener().getActionGPS().setEnabled(modelExist);
-	    ((OspfWin) owner).getOspfWinActListener().getActionGPSAll().setEnabled(modelExist);
-	    ((OspfWin) owner).getOspfWinActListener().getActionIPv6Toggle().setEnabled(modelExist);
+	    ospfWin.getOspfWinActListener().getActionGPS().setEnabled(modelExist);
+	    ospfWin.getOspfWinActListener().getActionGPSAll().setEnabled(modelExist);
+	    ospfWin.getOspfWinActListener().getActionIPv6Toggle().setEnabled(modelExist);
 	}
-	((OspfWin) owner).getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModels.size() < 2 ? false : true);
+	ospfWin.getOspfWinActListener().getActionShowNetStates().setEnabled(ospfModels.size() < 2 ? false : true);
 	if (!modelExist) {
-	    ((OspfWin) owner).getStatusBar().clear();
+	    ospfWin.getStatusBar().clear();
 	}
     }
 
@@ -176,12 +175,12 @@ public class OspfWinManager {
      * načte
      */
     protected void openLoadDataSelection() {
-	ModelSourceDialog selectSourceDialog = new ModelSourceDialog(owner, settings);
+	ModelSourceDialog selectSourceDialog = new ModelSourceDialog(ospfWin, settings);
 	selectSourceDialog.setLoadDialogConfirmed(false);
 	selectSourceDialog.setModal(true);
 	selectSourceDialog.setVisible(true);
 	if (selectSourceDialog.loadDialogConfirmed()) {
-	    owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	    ospfWin.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	    try {
 		settingsManager.saveSettings();
 	    } catch (FileNotFoundException e) {
@@ -190,7 +189,7 @@ public class OspfWinManager {
 		e.printStackTrace();
 	    }
 	    loadData();
-	    owner.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	    ospfWin.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
     }
 
@@ -227,7 +226,7 @@ public class OspfWinManager {
 	// pridani novych modelu do zalozek
 	if (settings.fromDateToDateLoadTo.equals(AppSettings.MAP_PANEL)) {
 	    for (OspfModel om : newModels) {
-		((OspfWin) owner).addAndFillModelTabbedPane(om.getModelName(), om);
+		ospfWin.addAndFillModelTabbedPane(om.getModelName(), om);
 	    }
 	    ospfModels.addAll(newModels);
 	    checkActionsEnable();
@@ -258,21 +257,21 @@ public class OspfWinManager {
 			e.printStackTrace();
 		    }
 		} else {
-		    ((OspfWin) owner).showInfoMessage(rb.getString("info"), rb.getString("owm.3"));
+		    ospfWin.showInfoMessage(rb.getString("info"), rb.getString("owm.3"));
 		}
 	    } else {
-		((OspfWin) owner).showInfoMessage(rb.getString("info"), rb.getString("owm.4"));
+		ospfWin.showInfoMessage(rb.getString("info"), rb.getString("owm.4"));
 	    }
 	}
-	((OspfWin) getOwner()).getStateDialog().operationSucceeded();
+	getOwner().getStateDialog().operationSucceeded();
 	// zarazeni LLTD dat do nove nacteneho modelu
 	if (!lltdModels.isEmpty()) {
 	    getOwner().getStateDialog().addText(rb.getString("stated.12"));
 	    addLLTDtoOspfModels();
-	    ((OspfWin) getOwner()).getStateDialog().operationSucceeded();
+	    getOwner().getStateDialog().operationSucceeded();
 	}
 	// zavreni dialogu s vypisem logu o nacteni dat
-	((OspfWin) getOwner()).getStateDialog().closeIfCloseable();
+	getOwner().getStateDialog().closeIfCloseable();
     }
 
 
@@ -286,7 +285,7 @@ public class OspfWinManager {
 	logSourceDialog.setModal(true);
 	logSourceDialog.setVisible(true);
 	if (logSourceDialog.logSourceDialogConfirmed()) {
-	    owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	    ospfWin.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	    try {
 		settingsManager.saveSettings();
 	    } catch (FileNotFoundException e) {
@@ -295,7 +294,7 @@ public class OspfWinManager {
 		e.printStackTrace();
 	    }
 	    loadLogs();
-	    owner.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	    ospfWin.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
     }
 
@@ -314,12 +313,12 @@ public class OspfWinManager {
 		}
 	    } catch (Exception e) {
 		success = false;
-		((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+		ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	    }
 	}
 	if (success) {
-	    ((OspfWin) owner).getOspfWinActListener().getActionShowLoadedLogs().setEnabled(true);
-	    ((OspfWin) owner).showInfoMessage(rb.getString("info"), rb.getString("owm.0"));
+	    ospfWin.getOspfWinActListener().getActionShowLoadedLogs().setEnabled(true);
+	    ospfWin.showInfoMessage(rb.getString("info"), rb.getString("owm.0"));
 	}
     }
 
@@ -347,7 +346,7 @@ public class OspfWinManager {
 	});
 	fchooser.setDialogTitle(rb.getString("owm.1"));
 	fchooser.setSelectedFile(new File("map-model.nml"));
-	if (fchooser.showOpenDialog(this.owner) == JFileChooser.APPROVE_OPTION) {
+	if (fchooser.showOpenDialog(this.ospfWin) == JFileChooser.APPROVE_OPTION) {
 	    loadMapModelFromXML(fchooser.getSelectedFile());
 	    checkActionsEnable();
 	}
@@ -365,7 +364,7 @@ public class OspfWinManager {
 	    mapXmlLoader.setInputFile(inputFile);
 	    mapXmlLoader.loadModelFromDocument();
 	    // mapModel = mapXmlLoader.getMapModel();
-	    ((OspfWin) owner).addAndFillModelTabbedPane(inputFile.getName(), mapXmlLoader.getMapModel(),
+	    ospfWin.addAndFillModelTabbedPane(inputFile.getName(), mapXmlLoader.getMapModel(),
 		    mapXmlLoader.getRVertexPositions());
 	    checkActionsEnable();
 	}
@@ -401,11 +400,11 @@ public class OspfWinManager {
 			e.printStackTrace();
 		    }
 		} else {
-		    ((OspfWin) owner).showInfoMessage(rb.getString("info"), rb.getString("owm.3"));
+		    ospfWin.showInfoMessage(rb.getString("info"), rb.getString("owm.3"));
 		}
 	    }
 	} else {
-	    ((OspfWin) owner).showInfoMessage(rb.getString("info"), rb.getString("owm.4"));
+	    ospfWin.showInfoMessage(rb.getString("info"), rb.getString("owm.4"));
 	}
     }
 
@@ -416,7 +415,7 @@ public class OspfWinManager {
     protected void closeActualModel() {
 	if (getAllMDManager().isEmpty()) {
 	    // pokud je seznam s modely prazdny, neni co zavirat
-	    ((OspfWin) owner).getStatusBar().clear();
+	    ospfWin.getStatusBar().clear();
 	} else {
 	    // jinak je nacten model site
 	    OspfModel modelToRemove = getActualMDManager().getOspfModel();
@@ -424,7 +423,7 @@ public class OspfWinManager {
 		// pokud model site obsahuje ospfModel, smaze se
 		ospfModels.remove(modelToRemove);
 	    }
-	    ((OspfWin) owner).closeActiveModelTabbedPane();
+	    ospfWin.closeActiveModelTabbedPane();
 	}
     }
 
@@ -435,7 +434,7 @@ public class OspfWinManager {
      */
     protected void showComputedRouterImportancesDialog() {
 	if (getActualMDManager().getOspfModel() == null) {
-	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), rb.getString("err.noData"));
+	    ospfWin.showErrorMessage(rb.getString("error"), rb.getString("err.noData"));
 	} else {
 	    OspfGraphComponentModel ogcm = new OspfGraphComponentModel();
 	    ogcm.setOspfModel(getActualMDManager().getOspfModel());
@@ -452,7 +451,7 @@ public class OspfWinManager {
      */
     protected void showComputedLinkImportancesDialog() {
 	if (getActualMDManager().getOspfModel() == null) {
-	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), rb.getString("err.noData"));
+	    ospfWin.showErrorMessage(rb.getString("error"), rb.getString("err.noData"));
 	} else {
 	    OspfGraphComponentModel ogcm = new OspfGraphComponentModel();
 	    ogcm.setOspfModel(getActualMDManager().getOspfModel());
@@ -477,7 +476,7 @@ public class OspfWinManager {
      * Zobrazí dialog "O aplikaci"
      */
     protected void showAboutDialog() {
-	AboutApplicationDialog dialog = new AboutApplicationDialog(owner);
+	AboutApplicationDialog dialog = new AboutApplicationDialog(ospfWin);
 	dialog.setVisible(true);
     }
 
@@ -486,7 +485,7 @@ public class OspfWinManager {
      * Zobrazí dialog "Tipy"
      */
     protected void showTipsDialog() {
-	TipsDialog dialog = new TipsDialog(owner, settings.language);
+	TipsDialog dialog = new TipsDialog(ospfWin, settings.language);
 	dialog.setVisible(true);
     }
 
@@ -495,7 +494,7 @@ public class OspfWinManager {
      * Otevře dialog s nastavením aplikace
      */
     protected void showSettingsDialog() {
-	SettingsDialog dialog = new SettingsDialog(owner, this, settings);
+	SettingsDialog dialog = new SettingsDialog(ospfWin, this, settings);
 	dialog.setVisible(true);
     }
 
@@ -505,7 +504,7 @@ public class OspfWinManager {
      */
     protected void showOspfModelSummaryDialog() {
 	OspfModel model = getActualMDManager().getOspfModel();
-	OspfModelSummaryDialog dialog = new OspfModelSummaryDialog(owner, new OspfWinModelTabbedPane(model), model);
+	OspfModelSummaryDialog dialog = new OspfModelSummaryDialog(ospfWin, new OspfWinModelTabbedPane(model), model);
 	dialog.setVisible(true);
     }
 
@@ -514,7 +513,7 @@ public class OspfWinManager {
      * Zobrazí okno s přehledem načtených LLTD dat a práce s nimi
      */
     protected void showLLTDDialog() {
-	LLTDSummaryDialog dialog = new LLTDSummaryDialog(owner, this, lltdModels);
+	LLTDSummaryDialog dialog = new LLTDSummaryDialog(ospfWin, this, lltdModels);
 	dialog.setVisible(true);
     }
 
@@ -527,7 +526,7 @@ public class OspfWinManager {
 	    SettingsManager setMan = new SettingsManager(settings);
 	    setMan.saveSettings();
 	} catch (Exception e) {
-	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	}
     }
 
@@ -556,11 +555,11 @@ public class OspfWinManager {
 	});
 	fchooser.setDialogTitle(rb.getString("owm.6"));
 	fchooser.setSelectedFile(new File(model.getModelName() + ".xgmml"));
-	if (fchooser.showSaveDialog(this.owner) == JFileChooser.APPROVE_OPTION) {
+	if (fchooser.showSaveDialog(this.ospfWin) == JFileChooser.APPROVE_OPTION) {
 	    try {
 		Exporter.exportModelToXGMML(fchooser.getSelectedFile(), model);
 	    } catch (IOException e) {
-		((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+		ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	    }
 	}
     }
@@ -571,7 +570,7 @@ public class OspfWinManager {
      * @return
      */
     protected Set<MapManager> getAllMDManager() {
-	return ((OspfWin) owner).getAllMDManager();
+	return ospfWin.getAllMDManager();
     }
 
 
@@ -580,7 +579,7 @@ public class OspfWinManager {
      * @return
      */
     protected MapManager getActualMDManager() {
-	return ((OspfWin) owner).getActualMDManager();
+	return ospfWin.getActualMDManager();
     }
 
 
@@ -588,7 +587,7 @@ public class OspfWinManager {
      * Vrací vlastníka
      */
     public OspfWin getOwner() {
-	return owner;
+	return ospfWin;
     }
 
 
@@ -629,7 +628,7 @@ public class OspfWinManager {
 	});
 	fchooser.setDialogTitle(rb.getString("mdwm.1"));
 	fchooser.setSelectedFile(new File("map-model.nml"));
-	if (fchooser.showSaveDialog(this.owner) == JFileChooser.APPROVE_OPTION) {
+	if (fchooser.showSaveDialog(this.ospfWin) == JFileChooser.APPROVE_OPTION) {
 	    saveModelToXML(fchooser.getSelectedFile());
 	}
     }
@@ -640,7 +639,7 @@ public class OspfWinManager {
      * @param text
      */
     protected void setStatusText(int index, String text) {
-	((OspfWin) owner).getStatusBar().setStatus(index, text);
+	ospfWin.getStatusBar().setStatus(index, text);
     }
 
 
@@ -649,7 +648,7 @@ public class OspfWinManager {
      * @param text
      */
     protected void setStatusTextToolTip(int index, String text) {
-	((OspfWin) owner).getStatusBar().setToolTip(index, text);
+	ospfWin.getStatusBar().setToolTip(index, text);
     }
 
 
@@ -658,7 +657,7 @@ public class OspfWinManager {
      * @return
      */
     protected String getSearchString() {
-	return ((OspfWin) owner).getSearhString();
+	return ospfWin.getSearhString();
     }
 
 
@@ -704,12 +703,12 @@ public class OspfWinManager {
 	dialog.setVisible(true);
 	if (dialog.selectionConfirmed()) {
 	    if (dialog.wholeModelIsSelected()) {
-		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(true, null, 0);
+		getActualMDManager().getOwner().processModelsAfterStart(true, null, 0);
 	    } else {
-		((MapPanel) getActualMDManager().getOwner()).processModelsAfterStart(false, dialog.getSelectedRouter(),
-		        dialog.getNeighboursDepth());
+		getActualMDManager().getOwner().processModelsAfterStart(false, dialog.getSelectedRouter(),
+			dialog.getNeighboursDepth());
 	    }
-	    owner.repaint();
+	    ospfWin.repaint();
 	}
     }
 
@@ -736,18 +735,18 @@ public class OspfWinManager {
 	});
 	fchooser.setDialogTitle(rb.getString("owm.8"));
 	fchooser.setSelectedFile(new File(name + ".svg"));
-	if (fchooser.showSaveDialog(this.owner) == JFileChooser.APPROVE_OPTION) {
+	if (fchooser.showSaveDialog(this.ospfWin) == JFileChooser.APPROVE_OPTION) {
 	    try {
 		Exporter.exportModelToSVG(fchooser.getSelectedFile(), model, getActualMDManager().getGraphComponent());
 	    } catch (IOException e) {
-		((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+		ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	    }
 	}
     }
 
 
     public void actualizeIPv6mode() {
-	((OspfWin) owner).actualizeIPv6mode();
+	ospfWin.actualizeIPv6mode();
     }
 
 
@@ -769,13 +768,13 @@ public class OspfWinManager {
 	    LLTDLoader.loadLLTDData(lltdModels);
 	} catch (IOException e) {
 	    e.printStackTrace();
-	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	} catch (ParserConfigurationException e) {
 	    e.printStackTrace();
-	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	} catch (SAXException e) {
 	    e.printStackTrace();
-	    ((OspfWin) owner).showErrorMessage(rb.getString("error"), e.getMessage());
+	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	}
     }
 

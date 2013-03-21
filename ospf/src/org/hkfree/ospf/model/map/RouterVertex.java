@@ -17,7 +17,6 @@ import edu.uci.ics.jung.visualization.RenderContext;
 public class RouterVertex implements Serializable {
 
     private static final long serialVersionUID = 7625919799208623090L;
-    
     private String description = "";
     private String name = "";
     private boolean isMultilink = false;
@@ -36,7 +35,7 @@ public class RouterVertex implements Serializable {
     private boolean isSecondRVOfTwoRVShortestPath = false;
     private boolean isFounded = false;
     private boolean isVisible = true;
-    
+    private boolean isLltd = false;
 
 
     /**
@@ -97,6 +96,9 @@ public class RouterVertex implements Serializable {
     public Color getColorFill() {
 	if (!isVisible) {
 	    return null;
+	}
+	if (isLltd) {
+	    return Color.MAGENTA;
 	}
 	if (isEnabled()) {
 	    if (isPartOfNewAddedEdge()) {
@@ -475,5 +477,15 @@ public class RouterVertex implements Serializable {
 
     public void setVisible(boolean visible) {
 	this.isVisible = visible;
+    }
+
+
+    public void setLltd(boolean isLltd) {
+	this.isLltd = isLltd;
+    }
+
+
+    public boolean isLltd() {
+	return isLltd;
     }
 }

@@ -31,6 +31,7 @@ public class OspfLoader {
     private static String patternMask = "^.*/([0-9]{1,2})";
     private static String patternCost = "^.*:\\s*([0-9]{1,})";
     private static String patternName = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+(.+)$";
+    private static String patternNameArpa = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.in-addr\\.arpa\\.)(\\s+.*\\s+IN\\s+PTR\\s+)(.*)$";
     private static String patternGeo = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+([0-9]+)\\s+([0-9]+)(.*)$";
     private static String patternLog = "^([0-9]{4}/[0-9]{2}/[0-9]{2}\\s+[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+.+id\\((.+)\\).+ar.+$";
 
@@ -231,6 +232,7 @@ public class OspfLoader {
 	    // BufferedReader input2 = new BufferedReader(input);
 	    // while ((s = input2.readLine()) != null) {
 	    // out.write(s + "\n");
+	    // System.out.println(s);
 	    // }
 	    // out.close();
 	    OspfModel modelIPv6 = new OspfModel();
@@ -253,6 +255,7 @@ public class OspfLoader {
 	    Pattern maskPattern = Pattern.compile(patternMask);
 	    Pattern costPattern = Pattern.compile(patternCost);
 	    Pattern namePattern = Pattern.compile(patternName);
+	    Pattern nameArpaPatern = Pattern.compile(patternNameArpa);
 	    Pattern geoPattern = Pattern.compile(patternGeo);
 	    GeoCoordinatesTransformator geoCoorTransormator = new GeoCoordinatesTransformator();
 	    Matcher matcher = null;
@@ -486,11 +489,26 @@ public class OspfLoader {
 			break;
 		    case 8:
 			// nacitani nazvu routeru
+			boolean matches = false;
 			matcher = namePattern.matcher(radek);
 			matcher.find();
 			if (matcher.matches()) {
+			    // matcher dle stareho tvaru zapisu id routeru a jeho nazvu
+			    matches = true;
 			    routerId = matcher.group(1);
 			    routerName = matcher.group(2);
+			} else {
+			    matcher = nameArpaPatern.matcher(radek);
+			    matcher.find();
+			    if (matcher.matches()) {
+				// matcher dle noveho tvaru zapisu id routeru a jeho nazvu z CGI
+				matches = true;
+				routerId = IpCalculator.getIpFromIpArpa(matcher.group(1));
+				routerName = matcher.group(3);
+			    }
+			}
+			if (matches) {
+			    // aspon jeden matcher nasel nazev routeru, najdi ho a pridej
 			    for (Router r : model.getRouters()) {
 				if (r.getId().equals(routerId) && !routerId.equals(routerName))
 				    r.setName(routerName);
@@ -506,7 +524,7 @@ public class OspfLoader {
 			    Router r = model.getRouterByIp(matcher.group(1));
 			    if (r != null) {
 				r.setGpsPosition(geoCoorTransormator.transformJTSKToWGS(Integer.valueOf(matcher.group(2)),
-				        Integer.valueOf(matcher.group(3))));
+					Integer.valueOf(matcher.group(3))));
 			    }
 			}
 			break;
