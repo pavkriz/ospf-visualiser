@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 
-import org.hkfree.ospf.model.map.LinkEdge;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
 import org.hkfree.ospf.tools.Factory;
 
 /**
@@ -52,10 +52,10 @@ public class ChangeLinkCostDialog extends JDialog {
 	cost1Input.setText(Integer.toString(linkEdge.getCost1v4()));
 	cost2Input.setText(Integer.toString(linkEdge.getCost2v4()));
 	linkNameLabel.setText(linkEdge.getLinkIDv4());
-	vertex1Name.setText(linkEdge.getRVertex1().getName());
-	vertex1IP.setText(linkEdge.getRVertex1().getDescription());
-	vertex2Name.setText(linkEdge.getRVertex2().getName());
-	vertex2IP.setText(linkEdge.getRVertex2().getDescription());
+	vertex1Name.setText(linkEdge.getVertex1().getLabel());
+	vertex1IP.setText(linkEdge.getVertex1().getInfo());
+	vertex2Name.setText(linkEdge.getVertex2().getLabel());
+	vertex2IP.setText(linkEdge.getVertex2().getInfo());
 	createComponents();
     }
 

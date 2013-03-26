@@ -207,18 +207,18 @@ public class OspfWinActionListener implements ActionListener {
 	actionTransformingMode.putValue(AbstractAction.SHORT_DESCRIPTION,
 		rb.getString("mode." + MODE.TRANSFORMING + ".title"));
 	actionTransformingMode.setEnabled(false);
-	actionLayoutStartFR = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_FR_START), new ImageIcon(getClass()
-		.getResource(Constants.URL_IMG_GUI + "layout_fr_start.png"))) {
+	actionLayoutStartFR = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_FR), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "layout_fr.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
-		winManager.getActualMDManager().getGraphComponent().layouting(LAYOUT.LAYOUT_FR_START);
+		winManager.getActualMDManager().getGraphComponent().layouting(LAYOUT.LAYOUT_FR);
 	    }
 	};
 	actionLayoutStartFR.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("layout." + LAYOUT.LAYOUT_FR_START + ".title"));
+		rb.getString("layout." + LAYOUT.LAYOUT_FR + ".title"));
 	actionLayoutStartFR.setEnabled(false);
 	actionLayoutStartJS = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_JS_START), new ImageIcon(getClass()
 		.getResource(Constants.URL_IMG_GUI + "layout_js_start.png"))) {
@@ -549,7 +549,7 @@ public class OspfWinActionListener implements ActionListener {
 		winManager.showLLTDDialog();
 	    }
 	};
-	actionShowLLTDSummary.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.program.settings.title"));
+	actionShowLLTDSummary.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("menu.data.lltd.title"));
     }
     
 

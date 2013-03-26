@@ -32,7 +32,7 @@ import org.hkfree.ospf.tools.Factory;
  * Dialog zobrazující mapu LLTD modelu
  * @author Jan Schovánek
  */
-public class LLTDDialog extends JDialog {
+public class LLTDMapDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private ResourceBundle rb = Factory.getRb();
@@ -44,7 +44,7 @@ public class LLTDDialog extends JDialog {
     private JPanel pInfo = null;
 
 
-    public LLTDDialog(LLTDModel lltd) {
+    public LLTDMapDialog(LLTDModel lltd) {
 	devices = lltd.getDevices();
 	relations = lltd.getRelations();
 	createGUI();

@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hkfree.ospf.model.AbstractMapModel;
+import org.hkfree.ospf.model.IMapModel;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.IVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 
 import edu.uci.ics.jung.graph.Graph;
 
@@ -18,7 +19,7 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class MapModelShortestPathFinder {
 
-    private AbstractMapModel mapModel = null;
+    private IMapModel mapModel = null;
     private RouterVertex startVertex = null;
     private Map<RouterVertex, RouterCostPredecessorBox> routerDistances = new HashMap<RouterVertex, RouterCostPredecessorBox>();
 
@@ -33,7 +34,7 @@ public class MapModelShortestPathFinder {
      * Nastaví mapModel, ve kterém je cesta počítána
      * @param mapModel
      */
-    public void setMapModel(AbstractMapModel mapModel) {
+    public void setMapModel(IMapModel mapModel) {
 	this.mapModel = mapModel;
     }
 
@@ -56,9 +57,12 @@ public class MapModelShortestPathFinder {
 	List<RouterVertex> waitingVertices = new ArrayList<RouterVertex>();
 	waitingVertices.add(startVertex);
 	List<RouterVertex> closedVertices = new ArrayList<RouterVertex>();
-	for (RouterVertex r : mapModel.getRouterVertices()) {
-	    if (!r.isMultilink() && r.isEnabled())
-		routerDistances.put(r, new RouterCostPredecessorBox(Integer.MAX_VALUE));
+	for (IVertex v : mapModel.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		RouterVertex rv = (RouterVertex) v;
+		if (!rv.isMultilink() && rv.isEnabled())
+		    routerDistances.put(rv, new RouterCostPredecessorBox(Integer.MAX_VALUE));
+	    }
 	}
 	routerDistances.get(startVertex).setCost(0);
 	while (!waitingVertices.isEmpty()) {
@@ -91,7 +95,7 @@ public class MapModelShortestPathFinder {
 		if (rcpb.getValue().getLinkEdge() != null) {
 		    rcpb.getValue().getLinkEdge().setEdgeOfShortestPath(true);
 		    if (rcpb.getValue().getLinkEdge().isEdgeOfMultilink()) {
-			mapModel.getMultilinkEdge(rcpb.getKey(), rcpb.getValue().getLinkEdge().getRVertex2())
+			mapModel.getMultilinkEdge(rcpb.getKey(), (RouterVertex) rcpb.getValue().getLinkEdge().getVertex2())
 				.setEdgeOfShortestPath(true);
 		    }
 		} else {
@@ -130,8 +134,9 @@ public class MapModelShortestPathFinder {
 		if (!treeGraph.containsVertex(rcpb.getValue().getPredecessor())) {
 		    treeGraph.addVertex(rcpb.getValue().getPredecessor());
 		}
-		treeGraph.addEdge(new EdgeOfSPT(rcpb.getValue().getCost(), rcpb.getValue().getLinkEdge().getLinkIDv4()), rcpb
-			.getValue().getPredecessor(), rcpb.getKey());
+		treeGraph.addEdge(new EdgeOfSPT(rcpb.getValue().getCost(), rcpb.getValue().getLinkEdge().getLinkIDv4()),
+			rcpb
+				.getValue().getPredecessor(), rcpb.getKey());
 	    }
 	}
     }
@@ -163,7 +168,8 @@ public class MapModelShortestPathFinder {
 	liste.add(routerDistances.get(routerVertex).getLinkEdge()); // přidání hrany do seznamu
 	if (routerDistances.get(routerVertex).getLinkEdge().isEdgeOfMultilink()) { // pokud je to multilink, přidat i druhou
 										   // hranu reprezentující multilink
-	    liste.add(mapModel.getMultilinkEdge(routerVertex, routerDistances.get(routerVertex).getLinkEdge().getRVertex2()));
+	    liste.add(mapModel.getMultilinkEdge(routerVertex, (RouterVertex) routerDistances.get(routerVertex).getLinkEdge()
+		    .getVertex2()));
 	}
 	backwardMarkPathEdges(routerDistances.get(routerVertex).getPredecessor(), liste);
     }

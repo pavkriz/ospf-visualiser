@@ -61,8 +61,8 @@ public class FaultIntensityCalculator {
      */
     public float getMyIntensity(int faultsCount) {
 	faultsCount = (int) Math.pow(faultsCount, power);
-	float value = ((faultsCount / (maximalFaults - minimalFaults)) * (255 - minimalIntensityValue) + minimalIntensityValue);
-	return (float) value;
+	float f = (float) (faultsCount / (maximalFaults - minimalFaults));
+	return f * (255 - minimalIntensityValue) + minimalIntensityValue;
     }
 
 

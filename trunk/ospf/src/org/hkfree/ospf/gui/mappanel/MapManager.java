@@ -4,11 +4,17 @@ import java.awt.geom.Point2D;
 import java.util.Map;
 
 import org.hkfree.ospf.model.Constants.MODE;
+import org.hkfree.ospf.model.lltd.Device;
 import org.hkfree.ospf.model.lltd.LLTDModel;
+import org.hkfree.ospf.model.lltd.Relation;
+import org.hkfree.ospf.model.map.IVertex;
 import org.hkfree.ospf.model.map.MapModel;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.DeviceVertex;
+import org.hkfree.ospf.model.map.impl.RelationEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
+import org.hkfree.ospf.tools.ip.IpCalculator;
 
 /**
  * Třída představující manažer okna návrhu sítě
@@ -33,6 +39,14 @@ public class MapManager {
      */
     public MapManager(MapPanel owner) {
 	this.owner = owner;
+    }
+
+
+    /**
+     * Vrací předka - MapPanel
+     */
+    public MapPanel getOwner() {
+	return owner;
     }
 
 
@@ -108,7 +122,7 @@ public class MapManager {
 	graphComponent.setMapModel(mapModel);
 	if (!processWholeModel && centerRouter != null) {
 	    for (RouterVertex rv : mapModel.getRouterVertices()) {
-		if (rv.getDescription().equals(centerRouter.getId())) {
+		if (rv.getInfo().equals(centerRouter.getId())) {
 		    graphComponent.createGraphFromCenter(rv, neighboursDepth);
 		    break;
 		}
@@ -216,14 +230,6 @@ public class MapManager {
 
 
     /**
-     * Vrací předka - MapPanel
-     */
-    public MapPanel getOwner() {
-	return owner;
-    }
-
-
-    /**
      * Zobrazí LLTD dialog
      * @param routerName název router v grafu
      * @param lltdName název lltd modelu k zobrazení
@@ -233,6 +239,81 @@ public class MapManager {
 	for (LLTDModel m : r.getLltdModels()) {
 	    if (m.getPublicIP().equals(lltdName)) {
 		getGraphComponent().showOrHideLltdModel(r, m);
+		break;
+	    }
+	}
+    }
+
+
+    public void actualizeLltdVericies() {
+	// prochazeni vsech routeru ospf modelu
+	for (Router router : ospfModel.getRouters()) {
+	    // nalezeni zakladniho vrcholu routeru, ktery propaguje lltd model
+	    RouterVertex rvBase = graphComponent.findRouterVertex(router.getName());
+	    // prochazeni lltd modelu daneho routeru
+	    for (LLTDModel lltdModel : router.getLltdModels()) {
+		IVertex vLast = null;
+		// pridani routeru a spoju z traceroutu dokud se nenarazi na ten, ktery je propagovan
+		for (int i = 0; i < lltdModel.getTraceroute().size(); i++) {
+		    String ip = lltdModel.getTraceroute().get(i);
+		    DeviceVertex dv = new DeviceVertex();
+		    dv.setIpv4(ip);
+		    dv.setIpv6(ip);
+		    dv.setMachineName(ip);
+		    dv.setMac(ip);
+		    dv.setVisible(lltdModel.isShow());
+		    graphComponent.addVertex(dv);
+		    RelationEdge re = new RelationEdge();
+		    re.setVertex1(i == 0 ? rvBase : graphComponent.findRouterVertex(lltdModel.getTraceroute().get(i - 1)));
+		    re.setVertex2(dv);
+		    graphComponent.addEdge(re);
+		    if (IpCalculator.containsRouterSubnet(router, ip)) {
+			vLast = dv;
+			break;
+		    }
+		}
+		for (Device d : lltdModel.getDevices()) {
+		    DeviceVertex dv = new DeviceVertex();
+		    dv.setMac(d.getSource());
+		    dv.setIpv4(d.getIpv4());
+		    dv.setIpv6(d.getIpv6());
+		    dv.setMachineName(d.getMachineName());
+		    dv.setVisible(lltdModel.isShow());
+		    graphComponent.addVertex(dv);
+		}
+		for (Relation r : lltdModel.getRelations()) {
+		    DeviceVertex dv1 = graphComponent.findLltdVertex(r.getFrom().getSource());
+		    if (dv1 == null) {
+			dv1 = new DeviceVertex();
+			dv1.setMac(r.getFrom().getSource());
+			dv1.setIpv4(r.getFrom().getIpv4());
+			dv1.setIpv6(r.getFrom().getIpv6());
+			dv1.setMachineName(r.getFrom().getMachineName());
+			dv1.setVisible(lltdModel.isShow());
+			graphComponent.addVertex(dv1);
+		    }
+		    DeviceVertex dv2 = graphComponent.findLltdVertex(r.getTo().getSource());
+		    if (dv2 == null) {
+			dv2 = new DeviceVertex();
+			dv2.setMac(r.getTo().getSource());
+			dv2.setIpv4(r.getTo().getIpv4());
+			dv2.setIpv6(r.getTo().getIpv6());
+			dv2.setMachineName(r.getTo().getMachineName());
+			dv2.setVisible(lltdModel.isShow());
+			graphComponent.addVertex(dv2);
+		    }
+		    RelationEdge re = new RelationEdge();
+		    re.setVertex1(dv1);
+		    re.setVertex2(dv2);
+		    re.setMedium(r.getMedium());
+		    graphComponent.addEdge(re);
+		}
+		// pridani spoje mezi routerem a poslednim prvkem v lltd modelu
+		RelationEdge reBetween = new RelationEdge();
+		reBetween.setVertex1(graphComponent.findLltdVertex(lltdModel.getRelations()
+			.get(lltdModel.getRelations().size() - 1).getFrom().getSource()));
+		reBetween.setVertex2(vLast);
+		graphComponent.addEdge(reBetween);
 	    }
 	}
     }

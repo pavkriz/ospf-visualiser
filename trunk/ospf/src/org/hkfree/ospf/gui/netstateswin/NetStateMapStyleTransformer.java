@@ -9,29 +9,31 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.commons.collections15.Transformer;
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.IEdge;
+import org.hkfree.ospf.model.map.IVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 
-//import org.apache.commons.collections15.Predicate;
 /**
  * Třída představující objekt transformeru, který určuje podobu vrcholů a hran grafu
  * @author Jakub Menzel
+ * @author Jan Schovánek
  */
 public class NetStateMapStyleTransformer {
 
-    private Transformer<RouterVertex, Paint> vertexFillPainter = null;
-    private Transformer<RouterVertex, Paint> vertexBorderPainter = null;
-    private Transformer<RouterVertex, Stroke> vertexBorderStroker = null;
-    private Transformer<RouterVertex, String> vertexLabeler = null;
-    private Transformer<RouterVertex, String> vertexToolTiper = null;
-    private Transformer<RouterVertex, Shape> vertexShaper = null;
-    private Transformer<LinkEdge, String> edgeLabeler = null;
-    private Transformer<LinkEdge, String> edgeToolTiper = null;
-    private Transformer<LinkEdge, Paint> edgeLinePainter = null;
-    private Transformer<LinkEdge, Stroke> edgeLineStroker = null;
+    private Transformer<IVertex, Paint> vertexFillPainter = null;
+    private Transformer<IVertex, Paint> vertexBorderPainter = null;
+    private Transformer<IVertex, Stroke> vertexBorderStroker = null;
+    private Transformer<IVertex, String> vertexLabeler = null;
+    private Transformer<IVertex, String> vertexToolTiper = null;
+    private Transformer<IVertex, Shape> vertexShaper = null;
+    private Transformer<IEdge, String> edgeLabeler = null;
+    private Transformer<IEdge, String> edgeToolTiper = null;
+    private Transformer<IEdge, Paint> edgeLinePainter = null;
+    private Transformer<IEdge, Stroke> edgeLineStroker = null;
     private NSWGraphComponent owner = null;
 
 
@@ -40,142 +42,161 @@ public class NetStateMapStyleTransformer {
      */
     public NetStateMapStyleTransformer(final NSWGraphComponent ownerComponent) {
 	this.owner = ownerComponent;
-	vertexFillPainter = new Transformer<RouterVertex, Paint>() {
+	vertexFillPainter = new Transformer<IVertex, Paint>() {
 
-	    public Paint transform(RouterVertex r) {
-		if (r.isEnabled()) {
-		    if (!r.isMultilink()) {
-			if (!r.isCenterOfShortestPathTree())
-			    return Color.ORANGE;
+	    @Override
+	    public Paint transform(IVertex v) {
+		if (v.isEnabled()) {
+		    if (v instanceof RouterVertex) {
+			RouterVertex rv = (RouterVertex) v;
+			if (!rv.isMultilink()) {
+			    if (!rv.isCenterOfShortestPathTree())
+				return Color.ORANGE;
+			    else
+				return Color.RED;
+			}
+		    }
+		}
+		return Color.WHITE;
+	    }
+	};
+	vertexBorderPainter = new Transformer<IVertex, Paint>() {
+
+	    @Override
+	    public Paint transform(IVertex v) {
+		if (v instanceof RouterVertex) {
+		    RouterVertex rv = (RouterVertex) v;
+		    if (v.isEnabled()) {
+			if (rv.isActuallyLive())
+			    return new Color(0, 153, 0);
 			else
+			    return Color.DARK_GRAY;
+		    } else {
+			if (rv.isActuallyDead())
 			    return Color.RED;
-		    } else
-			return Color.WHITE;
-		} else {
-		    return Color.WHITE;
+			else
+			    return Color.LIGHT_GRAY;
+		    }
 		}
+		return Color.WHITE;
 	    }
 	};
-	vertexBorderPainter = new Transformer<RouterVertex, Paint>() {
+	vertexBorderStroker = new Transformer<IVertex, Stroke>() {
 
-	    public Paint transform(RouterVertex r) {
-		if (r.isEnabled()) {
-		    if (r.isActuallyLive())
-			return new Color(0, 153, 0);
-		    else
-			return Color.DARK_GRAY;
-		} else {
-		    if (r.isActuallyDead())
-			return Color.RED;
-		    else
-			return Color.LIGHT_GRAY;
-		}
-	    }
-	};
-	vertexBorderStroker = new Transformer<RouterVertex, Stroke>() {
-
-	    public Stroke transform(RouterVertex r) {
-		if (r.isEnabled()) {
+	    @Override
+	    public Stroke transform(IVertex v) {
+		if (v.isEnabled()) {
 		    return new BasicStroke(1);
 		} else {
 		    return RenderContext.DASHED;
 		}
 	    }
 	};
-	vertexLabeler = new Transformer<RouterVertex, String>() {
+	vertexLabeler = new Transformer<IVertex, String>() {
 
-	    public String transform(RouterVertex r) {
-		if (!r.isMultilink())
-		    return r.getName();
-		else
-		    return "";
+	    @Override
+	    public String transform(IVertex v) {
+		if (v instanceof RouterVertex) {
+		    if (!((RouterVertex) v).isMultilink())
+			return v.getLabel();
+		}
+		return "";
 	    }
 	};
-	vertexToolTiper = new Transformer<RouterVertex, String>() {
+	vertexToolTiper = new Transformer<IVertex, String>() {
 
-	    public String transform(RouterVertex r) {
-		if (!r.isMultilink())
-		    return "<html><b>" + r.getName() + "</b><br>" + r.getDescription() + "</html>";
-		else
-		    return r.getName();
+	    @Override
+	    public String transform(IVertex v) {
+		if (v instanceof RouterVertex) {
+		    if (!((RouterVertex) v).isMultilink()) {
+			return "<html><b>" + v.getLabel() + "</b><br>" + v.getDescription() + "</html>";
+		    }
+		}
+		return v.getLabel();
 	    }
 	};
-	vertexShaper = new Transformer<RouterVertex, Shape>() {
+	vertexShaper = new Transformer<IVertex, Shape>() {
 
-	    public Shape transform(RouterVertex r) {
-		if (!r.isMultilink())
-		    return new Ellipse2D.Float(-10, -10, 20, 20);
-		else
-		    return new Rectangle2D.Float(-6, -6, 12, 12);
+	    @Override
+	    public Shape transform(IVertex v) {
+		if (v instanceof RouterVertex) {
+		    if (((RouterVertex) v).isMultilink()) {
+			return new Rectangle2D.Float(-6, -6, 12, 12);
+		    }
+		}
+		return new Ellipse2D.Float(-10, -10, 20, 20);
 	    }
 	};
-	/**
-	 * visiblePredicate = new
-	 * Predicate<Context<Graph<RouterVertex,String>,RouterVertex>>() {
-	 * public boolean evaluate(Context<Graph<RouterVertex, String>,
-	 * RouterVertex> argument) { //return argument.element.isMultispoj();
-	 * return true; } };
-	 */
-	edgeLabeler = new Transformer<LinkEdge, String>() {
+	edgeLabeler = new Transformer<IEdge, String>() {
 
-	    public String transform(LinkEdge e) {
-//		if (e.isEnabled()) {
-			//zmena, vzdy se zobrazuje cena spoje (pro vypadly se zobrazi posledni znama)
-		    return owner.getActualNetStateLinkEdgeLabel(e);
-//		} else {
-//		    return "";
-//		    
-//		}
+	    @Override
+	    public String transform(IEdge e) {
+		// zmena, vzdy se zobrazuje cena spoje (pro vypadly se zobrazi posledni znama)
+		if (e instanceof LinkEdge) {
+		    return owner.getActualNetStateLinkEdgeLabel((LinkEdge) e);
+		}
+		return "";
 	    }
 	};
-	edgeToolTiper = new Transformer<LinkEdge, String>() {
+	edgeToolTiper = new Transformer<IEdge, String>() {
 
-	    public String transform(LinkEdge e) {
-		if (owner.getMapGraphComponentMode() != MapGraphComponentMode.LINK_FAULT)
-		    return owner.getActualNetStateLinkEdgeDescription(e);
-		else
-		    return e.getLinkFaultDescription();
+	    @Override
+	    public String transform(IEdge e) {
+		if (e instanceof LinkEdge) {
+		    if (owner.getMapGraphComponentMode() != MapGraphComponentMode.LINK_FAULT)
+			return owner.getActualNetStateLinkEdgeDescription((LinkEdge) e);
+		    else
+			return ((LinkEdge) e).getLinkFaultDescription();
+		}
+		return "";
 	    }
 	};
-	edgeLinePainter = new Transformer<LinkEdge, Paint>() {
+	edgeLinePainter = new Transformer<IEdge, Paint>() {
 
-	    public Paint transform(LinkEdge le) {
-		if (le.isHover()) {
+	    @Override
+	    public Paint transform(IEdge e) {
+		if (e.isHover()) {
 		    return Color.ORANGE;
 		}
-		if (owner.getMapGraphComponentMode() != MapGraphComponentMode.LINK_FAULT) {
-		    if (le.isEnabled()) {
-			if (le.isEdgeOfShortestPath())
-			    return Color.GREEN;
-			else if (le.isActuallyLive())
-			    return new Color(0, 153, 0);
-			else
-			    return Color.DARK_GRAY;
+		if (e instanceof LinkEdge) {
+		    LinkEdge le = (LinkEdge) e;
+		    if (owner.getMapGraphComponentMode() != MapGraphComponentMode.LINK_FAULT) {
+			if (e.isEnabled()) {
+			    if (le.isEdgeOfShortestPath())
+				return Color.GREEN;
+			    else if (le.isActuallyLive())
+				return new Color(0, 153, 0);
+			    else
+				return Color.DARK_GRAY;
+			} else {
+			    if (le.isActuallyDead())
+				return Color.RED;
+			    else
+				return Color.LIGHT_GRAY;
+			}
 		    } else {
-			if (le.isActuallyDead())
-			    return Color.RED;
-			else
-			    return Color.LIGHT_GRAY;
+			return new Color(255, 255 - (int) le.getFaultIntensity(), 255 - (int) le.getFaultIntensity());
 		    }
-		} else {
-		    return new Color(255, 255 - (int) le.getFaultIntensity(), 255 - (int) le.getFaultIntensity());
 		}
+		return Color.BLACK;
 	    }
 	};
-	edgeLineStroker = new Transformer<LinkEdge, Stroke>() {
+	edgeLineStroker = new Transformer<IEdge, Stroke>() {
 
-	    public Stroke transform(LinkEdge le) {
-		if (le.isHover()) {
+	    @Override
+	    public Stroke transform(IEdge e) {
+		if (e.isHover()) {
 		    return new BasicStroke(3);
 		}
-		if (le.isEnabled()) {
-		    if (le.isEdgeOfShortestPath())
-			return new BasicStroke(3);
-		    else
-			return new BasicStroke(1);
-		} else {
-		    return RenderContext.DASHED;
+		if (e.isEnabled()) {
+		    if (e instanceof LinkEdge) {
+			if (((LinkEdge) e).isEdgeOfShortestPath())
+			    return new BasicStroke(3);
+			else
+			    return new BasicStroke(1);
+		    }
 		}
+		return RenderContext.DASHED;
 	    }
 	};
     }
@@ -185,7 +206,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Paint> getVertexFillPainter() {
+    public Transformer<IVertex, Paint> getVertexFillPainter() {
 	return vertexFillPainter;
     }
 
@@ -194,7 +215,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Paint> getVertexBorderPainter() {
+    public Transformer<IVertex, Paint> getVertexBorderPainter() {
 	return vertexBorderPainter;
     }
 
@@ -203,7 +224,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Stroke> getVertexBorderStroker() {
+    public Transformer<IVertex, Stroke> getVertexBorderStroker() {
 	return vertexBorderStroker;
     }
 
@@ -212,7 +233,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, String> getVertexLabeler() {
+    public Transformer<IVertex, String> getVertexLabeler() {
 	return vertexLabeler;
     }
 
@@ -221,7 +242,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, String> getVertexToolTiper() {
+    public Transformer<IVertex, String> getVertexToolTiper() {
 	return vertexToolTiper;
     }
 
@@ -230,7 +251,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Shape> getVertexShaper() {
+    public Transformer<IVertex, Shape> getVertexShaper() {
 	return vertexShaper;
     }
 
@@ -239,7 +260,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, String> getEdgeLabeler() {
+    public Transformer<IEdge, String> getEdgeLabeler() {
 	return edgeLabeler;
     }
 
@@ -248,7 +269,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, String> getEdgeTooltiper() {
+    public Transformer<IEdge, String> getEdgeTooltiper() {
 	return edgeToolTiper;
     }
 
@@ -257,7 +278,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, Paint> getEdgeLinePainter() {
+    public Transformer<IEdge, Paint> getEdgeLinePainter() {
 	return edgeLinePainter;
     }
 
@@ -266,7 +287,7 @@ public class NetStateMapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, Stroke> getEdgeLineStroker() {
+    public Transformer<IEdge, Stroke> getEdgeLineStroker() {
 	return edgeLineStroker;
     }
 }

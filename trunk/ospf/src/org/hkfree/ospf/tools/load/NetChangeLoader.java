@@ -1,8 +1,8 @@
 package org.hkfree.ospf.tools.load;
 
 import org.hkfree.ospf.model.Constants;
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
 import org.hkfree.ospf.model.netchange.NetState;
 import org.hkfree.ospf.model.ospf.Link;

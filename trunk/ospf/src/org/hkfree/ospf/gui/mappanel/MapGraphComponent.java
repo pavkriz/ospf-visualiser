@@ -20,11 +20,13 @@ import org.hkfree.ospf.model.Constants.EDGE_SHAPER;
 import org.hkfree.ospf.model.Constants.LAYOUT;
 import org.hkfree.ospf.model.lltd.Device;
 import org.hkfree.ospf.model.lltd.LLTDModel;
-import org.hkfree.ospf.model.lltd.Relation;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
-import org.hkfree.ospf.model.map.LinkEdge;
+import org.hkfree.ospf.model.map.IEdge;
+import org.hkfree.ospf.model.map.IVertex;
 import org.hkfree.ospf.model.map.MapModel;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.DeviceVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.ExternalLSA;
 import org.hkfree.ospf.model.ospf.Router;
 import org.hkfree.ospf.model.ospf.StubLink;
@@ -62,16 +64,16 @@ public class MapGraphComponent extends JComponent {
     private MapModel mapModel = null;
     private int mapGraphCompMode;
     private RouterVertex shortestTreeCenter = null;
-    private VisualizationViewer<RouterVertex, LinkEdge> vv = null;
-    private Graph<RouterVertex, LinkEdge> graph = null;
-    private Layout<RouterVertex, LinkEdge> layout = null;
-    private OspfModalGraphMouse<RouterVertex, LinkEdge> graphMouse = null;
+    private VisualizationViewer<IVertex, IEdge> vv = null;
+    private Graph<IVertex, IEdge> graph = null;
+    private Layout<IVertex, IEdge> layout = null;
+    private OspfModalGraphMouse<IVertex, IEdge> graphMouse = null;
     private MapStyleTransformer styleTransformer = null;
     private GPSPointConverter gpsPointConverter = null;
     private ScalingControl scaler = null;
     private float zoomValue = 1.0f;
     private Forest<RouterVertex, EdgeOfSPT> shortestTreeGraph = new DelegateForest<RouterVertex, EdgeOfSPT>();
-    private RouterVertex firstRVertexToMakeEdge = null;
+    private RouterVertex firstRouterVertexToMakeEdge = null;
     private RouterVertex firstShortestPathRV = null;
     private RouterVertex secondShortestPathRV = null;
     private boolean showIPv6 = false;
@@ -100,7 +102,7 @@ public class MapGraphComponent extends JComponent {
      * Vrací komponentu vizualization vieweru
      * @return vv
      */
-    public VisualizationViewer<RouterVertex, LinkEdge> getVisualizationComponent() {
+    public VisualizationViewer<IVertex, IEdge> getVisualizationComponent() {
 	return this.vv;
     }
 
@@ -119,15 +121,15 @@ public class MapGraphComponent extends JComponent {
      */
     @SuppressWarnings("rawtypes")
     private void initializeGraph(EDGE_SHAPER edgeShaper) {
-	graph = new SparseMultigraph<RouterVertex, LinkEdge>();
-	layout = new FRLayout<RouterVertex, LinkEdge>(graph);
+	graph = new SparseMultigraph<IVertex, IEdge>();
+	layout = new FRLayout<IVertex, IEdge>(graph);
 	layout.setSize(Constants.LAYOUT_SIZE);
-	vv = new VisualizationViewer<RouterVertex, LinkEdge>(layout);
+	vv = new VisualizationViewer<IVertex, IEdge>(layout);
 	((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
 	((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
 	((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
 	scaler = new CrossoverScalingControl();
-	graphMouse = new OspfModalGraphMouse<RouterVertex, LinkEdge>(this);
+	graphMouse = new OspfModalGraphMouse<IVertex, IEdge>(this);
 	graphMouse.add(new MapGraphContextMenu(this));
 	graphMouse.add(new MapGraphMouseClickPlugin(this));
 	styleTransformer = new MapStyleTransformer(this);
@@ -153,13 +155,13 @@ public class MapGraphComponent extends JComponent {
      */
     public void setEdgeShaper(EDGE_SHAPER edgeShaper) {
 	if (edgeShaper == EDGE_SHAPER.QUAD_CURVE)
-	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<RouterVertex, LinkEdge>());
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<IVertex, IEdge>());
 	if (edgeShaper == EDGE_SHAPER.LINE)
-	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<RouterVertex, LinkEdge>());
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<IVertex, IEdge>());
 	if (edgeShaper == EDGE_SHAPER.BENT_LINE)
-	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine<RouterVertex, LinkEdge>());
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine<IVertex, IEdge>());
 	if (edgeShaper == EDGE_SHAPER.CUBIC_CURVE)
-	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.CubicCurve<RouterVertex, LinkEdge>());
+	    vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.CubicCurve<IVertex, IEdge>());
 	vv.repaint();
     }
 
@@ -168,14 +170,14 @@ public class MapGraphComponent extends JComponent {
      * Vytvoří a zobrazí graf celé sítě
      */
     public void createWholeGraph() {
-	for (RouterVertex routerVertex : mapModel.getRouterVertices()) {
-	    graph.addVertex(routerVertex);
-	    routerVertex.setFullExpanded(true);
-	    routerVertex.setPermanentlyDisplayed(true);
+	for (RouterVertex rv : mapModel.getRouterVertices()) {
+	    rv.setFullExpanded(true);
+	    rv.setPermanentlyDisplayed(true);
+	    graph.addVertex(rv);
 	}
-	for (LinkEdge linkEdge : mapModel.getLinkEdges()) {
-	    linkEdge.setGraphComponent(this);
-	    graph.addEdge(linkEdge, linkEdge.getRVertex1(), linkEdge.getRVertex2());
+	for (LinkEdge le : mapModel.getLinkEdges()) {
+	    le.setGraphComponent(this);
+	    graph.addEdge(le, le.getVertex1(), le.getVertex2());
 	}
 	vv.repaint();
 	scaler.scale(vv, zoomValue, vv.getCenter());
@@ -190,27 +192,27 @@ public class MapGraphComponent extends JComponent {
 
     /**
      * Zobrazí graf pouze zadané části sítě
-     * @param center
+     * @param centerVertex
      * @param depth
      */
-    public void createGraphFromCenter(RouterVertex center, int depth) {
-	for (RouterVertex rv : mapModel.getRouterVertices()) {
-	    graph.removeVertex(rv);
+    public void createGraphFromCenter(IVertex centerVertex, int depth) {
+	for (IVertex v : mapModel.getVertices()) {
+	    graph.removeVertex(v);
 	}
-	graph.addVertex(center);
-	((FRLayout<RouterVertex, LinkEdge>) layout).setLocation(center, vv.getWidth() / 2, vv.getHeight() / 2);
-	layout.lock(center, true);
-	center.setPermanentlyDisplayed(true);
-	List<RouterVertex> previousStepVertexes = new ArrayList<RouterVertex>();
-	List<RouterVertex> newAddedVertexes = new ArrayList<RouterVertex>();
-	previousStepVertexes.add(center);
-	newAddedVertexes.add(center);
+	graph.addVertex(centerVertex);
+	((FRLayout<IVertex, IEdge>) layout).setLocation(centerVertex, vv.getWidth() / 2, vv.getHeight() / 2);
+	layout.lock(centerVertex, true);
+	((RouterVertex) centerVertex).setPermanentlyDisplayed(true);
+	List<IVertex> previousStepVertexes = new ArrayList<IVertex>();
+	List<IVertex> newAddedVertexes = new ArrayList<IVertex>();
+	previousStepVertexes.add(centerVertex);
+	newAddedVertexes.add(centerVertex);
 	for (int i = 1; i <= depth; i++) {
-	    for (RouterVertex rv : newAddedVertexes) {
-		addNeighborsRouterVertexes(rv);
+	    for (IVertex rv : newAddedVertexes) {
+		addNeighborsRouters((RouterVertex) rv);
 	    }
 	    newAddedVertexes.clear();
-	    for (RouterVertex rv : graph.getVertices()) {
+	    for (IVertex rv : graph.getVertices()) {
 		if (!previousStepVertexes.contains(rv)) {
 		    previousStepVertexes.add(rv);
 		    newAddedVertexes.add(rv);
@@ -229,27 +231,35 @@ public class MapGraphComponent extends JComponent {
 
 
     /**
-     * Vytvoří graf na základě inframací o pozicích z XML
+     * Vytvoří graf na základě informací o pozicích z XML
      * @param rvPositions
      */
     public void createGraphByPositions(Map<RouterVertex, Point2D> rvPositions) {
-	for (RouterVertex routerVertex : mapModel.getRouterVertices()) {
-	    if (rvPositions.containsKey(routerVertex)) {
-		graph.addVertex(routerVertex);
-		layout.setLocation(routerVertex, rvPositions.get(routerVertex));
-		if (routerVertex.isLocked()) {
-		    lockVertexPosition(routerVertex);
+	for (IVertex v : mapModel.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		RouterVertex rv = (RouterVertex) v;
+		if (rvPositions.containsKey(rv)) {
+		    graph.addVertex(rv);
+		    layout.setLocation(rv, rvPositions.get(rv));
+		    if (rv.isLocked()) {
+			lockVertexPosition(rv);
+		    }
 		}
 	    }
 	}
-	for (LinkEdge linkEdge : mapModel.getLinkEdges()) {
-	    if (graph.containsVertex(linkEdge.getRVertex1()) && graph.containsVertex(linkEdge.getRVertex2())) {
-		linkEdge.setGraphComponent(this);
-		graph.addEdge(linkEdge, linkEdge.getRVertex1(), linkEdge.getRVertex2());
+	for (IEdge e : mapModel.getEdges()) {
+	    if (e instanceof LinkEdge) {
+		LinkEdge le = (LinkEdge) e;
+		if (graph.containsVertex(le.getVertex1()) && graph.containsVertex(le.getVertex2())) {
+		    le.setGraphComponent(this);
+		    graph.addEdge(le, le.getVertex1(), le.getVertex2());
+		}
 	    }
 	}
-	for (RouterVertex routerVertex : graph.getVertices()) {
-	    checkRVertexExpandability(routerVertex);
+	for (IVertex v : graph.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		checkRouterVertexExpandability((RouterVertex) v);
+	    }
 	}
 	vv.repaint();
 	scaler.scale(vv, zoomValue, vv.getCenter());
@@ -261,11 +271,11 @@ public class MapGraphComponent extends JComponent {
 
     /**
      * Pokud graf ještě neobsahuje zadaný vrchol, metoda ho do grafu přidá
-     * @param routerVertex
+     * @param vertex
      */
-    public void addRouterVertexToGraph(RouterVertex routerVertex) {
-	if (!graph.containsVertex(routerVertex)) {
-	    graph.addVertex(routerVertex);
+    public void addVertexToGraph(IVertex vertex) {
+	if (!graph.containsVertex(vertex)) {
+	    graph.addVertex(vertex);
 	}
     }
 
@@ -274,42 +284,45 @@ public class MapGraphComponent extends JComponent {
      * Zobrazí sousedy zadaného vrcholu
      * @param routerVertex
      */
-    public void addNeighborsRouterVertexes(RouterVertex routerVertex) {
+    public void addNeighborsRouters(RouterVertex routerVertex) {
 	for (LinkEdge linkEdge : mapModel.getIncidentEdges(routerVertex)) {
 	    linkEdge.setGraphComponent(this);
-	    if (!routerVertex.equals(linkEdge.getRVertex1())) {
-		addRouterVertexToGraph(linkEdge.getRVertex1());
-		if (linkEdge.getRVertex1().isMultilink()) {
-		    linkEdge.getRVertex1().setPermanentlyDisplayed(true);
-		    this.addNeighborsRouterVertexes(linkEdge.getRVertex1());
+	    if (!routerVertex.equals(linkEdge.getVertex1())) {
+		addVertexToGraph(linkEdge.getVertex1());
+		if (linkEdge.getVertex1().isMultilink()) {
+		    linkEdge.getVertex1().setPermanentlyDisplayed(true);
+		    addNeighborsRouters(linkEdge.getVertex1());
 		}
 	    }
-	    if (!routerVertex.equals(linkEdge.getRVertex2())) {
-		addRouterVertexToGraph(linkEdge.getRVertex2());
-		if (linkEdge.getRVertex2().isMultilink()) {
-		    linkEdge.getRVertex2().setPermanentlyDisplayed(true);
-		    this.addNeighborsRouterVertexes(linkEdge.getRVertex2());
+	    if (!routerVertex.equals(linkEdge.getVertex2())) {
+		addVertexToGraph(linkEdge.getVertex2());
+		if (linkEdge.getVertex2().isMultilink()) {
+		    linkEdge.getVertex2().setPermanentlyDisplayed(true);
+		    addNeighborsRouters(linkEdge.getVertex2());
 		}
 	    }
 	    if (!graph.containsEdge(linkEdge)) {
-		graph.addEdge(linkEdge, linkEdge.getRVertex1(), linkEdge.getRVertex2());
+		graph.addEdge(linkEdge, linkEdge.getVertex1(), linkEdge.getVertex2());
 	    }
 	}
-	for (LinkEdge linkEdge : mapModel.getLinkEdges()) {
-	    linkEdge.setGraphComponent(this);
-	    if (!graph.containsEdge(linkEdge)) {
-		if (graph.containsVertex(linkEdge.getRVertex1()) && graph.containsVertex(linkEdge.getRVertex2())) {
-		    graph.addEdge(linkEdge, linkEdge.getRVertex1(), linkEdge.getRVertex2());
-		    if (!linkEdge.getRVertex1().isFullExpanded())
-			checkRVertexExpandability(linkEdge.getRVertex1());
-		    if (!linkEdge.getRVertex2().isFullExpanded())
-			checkRVertexExpandability(linkEdge.getRVertex2());
+	for (LinkEdge le : mapModel.getLinkEdges()) {
+	    le.setGraphComponent(this);
+	    if (!graph.containsEdge(le)) {
+		if (graph.containsVertex(le.getVertex1()) && graph.containsVertex(le.getVertex2())) {
+		    graph.addEdge(le, le.getVertex1(), le.getVertex2());
+		    if (!le.getVertex1().isFullExpanded())
+			checkRouterVertexExpandability(le.getVertex1());
+		    if (!le.getVertex2().isFullExpanded())
+			checkRouterVertexExpandability(le.getVertex2());
 		}
 	    }
 	}
-	for (RouterVertex rv : graph.getVertices()) {
-	    if (!rv.isFullExpanded())
-		checkRVertexExpandability(rv);
+	for (IVertex v : graph.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		if (!((RouterVertex) v).isFullExpanded()) {
+		    checkRouterVertexExpandability((RouterVertex) v);
+		}
+	    }
 	}
     }
 
@@ -318,24 +331,24 @@ public class MapGraphComponent extends JComponent {
      * Zjistí, zda má zadaná router ještě nějaké nezobrazené sousedy
      * @param r
      */
-    private void checkRVertexExpandability(RouterVertex r) {
+    private void checkRouterVertexExpandability(RouterVertex r) {
 	if (!r.isMultilink()) {
 	    for (LinkEdge le : mapModel.getIncidentEdges(r)) {
-		RouterVertex secondLeRVertex = null;
-		if (le.getRVertex1().equals(r)) {
-		    secondLeRVertex = le.getRVertex2();
+		RouterVertex secondLeRouterVertex = null;
+		if (le.getVertex1().equals(r)) {
+		    secondLeRouterVertex = le.getVertex2();
 		} else {
-		    secondLeRVertex = le.getRVertex1();
+		    secondLeRouterVertex = le.getVertex1();
 		}
 		// kouknout jestli je router na standardnim spoji zobrazen
-		if (!secondLeRVertex.isMultilink()) {
-		    if (!graph.containsVertex(secondLeRVertex)) {
+		if (!secondLeRouterVertex.isMultilink()) {
+		    if (!graph.containsVertex(secondLeRouterVertex)) {
 			r.setFullExpanded(false);
 			return;
 		    }
 		} else { // kouknout jestli ma incidentni multilink zobrazeny vsechny vrcholy
-		    for (LinkEdge mle : mapModel.getIncidentEdges(secondLeRVertex)) {
-			if (!graph.containsVertex(mle.getRVertex1())) {
+		    for (LinkEdge mle : mapModel.getIncidentEdges(secondLeRouterVertex)) {
+			if (!graph.containsVertex(mle.getVertex1())) {
 			    r.setFullExpanded(false);
 			    return;
 			}
@@ -353,34 +366,42 @@ public class MapGraphComponent extends JComponent {
      */
     public void removeNonPermanentlyDisplayedNeighbours(RouterVertex routerVertex) {
 	List<LinkEdge> edgesToRemove = new ArrayList<LinkEdge>();
-	List<RouterVertex> rvertexesToRemove = new ArrayList<RouterVertex>();
-	for (LinkEdge le : graph.getIncidentEdges(routerVertex)) {
-	    RouterVertex secondRVertex = null;
-	    if (le.getRVertex1().equals(routerVertex)) {
-		secondRVertex = le.getRVertex2();
-	    } else {
-		secondRVertex = le.getRVertex1();
-	    }
-	    if (!secondRVertex.isPermanentlyDisplayed()) {
-		for (LinkEdge sle : graph.getIncidentEdges(secondRVertex)) {
-		    if (!edgesToRemove.contains(sle)) {
-			edgesToRemove.add(sle);
-		    }
+	List<RouterVertex> vertexesToRemove = new ArrayList<RouterVertex>();
+	for (IEdge e : graph.getIncidentEdges(routerVertex)) {
+	    if (e instanceof LinkEdge) {
+		LinkEdge le = (LinkEdge) e;
+		RouterVertex secondRVertex = null;
+		if (le.getVertex1().equals(routerVertex)) {
+		    secondRVertex = le.getVertex2();
+		} else {
+		    secondRVertex = le.getVertex1();
 		}
-		rvertexesToRemove.add(secondRVertex);
+		if (!secondRVertex.isPermanentlyDisplayed()) {
+		    for (IEdge se : graph.getIncidentEdges(secondRVertex)) {
+			if (se instanceof LinkEdge) {
+			    LinkEdge sle = (LinkEdge) se;
+			    if (!edgesToRemove.contains(sle)) {
+				edgesToRemove.add(sle);
+			    }
+			}
+		    }
+		    vertexesToRemove.add(secondRVertex);
+		}
+		if (secondRVertex.isMultilink()) {
+		    removeMultilikNonPermanentlyDRVertexes(secondRVertex, routerVertex, edgesToRemove, vertexesToRemove);
+		}
 	    }
-	    if (secondRVertex.isMultilink()) {
-		removeMultilikNonPermanentlyDRVertexes(secondRVertex, routerVertex, edgesToRemove, rvertexesToRemove);
+	}
+	for (LinkEdge le : edgesToRemove) {
+	    graph.removeEdge(le);
+	}
+	for (RouterVertex rv : vertexesToRemove) {
+	    graph.removeVertex(rv);
+	}
+	for (IVertex rv : graph.getVertices()) {
+	    if (rv instanceof RouterVertex) {
+		checkRouterVertexExpandability((RouterVertex) rv);
 	    }
-	}
-	for (LinkEdge rle : edgesToRemove) {
-	    graph.removeEdge(rle);
-	}
-	for (RouterVertex rrv : rvertexesToRemove) {
-	    graph.removeVertex(rrv);
-	}
-	for (RouterVertex rv : graph.getVertices()) {
-	    checkRVertexExpandability(rv);
 	}
     }
 
@@ -394,25 +415,34 @@ public class MapGraphComponent extends JComponent {
     private void removeMultilikNonPermanentlyDRVertexes(RouterVertex multilinkCenter, RouterVertex rvSender,
 	    List<LinkEdge> edgesToRemove, List<RouterVertex> rvertexesToRemove) {
 	int showedCnt = 0;
-	for (LinkEdge le : graph.getIncidentEdges(multilinkCenter)) {
-	    if (!le.getRVertex1().isPermanentlyDisplayed()) {
-		for (LinkEdge sle : graph.getIncidentEdges(le.getRVertex1())) {
-		    if (!edgesToRemove.contains(sle)) {
-			edgesToRemove.add(sle);
+	for (IEdge e : graph.getIncidentEdges(multilinkCenter)) {
+	    if (e instanceof LinkEdge) {
+		LinkEdge le = (LinkEdge) e;
+		if (!le.getVertex1().isPermanentlyDisplayed()) {
+		    for (IEdge se : graph.getIncidentEdges(le.getVertex1())) {
+			if (se instanceof LinkEdge) {
+			    LinkEdge sle = (LinkEdge) se;
+			    if (!edgesToRemove.contains(sle)) {
+				edgesToRemove.add(sle);
+			    }
+			}
 		    }
-		}
-		if (!rvertexesToRemove.contains(le.getRVertex1())) {
-		    rvertexesToRemove.add(le.getRVertex1());
-		}
-	    } else
-		showedCnt++;
+		    if (!rvertexesToRemove.contains(le.getVertex1())) {
+			rvertexesToRemove.add(le.getVertex1());
+		    }
+		} else
+		    showedCnt++;
+	    }
 	}
 	if (showedCnt < 2) {
 	    rvertexesToRemove.add(multilinkCenter);
-	    for (LinkEdge le : graph.getIncidentEdges(multilinkCenter)) {
-		if (le.getRVertex1().equals(rvSender)) {
-		    if (!edgesToRemove.contains(le)) {
-			edgesToRemove.add(le);
+	    for (IEdge e : graph.getIncidentEdges(multilinkCenter)) {
+		if (e instanceof LinkEdge) {
+		    LinkEdge le = (LinkEdge) e;
+		    if (le.getVertex1().equals(rvSender)) {
+			if (!edgesToRemove.contains(le)) {
+			    edgesToRemove.add(le);
+			}
 		    }
 		}
 	    }
@@ -568,12 +598,24 @@ public class MapGraphComponent extends JComponent {
 
 
     /**
-     * Zamkne pozice všech vrcholů
+     * Zamkne pozice všech routeru v mapě
      */
     public void lockAllRouterVertices() {
-	for (RouterVertex r : graph.getVertices()) {
-	    r.setLocked(true);
-	    layout.lock(r, true);
+	for (IVertex r : graph.getVertices()) {
+	    if (r instanceof RouterVertex) {
+		((RouterVertex) r).setLocked(true);
+		layout.lock(r, true);
+	    }
+	}
+    }
+
+
+    public void unlockAllRouterVertices() {
+	for (IVertex r : graph.getVertices()) {
+	    if (r instanceof RouterVertex) {
+		((RouterVertex) r).setLocked(false);
+		layout.lock(r, false);
+	    }
 	}
     }
 
@@ -627,7 +669,7 @@ public class MapGraphComponent extends JComponent {
      * @param le
      */
     public void enableLinkEdge(LinkEdge le) {
-	if (le.getRVertex1().isEnabled() && le.getRVertex2().isEnabled()) {
+	if (le.getVertex1().isEnabled() && le.getVertex2().isEnabled()) {
 	    le.setEnabled(true);
 	}
     }
@@ -640,7 +682,7 @@ public class MapGraphComponent extends JComponent {
     public void tryDisableIncidentMultilink(RouterVertex r) {
 	for (LinkEdge le : mapModel.getIncidentEdges(r)) {
 	    if (le.isEdgeOfMultilink()) {
-		checkMultilinkToDisable(le.getRVertex2());
+		checkMultilinkToDisable(le.getVertex2());
 	    }
 	}
     }
@@ -664,12 +706,12 @@ public class MapGraphComponent extends JComponent {
 
     /**
      * Pokud má vrchol nadefinovánu gps pozici, bude na ni přemístěn
-     * @param r
+     * @param rv
      */
-    public void setVertexPositionByGPS(RouterVertex r) {
-	if (r.getGpsLatitude() != 0 && r.getGpsLongtitude() != 0) {
-	    layout.setLocation(r, gpsPointConverter.getPosition(r.getGPSCoordinates()));
-	    lockVertexPosition(r);
+    public void setVertexPositionByGPS(RouterVertex rv) {
+	if (rv.getGpsLatitude() != 0 && rv.getGpsLongtitude() != 0) {
+	    layout.setLocation(rv, gpsPointConverter.getPosition(rv.getGPSCoordinates()));
+	    lockVertexPosition(rv);
 	}
     }
 
@@ -678,8 +720,10 @@ public class MapGraphComponent extends JComponent {
      * Rozmístí všechny vrcholy dle jejich odpovídajících gps souřadnic
      */
     public void setAllVerticesToGPSPosition() {
-	for (RouterVertex r : graph.getVertices()) {
-	    setVertexPositionByGPS(r);
+	for (IVertex v : graph.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		setVertexPositionByGPS((RouterVertex) v);
+	    }
 	}
 	layout.initialize();
 	vv.repaint();
@@ -690,15 +734,21 @@ public class MapGraphComponent extends JComponent {
      * Nastaví všechny hrany jako neobarvené a všem vrcholům, že se nejedná o kořen stromu nejkratších cest
      */
     private void returnColorOfShortestPath() {
-	for (LinkEdge le : mapModel.getLinkEdges()) {
-	    le.setEdgeOfShortestPath(false);
-	    le.setEdgeOfFirstPath(false);
-	    le.setEdgeOfSecondPath(false);
+	for (IEdge e : mapModel.getEdges()) {
+	    if (e instanceof LinkEdge) {
+		LinkEdge le = (LinkEdge) e;
+		le.setEdgeOfShortestPath(false);
+		le.setEdgeOfFirstPath(false);
+		le.setEdgeOfSecondPath(false);
+	    }
 	}
-	for (RouterVertex rv : mapModel.getRouterVertices()) {
-	    rv.setCenterOfShortestPathTree(false);
-	    rv.setFirstRVOfTwoRVShortestPath(false);
-	    rv.setSecondRVOfTwoRVShortestPath(false);
+	for (IVertex v : mapModel.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		RouterVertex rv = (RouterVertex) v;
+		rv.setCenterOfShortestPathTree(false);
+		rv.setFirstRVOfTwoRVShortestPath(false);
+		rv.setSecondRVOfTwoRVShortestPath(false);
+	    }
 	}
 	if (mapGraphCompMode != MapGraphComponentMode.TWO_ROUTERS_SHORTEST_PATH) {
 	    firstShortestPathRV = null;
@@ -711,9 +761,9 @@ public class MapGraphComponent extends JComponent {
      * Zruší první vybraný vrchol k vytvoření nové hrany
      */
     private void returnColorOfNewEdgeFirstVertex() {
-	if (firstRVertexToMakeEdge != null) {
-	    firstRVertexToMakeEdge.setPartOfNewAddedEdge(false);
-	    firstRVertexToMakeEdge = null;
+	if (firstRouterVertexToMakeEdge != null) {
+	    firstRouterVertexToMakeEdge.setPartOfNewAddedEdge(false);
+	    firstRouterVertexToMakeEdge = null;
 	}
     }
 
@@ -821,12 +871,15 @@ public class MapGraphComponent extends JComponent {
 
 
     /**
-     * Vytvoří nový RouterVertex v modelu, přidá ho do grafu a přesune ho na zvolenou pozici
+     * Vytvoří nový IVertex v modelu, přidá ho do grafu a přesune ho na zvolenou pozici
      */
-    public void addNewRouterVertex(Point2D rvPoint) {
+    public void addNewVertex(Point2D rvPoint) {
 	AddRouterVertexDialog dialog = new AddRouterVertexDialog(mapModel.getRouterVertices());
 	if (dialog.successfulyConfirmed()) {
-	    RouterVertex rv = mapModel.addFirstRouterVertex(dialog.getEnteredName(), dialog.getEnteredName());
+	    RouterVertex rv = new RouterVertex();
+	    rv.setName(dialog.getEnteredName());
+	    rv.setInfo(dialog.getEnteredName());
+	    mapModel.getVertices().add(rv);
 	    graph.addVertex(rv);
 	    lockVertexPosition(rv);
 	    rv.setFullExpanded(true);
@@ -855,20 +908,20 @@ public class MapGraphComponent extends JComponent {
      * @param rv
      */
     public void addNewLinkEdge(RouterVertex rv) {
-	if (firstRVertexToMakeEdge == null) {
-	    firstRVertexToMakeEdge = rv;
+	if (firstRouterVertexToMakeEdge == null) {
+	    firstRouterVertexToMakeEdge = rv;
 	    rv.setPartOfNewAddedEdge(true);
 	} else {
-	    if (!(firstRVertexToMakeEdge.isMultilink() && rv.isMultilink()) && !firstRVertexToMakeEdge.equals(rv)) {
-		AddLinkEdgeDialog dialog = new AddLinkEdgeDialog(mapModel.getLinkEdges(), firstRVertexToMakeEdge, rv);
+	    if (!(firstRouterVertexToMakeEdge.isMultilink() && rv.isMultilink()) && !firstRouterVertexToMakeEdge.equals(rv)) {
+		AddLinkEdgeDialog dialog = new AddLinkEdgeDialog(mapModel.getLinkEdges(), firstRouterVertexToMakeEdge, rv);
 		if (dialog.successfulyConfirmed()) {
-		    firstRVertexToMakeEdge.setPartOfNewAddedEdge(false);
+		    firstRouterVertexToMakeEdge.setPartOfNewAddedEdge(false);
 		    LinkEdge le = mapModel.addLinkEdge(dialog.getRouterV1(), dialog.getRouterV2(), dialog.getCost1(),
 			    dialog.getCost2(), dialog.getEnteredName());
 		    le.setExtraAddedEdge(true);
 		    le.setGraphComponent(this);
-		    graph.addEdge(le, le.getRVertex1(), le.getRVertex2());
-		    firstRVertexToMakeEdge = null;
+		    graph.addEdge(le, le.getVertex1(), le.getVertex2());
+		    firstRouterVertexToMakeEdge = null;
 		}
 	    }
 	}
@@ -881,9 +934,12 @@ public class MapGraphComponent extends JComponent {
      */
     public Map<RouterVertex, Point2D> getRouterVertexPositions() {
 	Map<RouterVertex, Point2D> positions = new HashMap<RouterVertex, Point2D>();
-	for (RouterVertex rv : graph.getVertices()) {
-	    positions.put(rv, new Point2D.Double(((AbstractLayout<RouterVertex, LinkEdge>) layout).getX(rv),
-		    ((AbstractLayout<RouterVertex, LinkEdge>) layout).getY(rv)));
+	for (IVertex v : graph.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		RouterVertex rv = (RouterVertex) v;
+		positions.put(rv, new Point2D.Double(((AbstractLayout<IVertex, IEdge>) layout).getX(rv),
+			((AbstractLayout<IVertex, IEdge>) layout).getY(rv)));
+	    }
 	}
 	return positions;
     }
@@ -901,10 +957,10 @@ public class MapGraphComponent extends JComponent {
 		removeEdges.add(le);
 	    }
 	    for (LinkEdge le : removeEdges) {
-		mapModel.getLinkEdges().remove(le);
+		mapModel.getEdges().remove(le);
 	    }
 	    graph.removeVertex(routerVertex);
-	    mapModel.getRouterVertices().remove(routerVertex);
+	    mapModel.getVertices().remove(routerVertex);
 	}
     }
 
@@ -916,7 +972,7 @@ public class MapGraphComponent extends JComponent {
     public void removeExtraAddedLEdge(LinkEdge linkEdge) {
 	if (linkEdge.isExtraAddedEdge()) {
 	    graph.removeEdge(linkEdge);
-	    mapModel.getLinkEdges().remove(linkEdge);
+	    mapModel.getEdges().remove(linkEdge);
 	}
     }
 
@@ -928,45 +984,48 @@ public class MapGraphComponent extends JComponent {
      */
     public void findByNameOrIP(String text) {
 	boolean b;
-	Set<RouterVertex> rvs = new HashSet<RouterVertex>(graph.getVertices());
+	Set<IVertex> rvs = new HashSet<IVertex>(graph.getVertices());
 	Router r = null;
 	String[] foundedNames = text.split("\\|");
-	for (RouterVertex rv : rvs) {
-	    // multilink se preskakuje, v nem se nehleda
-	    if (rv.isMultilink()) {
-		continue;
-	    }
-	    b = false;
-	    // prochazeni a hledani kazdeho retezce ktere byly oddeleny '|'
-	    for (String name : foundedNames) {
-		if (name.isEmpty()) {
+	for (IVertex v : rvs) {
+	    if (v instanceof RouterVertex) {
+		RouterVertex rv = (RouterVertex) v;
+		// multilink se preskakuje, v nem se nehleda
+		if (rv.isMultilink()) {
 		    continue;
 		}
-		if (rv.getName().toUpperCase().contains(name.toUpperCase())
-			|| rv.getDescription().toUpperCase().contains(name.toUpperCase())) {
-		    b = true;
-		}
-		// pokud je model null, hledat pouze v mapModelu
-		if (owner.getMapDesignWinManager().getOspfModel() != null) {
-		    r = owner.getMapDesignWinManager().getOspfModel().getRouterByIp(rv.getDescription());
-		    // vyhledavani ve stubs
-		    for (StubLink sl : r.getStubs()) {
-			if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
-				IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
-			    b = true;
+		b = false;
+		// prochazeni a hledani kazdeho retezce ktere byly oddeleny '|'
+		for (String name : foundedNames) {
+		    if (name.isEmpty()) {
+			continue;
+		    }
+		    if (rv.getName().toUpperCase().contains(name.toUpperCase())
+			    || rv.getInfo().toUpperCase().contains(name.toUpperCase())) {
+			b = true;
+		    }
+		    // pokud je model null, hledat pouze v mapModelu
+		    if (owner.getMapDesignWinManager().getOspfModel() != null) {
+			r = owner.getMapDesignWinManager().getOspfModel().getRouterByIp(rv.getInfo());
+			// vyhledavani ve stubs
+			for (StubLink sl : r.getStubs()) {
+			    if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
+				    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
+				b = true;
+			    }
+			}
+			// vyhledavani v external lsa
+			for (ExternalLSA el : r.getExternalLsa()) {
+			    if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
+				    IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
+				b = true;
+			    }
 			}
 		    }
-		    // vyhledavani v external lsa
-		    for (ExternalLSA el : r.getExternalLsa()) {
-			if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
-				IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
-			    b = true;
-			}
-		    }
 		}
+		rv.setFounded(b);
+		vv.getPickedVertexState().pick(rv, b);
 	    }
-	    rv.setFounded(b);
-	    vv.getPickedVertexState().pick(rv, b);
 	}
     }
 
@@ -985,24 +1044,24 @@ public class MapGraphComponent extends JComponent {
     public void layouting(LAYOUT mode) {
 	try {
 	    Object[] constructorArgs = { graph };
-	    Class<? extends Layout<RouterVertex, LinkEdge>> layoutNew = null;
-	    Constructor<? extends Layout<RouterVertex, LinkEdge>> constructor = null;
+	    Class<? extends Layout<IVertex, IEdge>> layoutNew = null;
+	    Constructor<? extends Layout<IVertex, IEdge>> constructor = null;
 	    Object o = null;
-	    Layout<RouterVertex, LinkEdge> l = null;
-	    LayoutTransition<RouterVertex, LinkEdge> lt = null;
+	    Layout<IVertex, IEdge> l = null;
+	    LayoutTransition<IVertex, IEdge> lt = null;
 	    Animator animator = null;
 	    switch (mode) {
-		case LAYOUT_FR_START:
-		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) FRLayout.class;
+		case LAYOUT_FR:
+		    layoutNew = (Class<? extends Layout<IVertex, IEdge>>) FRLayout.class;
 		    constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 		    o = constructor.newInstance(constructorArgs);
-		    layout = (Layout<RouterVertex, LinkEdge>) o;
+		    layout = (Layout<IVertex, IEdge>) o;
 		    layout.setInitializer(vv.getGraphLayout());
 		    ((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
 		    ((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
 		    ((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
 		    layout.setSize(Constants.LAYOUT_SIZE);
-		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), layout);
+		    lt = new LayoutTransition<IVertex, IEdge>(vv, vv.getGraphLayout(), layout);
 		    animator = new Animator(lt);
 		    animator.start();
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
@@ -1012,16 +1071,16 @@ public class MapGraphComponent extends JComponent {
 		    if (layout instanceof SpringLayout<?, ?>) {
 			vv.getModel().getRelaxer().relax();
 		    } else {
-			layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) SpringLayout.class;
+			layoutNew = (Class<? extends Layout<IVertex, IEdge>>) SpringLayout.class;
 			constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 			o = constructor.newInstance(constructorArgs);
-			l = (Layout<RouterVertex, LinkEdge>) o;
+			l = (Layout<IVertex, IEdge>) o;
 			l.setInitializer(vv.getGraphLayout());
 			((SpringLayout) l).setStretch(Constants.LAYOUT_STRETCH);
 			((SpringLayout) l).setRepulsionRange(Constants.LAYOUT_REPULSION_RANGE);
 			((SpringLayout) l).setForceMultiplier(Constants.LAYOUT_FORCE_MULTIPLIER);
 			l.setSize(Constants.LAYOUT_SIZE);
-			lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), l);
+			lt = new LayoutTransition<IVertex, IEdge>(vv, vv.getGraphLayout(), l);
 			animator = new Animator(lt);
 			animator.start();
 			vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
@@ -1036,18 +1095,46 @@ public class MapGraphComponent extends JComponent {
 		    }
 		    break;
 		case LAYOUT_JS_START:
-		    layoutNew = (Class<? extends Layout<RouterVertex, LinkEdge>>) JSLayout.class;
+		    layoutNew = (Class<? extends Layout<IVertex, IEdge>>) JSLayout.class;
 		    constructor = layoutNew.getConstructor(new Class[] { Graph.class });
 		    o = constructor.newInstance(constructorArgs);
-		    layout = (Layout<RouterVertex, LinkEdge>) o;
+		    layout = (Layout<IVertex, IEdge>) o;
 		    layout.setInitializer(vv.getGraphLayout());
 		    layout.setSize(Constants.LAYOUT_SIZE);
-		    lt = new LayoutTransition<RouterVertex, LinkEdge>(vv, vv.getGraphLayout(), layout);
+		    lt = new LayoutTransition<IVertex, IEdge>(vv, vv.getGraphLayout(), layout);
 		    animator = new Animator(lt);
 		    animator.start();
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		    vv.repaint();
 		    break;
+		// case LAYOUT_FR_LLTD:
+		// layoutNew = (Class<? extends Layout<IVertex, IEdge>>) FRLayout.class;
+		// constructor = layoutNew.getConstructor(new Class[] { Graph.class });
+		// o = constructor.newInstance(constructorArgs);
+		// layout = (Layout<IVertex, LinkEdge>) o;
+		// layout.setInitializer(vv.getGraphLayout());
+		// ((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
+		// ((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
+		// ((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
+		// layout.setSize(Constants.LAYOUT_SIZE);
+		// lt = new LayoutTransition<IVertex, LinkEdge>(vv, vv.getGraphLayout(), layout);
+		// List<IVertex> rvs = new ArrayList<IVertex>();
+		// for (IVertex rv : graph.getVertices()) {
+		// if (!rv.isLltd()) {
+		// // if (!rv.isLocked()) {
+		// rvs.add(rv);
+		// lockVertexPosition(rv);
+		// // }
+		// }
+		// }
+		// animator = new Animator(lt);
+		// animator.start();
+		// vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+		// vv.repaint();
+		// for (IVertex rv : rvs) {
+		// unlockVertexPosition(rv);
+		// }
+		// break;
 		default:
 		    break;
 	    }
@@ -1079,18 +1166,26 @@ public class MapGraphComponent extends JComponent {
     public void setShowIPv6(boolean showIPv6) {
 	this.showIPv6 = showIPv6;
 	if (showIPv6) {
-	    for (RouterVertex rv : mapModel.getRouterVertices()) {
-		rv.setVisible(true);
+	    for (IVertex v : mapModel.getVertices()) {
+		if (v instanceof RouterVertex) {
+		    ((RouterVertex) v).setVisible(true);
+		}
 	    }
 	} else {
-	    for (RouterVertex rv : mapModel.getRouterVertices()) {
-		boolean bi = false;
-		for (LinkEdge le : mapModel.getLinkEdges()) {
-		    if ((rv == le.getRVertex1() || rv == le.getRVertex2()) && le.isIPv4()) {
-			bi = true;
+	    for (IVertex v : mapModel.getVertices()) {
+		if (v instanceof RouterVertex) {
+		    RouterVertex rv = (RouterVertex) v;
+		    boolean bi = false;
+		    for (IEdge e : mapModel.getEdges()) {
+			if (e instanceof LinkEdge) {
+			    LinkEdge le = (LinkEdge) e;
+			    if ((rv == le.getVertex1() || rv == le.getVertex2()) && le.isIPv4()) {
+				bi = true;
+			    }
+			}
 		    }
+		    rv.setVisible(bi);
 		}
-		rv.setVisible(bi);
 	    }
 	}
 	vv.repaint();
@@ -1098,88 +1193,45 @@ public class MapGraphComponent extends JComponent {
 
 
     /**
-     * Zobrazí nebo skyje LLTD model u routeru
+     * Zobrazí nebo skryje LLTD model u routeru
      * @param model
      */
     public void showOrHideLltdModel(Router router, LLTDModel model) {
-	RouterVertex rvBase = findRouterVertex(router.getName());
-	RouterVertex rvLast = null;
+	// najit model u routeru a nastavit jeho prvkum viditelnost
 	model.setShow(!model.isShow());
-	if (model.isShow()) {
-	    // pridani routeru a spoju z traceroutu
-	    for (int i = 0; i < model.getTraceroute().size(); i++) {
-		String ip = model.getTraceroute().get(i);
-		boolean con = IpCalculator.containsRouterSubnet(router, ip);
-		RouterVertex rv = new RouterVertex();
-		rv.setName(ip);
-		rv.setLltd(true);
-		graph.addVertex(rv);
-		LinkEdge le = new LinkEdge();
-		le.setRouterVertex1(i == 0 ? rvBase : findRouterVertex(model.getTraceroute().get(i - 1)));
-		le.setRouterVertex2(rv);
-		le.setActuallyLive(true);
-		le.setLltd(true);
-		graph.addEdge(le, le.getRVertex1(), le.getRVertex2());
-		if (con) {
-		    rvLast = rv;
-		    break;
-		}
+	for (Device d : model.getDevices()) {
+	    DeviceVertex dv = findLltdVertex(d.getSource());
+	    if (dv != null) {
+		dv.setVisible(model.isShow());
 	    }
-	    // pridani zarizeni
-	    for (Device d : model.getDevices()) {
-		RouterVertex rv = new RouterVertex();
-		rv.setName(d.getSource());
-		rv.setLltd(true);
-		graph.addVertex(rv);
+	}
+	for (String ip : model.getTraceroute()) {
+	    DeviceVertex dv = findLltdVertex(ip);
+	    if (dv != null) {
+		dv.setVisible(model.isShow());
 	    }
-	    LinkEdge led = new LinkEdge();
-		led.setRouterVertex1(rvLast);
-		led.setRouterVertex2(findLltdVertex(model.getDevices().get(0).getSource()));
-		led.setActuallyLive(true);
-		led.setLltd(true);
-		graph.addEdge(led, led.getRVertex1(), led.getRVertex2());
-	    
-	    // pridani spoju
-	    for (Relation r : model.getRelations()) {
-		RouterVertex rv1 = findLltdVertex(r.getFrom().getSource());
-		if (rv1 == null) {
-		    rv1 = new RouterVertex();
-		    rv1.setName(r.getFrom().getSource());
-		    rv1.setLltd(true);
-		    graph.addVertex(rv1);
-		}
-		RouterVertex rv2 = findLltdVertex(r.getTo().getSource());
-		if (rv2 == null) {
-		    rv2 = new RouterVertex();
-		    rv2.setName(r.getFrom().getSource());
-		    rv2.setLltd(true);
-		    graph.addVertex(rv2);
-		}
-		LinkEdge le = new LinkEdge();
-		le.setRouterVertex1(rv1);
-		le.setRouterVertex2(rv2);
-		le.setActuallyLive(true);
-		le.setLltd(true);
-		graph.addEdge(le, le.getRVertex1(), le.getRVertex2());
-	    }
-	} else {}
+	}
     }
 
 
-    private RouterVertex findLltdVertex(String mac) {
-	for (RouterVertex rv : graph.getVertices()) {
-	    if (rv.isLltd() && rv.getName().equals(mac)) {
-		return rv;
+    public DeviceVertex findLltdVertex(String mac) {
+	for (IVertex v : graph.getVertices()) {
+	    if (v instanceof DeviceVertex) {
+		if (((DeviceVertex) v).getMac().equals(mac)) {
+		    return (DeviceVertex) v;
+		}
 	    }
 	}
 	return null;
     }
 
 
-    private RouterVertex findRouterVertex(String name) {
-	for (RouterVertex rv : graph.getVertices()) {
-	    if (rv.getName().equals(name)) {
-		return rv;
+    public RouterVertex findRouterVertex(String idRouter) {
+	for (IVertex v : graph.getVertices()) {
+	    if (v instanceof RouterVertex) {
+		if (((RouterVertex) v).getName().equals(idRouter)) {
+		    return (RouterVertex) v;
+		}
 	    }
 	}
 	return null;
@@ -1192,6 +1244,16 @@ public class MapGraphComponent extends JComponent {
      * @return
      */
     public Set<LLTDModel> getLLTDmodels(String routerName) {
-	return ((Router) owner.getMapDesignWinManager().getOspfModel().getRouterByName(routerName)).getLltdModels();
+	return owner.getMapDesignWinManager().getOspfModel().getRouterByName(routerName).getLltdModels();
+    }
+
+
+    public void addVertex(IVertex dv) {
+	graph.addVertex(dv);
+    }
+
+
+    public void addEdge(IEdge e) {
+	graph.addEdge(e, e.getVertex1(), e.getVertex2());
     }
 }

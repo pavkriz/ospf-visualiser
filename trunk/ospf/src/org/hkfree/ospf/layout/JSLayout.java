@@ -23,16 +23,16 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeContext {
 
-//    private double forceConstant;
+    // private double forceConstant;
     private double temperature;
     private int currentIteration;
     private int maxIterations = 700;
     private Map<V, JSVertexData> jsVertexData =
 	    LazyMap.decorate(new HashMap<V, JSVertexData>(), new Factory<JSVertexData>() {
 
-	        public JSVertexData create() {
+		public JSVertexData create() {
 		    return new JSVertexData();
-	        }
+		}
 	    });
     // private double attraction_multiplier = 0.75;
     // private double attraction_constant;
@@ -90,7 +90,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	if (graph != null && d != null) {
 	    currentIteration = 0;
 	    temperature = d.getWidth() / 10;
-//	    forceConstant = Math.sqrt(d.getHeight() * d.getWidth() / graph.getVertexCount());
+	    // forceConstant = Math.sqrt(d.getHeight() * d.getWidth() / graph.getVertexCount());
 	    // attraction_constant = attraction_multiplier * forceConstant;
 	    // repulsion_constant = repulsion_multiplier * forceConstant;
 	}

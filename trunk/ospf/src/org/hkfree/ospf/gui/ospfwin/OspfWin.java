@@ -30,7 +30,7 @@ import org.hkfree.ospf.gui.mappanel.MapManager;
 import org.hkfree.ospf.gui.mappanel.MapPanel;
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.map.MapModel;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.tools.Factory;
 

@@ -2,12 +2,14 @@ package org.hkfree.ospf.model.netchange;
 
 import java.util.ResourceBundle;
 
-import org.hkfree.ospf.model.map.LinkEdge;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.tools.Factory;
 
 /**
  * Třída představující aktuální data o spoji modelu v některém ze stavů
  * @author Jakub Menzel
+ * @author Jan Schovánek
  */
 public class NetStateLinkEdge {
 
@@ -123,16 +125,16 @@ public class NetStateLinkEdge {
      * @return description
      */
     public String getNetStateLinkDescription() {
-	if (!linkEdge.getRVertex2().isMultilink()) {
+	if (!((RouterVertex) linkEdge.getVertex2()).isMultilink()) {
 	    return "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + stateLinkID + "</b><br><br>"
-		    + rb.getString("le.0") + ":<br><b>" + linkEdge.getRVertex1().getName() + "</b>" + "("
-		    + linkEdge.getRVertex1().getDescription() + "): <b>" + Integer.toString(cost1) + "</b><br><b>"
-		    + linkEdge.getRVertex2().getName() + "</b>" + "(" + linkEdge.getRVertex2().getDescription() + "): <b>"
+		    + rb.getString("le.0") + ":<br><b>" + linkEdge.getVertex1().getLabel() + "</b>" + "("
+		    + linkEdge.getVertex1().getInfo() + "): <b>" + Integer.toString(cost1) + "</b><br><b>"
+		    + linkEdge.getVertex2().getLabel() + "</b>" + "(" + linkEdge.getVertex2().getInfo() + "): <b>"
 		    + Integer.toString(cost2) + "</b></body></html>";
 	} else {
 	    return "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + stateLinkID + "</b><br><br>"
-		    + rb.getString("clcd.1") + ":<br> <b>" + linkEdge.getRVertex1().getName() + "</b>" + "("
-		    + linkEdge.getRVertex1().getDescription() + "): <b>" + Integer.toString(cost1) + "</b></body></html>";
+		    + rb.getString("clcd.1") + ":<br> <b>" + linkEdge.getVertex1().getLabel() + "</b>" + "("
+		    + linkEdge.getVertex1().getInfo() + "): <b>" + Integer.toString(cost1) + "</b></body></html>";
 	}
     }
 }

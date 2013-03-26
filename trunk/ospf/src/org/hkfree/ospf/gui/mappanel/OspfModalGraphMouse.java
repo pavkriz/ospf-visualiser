@@ -21,8 +21,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.IEdge;
+import org.hkfree.ospf.model.map.IVertex;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -45,12 +45,12 @@ import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
  * @param <V>
  * @param <E>
  */
-public class OspfModalGraphMouse<V, E> extends AbstractModalGraphMouse implements ModalGraphMouse, ItemSelectable, Serializable {
+public class OspfModalGraphMouse<V, E> extends AbstractModalGraphMouse implements ModalGraphMouse, ItemSelectable,
+	Serializable {
 
     private static final long serialVersionUID = -6553269221133983493L;
-    
     MapGraphComponent owner;
-    LinkEdge edgeHovered;
+    IEdge edgeHovered;
 
 
     /**
@@ -93,9 +93,9 @@ public class OspfModalGraphMouse<V, E> extends AbstractModalGraphMouse implement
 	    isrepaint = true;
 	    edgeHovered.setHover(false);
 	}
-	final VisualizationViewer<RouterVertex, LinkEdge> vv = (VisualizationViewer<RouterVertex, LinkEdge>) e.getSource();
+	final VisualizationViewer<IVertex, IEdge> vv = (VisualizationViewer<IVertex, IEdge>) e.getSource();
 	Point2D p = e.getPoint();
-	GraphElementAccessor<RouterVertex, LinkEdge> pickSupport = vv.getPickSupport();
+	GraphElementAccessor<IVertex, IEdge> pickSupport = vv.getPickSupport();
 	if (pickSupport != null) {
 	    edgeHovered = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
 	    if (edgeHovered != null) {
@@ -113,16 +113,17 @@ public class OspfModalGraphMouse<V, E> extends AbstractModalGraphMouse implement
     @SuppressWarnings("unchecked")
     @Override
     public void mouseClicked(MouseEvent e) {
-	if (owner != null) {	//pokud owner neni null, tak je instanci MapPanelu
-	    final VisualizationViewer<RouterVertex, LinkEdge> vv = (VisualizationViewer<RouterVertex, LinkEdge>) e.getSource();
+	if (owner != null) { // pokud owner neni null, tak je instanci MapPanelu
+	    final VisualizationViewer<IVertex, IEdge> vv = (VisualizationViewer<IVertex, IEdge>) e
+		    .getSource();
 	    Point2D p = e.getPoint();
-	    GraphElementAccessor<RouterVertex, LinkEdge> pickSupport = vv.getPickSupport();
+	    GraphElementAccessor<IVertex, IEdge> pickSupport = vv.getPickSupport();
 	    if (pickSupport != null) {
-		LinkEdge le = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
+		IEdge le = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
 		if (le != null) {
 		    owner.getOwner().setPropertiesPanel(le);
 		}
-		RouterVertex rv = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+		IVertex rv = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
 		if (rv != null) {
 		    owner.getOwner().setPropertiesPanel(rv);
 		}

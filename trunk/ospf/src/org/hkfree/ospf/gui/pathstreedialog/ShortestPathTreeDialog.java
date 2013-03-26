@@ -10,7 +10,7 @@ import javax.swing.JDialog;
 import org.apache.commons.collections15.Transformer;
 import org.hkfree.ospf.gui.mappanel.OspfModalGraphMouse;
 import org.hkfree.ospf.model.map.EdgeOfSPT;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.tools.Factory;
 
 import edu.uci.ics.jung.algorithms.layout.TreeLayout;
