@@ -3,6 +3,7 @@
   * vytvoreni modelu pro lltd
   * predelani aplikace tak aby pracovala s rozhranimi
   * zobrazeni/skryti lltd modelu u routeru
+  * sjednoceni popisku a titulku vrcholu a hran
 
 *18.3.2013*
   * uprava nacitani cgi - tvar nazvu routeru z rdns
