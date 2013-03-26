@@ -3,9 +3,9 @@ package org.hkfree.ospf.gui.mappanel;
 import javax.swing.JPanel;
 
 import org.hkfree.ospf.gui.ospfwin.OspfWin;
-import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
 

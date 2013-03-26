@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,12 +35,14 @@ import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.model.netchange.NetChangeModel;
 import org.hkfree.ospf.model.ospf.OspfModel;
+import org.hkfree.ospf.model.ospf.Router;
 import org.hkfree.ospf.model.ospfchange.OspfChangeModel;
 import org.hkfree.ospf.model.ospfcomponent.OspfGraphComponentModel;
 import org.hkfree.ospf.setting.AppSettings;
 import org.hkfree.ospf.setting.SettingsManager;
 import org.hkfree.ospf.tools.Exporter;
 import org.hkfree.ospf.tools.Factory;
+import org.hkfree.ospf.tools.ip.IpCalculator;
 import org.hkfree.ospf.tools.load.LLTDLoader;
 import org.hkfree.ospf.tools.load.MapXMLLoader;
 import org.hkfree.ospf.tools.load.NetChangeLoader;
@@ -600,7 +601,7 @@ public class OspfWinManager {
 	mapXMLSaver.setMapModel(getActualMDManager().getMapModel());
 	mapXMLSaver.setOutputFile(outputFile);
 	mapXMLSaver.createRVertexIdentificators();
-	mapXMLSaver.setRVertexPositions(getActualMDManager().getGraphComponent().getRouterVertexPositions());
+	mapXMLSaver.setVertexPositions(getActualMDManager().getGraphComponent().getRouterVertexPositions());
 	mapXMLSaver.createDocumentFromModel();
     }
 
@@ -780,14 +781,33 @@ public class OspfWinManager {
 
 
     /**
-     * Zatřízení LLTD modelů do OSPF modelů (k routerům)
+     * Zařazení LLTD modelů do OSPF modelů (k routerům) dle toho,
+     * zda dany routeru propaguje IP adresu
      */
     public void addLLTDtoOspfModels() {
-	Set<LLTDModel> ms = new HashSet<LLTDModel>(lltdModels);
 	// prochazeni vsech OSPF modelu
 	for (OspfModel ospf : ospfModels) {
-	    // zarazeni lltd modelu k routerum
-	    ospf.addLLTD(ms);
+	    // prochazeni vsech routeru daneho ospf modelu
+	    for (Router r : ospf.getRouters()) {
+		// prochazeni vsech nactenych lltd modelu
+		for (LLTDModel m : this.lltdModels) {
+		    // prochazeni ip adres z traceroutu
+		    for (String ip : m.getTraceroute()) {
+			// pokud ip z traceroutu je propagovana routerem, lltd model se prida
+			if (IpCalculator.containsRouterSubnet(r, ip)) {
+			    r.getLltdModels().add(m);
+			}
+		    }
+		}
+	    }
+	}
+	bla();
+    }
+
+
+    public void bla() {
+	for (MapManager mm : getAllMDManager()) {
+	    mm.actualizeLltdVericies();
 	}
     }
 }

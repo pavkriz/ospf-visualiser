@@ -15,7 +15,6 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -39,8 +38,8 @@ public class LLTDGraphComponent extends JComponent {
     private LLTDModalGraphMouse<Device, Relation> graphMouse = null;
 
 
-    @SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-    public LLTDGraphComponent(List<Device> devices, List<Relation> relations, LLTDDialog lltdDialog) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public LLTDGraphComponent(List<Device> devices, List<Relation> relations, LLTDMapDialog lltdDialog) {
 	graph = new SparseMultigraph<Device, Relation>();
 	for (Device dev : devices) {
 	    graph.addVertex(dev);
@@ -51,7 +50,6 @@ public class LLTDGraphComponent extends JComponent {
 	layout = new FRLayout<Device, Relation>(graph);
 	vv = new VisualizationViewer<Device, Relation>(layout, new Dimension(400, 400));
 	scaler = new CrossoverScalingControl();
-	GraphZoomScrollPane graphScroll = new GraphZoomScrollPane(vv);
 	graphMouse = new LLTDModalGraphMouse<Device, Relation>(lltdDialog);
 	vv.setGraphMouse(graphMouse);
 	vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());

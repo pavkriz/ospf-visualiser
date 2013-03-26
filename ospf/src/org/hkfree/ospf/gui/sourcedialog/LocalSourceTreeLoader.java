@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-
 /**
  * Třída sloužící k vytvoření rozbalovacího stromu
  * @author Jakub Menzel
@@ -33,7 +32,9 @@ public class LocalSourceTreeLoader {
 	DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(path);
 	try {
 	    readAndParsePaths(rootNode, path);
-	} catch (Exception ex) {}
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
 	return rootNode;
     }
 
@@ -56,6 +57,8 @@ public class LocalSourceTreeLoader {
 		    node.add(new DefaultMutableTreeNode(new FileNameCheckBoxNode(filename)));
 		}
 	    }
-	} finally {}
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
     }
 }

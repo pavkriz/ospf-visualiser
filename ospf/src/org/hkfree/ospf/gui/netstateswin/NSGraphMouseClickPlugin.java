@@ -4,8 +4,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -66,7 +66,7 @@ public class NSGraphMouseClickPlugin extends AbstractGraphMousePlugin implements
 		if (linkEdge != null) {
 		    if (owner.getMapGraphComponentMode() == MapGraphComponentMode.LINK_FAULT) {
 			if (linkEdge.getFaultCount() > 0) {
-			    ((NetStatesWin) owner.getOwner()).getManager().showLinkFaultDialog(linkEdge.getLinkIDv4());
+			    owner.getOwner().getManager().showLinkFaultDialog(linkEdge.getLinkIDv4());
 			}
 		    }
 		}

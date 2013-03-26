@@ -14,9 +14,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -27,8 +27,8 @@ import org.w3c.dom.Element;
 public class MapXMLSaver {
 
     private MapModel mapModel = null;
-    private Map<RouterVertex, Point2D> rvertexPositions = null;
-    private Map<RouterVertex, String> rvertexIdentificators = new HashMap<RouterVertex, String>();
+    private Map<RouterVertex, Point2D> vertexPositions = null;
+    private Map<RouterVertex, String> vertexIdentificators = new HashMap<RouterVertex, String>();
     private File outputFile = null;
 
 
@@ -51,8 +51,8 @@ public class MapXMLSaver {
      * Nastaví pozice routerů, které byly zobrazeny v grafu
      * @param positions
      */
-    public void setRVertexPositions(Map<RouterVertex, Point2D> positions) {
-	this.rvertexPositions = positions;
+    public void setVertexPositions(Map<RouterVertex, Point2D> positions) {
+	this.vertexPositions = positions;
     }
 
 
@@ -71,7 +71,7 @@ public class MapXMLSaver {
     public void createRVertexIdentificators() {
 	int i = 0;
 	for (RouterVertex rv : mapModel.getRouterVertices()) {
-	    rvertexIdentificators.put(rv, "rv" + i);
+	    vertexIdentificators.put(rv, "rv" + i);
 	    i++;
 	}
     }
@@ -106,13 +106,13 @@ public class MapXMLSaver {
 		Element ELMrouterVertex = doc.createElement("router-vertex");
 		ELMrouterVertexes.appendChild(ELMrouterVertex);
 		Element ELMid = doc.createElement("id");
-		ELMid.appendChild(doc.createTextNode(rvertexIdentificators.get(rv)));
+		ELMid.appendChild(doc.createTextNode(vertexIdentificators.get(rv)));
 		ELMrouterVertex.appendChild(ELMid);
 		Element ELMrName = doc.createElement("r-name");
 		ELMrName.appendChild(doc.createTextNode(rv.getName()));
 		ELMrouterVertex.appendChild(ELMrName);
 		Element ELMrDescription = doc.createElement("r-description");
-		ELMrDescription.appendChild(doc.createTextNode(rv.getDescription()));
+		ELMrDescription.appendChild(doc.createTextNode(rv.getInfo()));
 		ELMrouterVertex.appendChild(ELMrDescription);
 		Element ELMrIsMultilink = doc.createElement("r-is-multilink");
 		ELMrIsMultilink.appendChild(doc.createTextNode(Integer.toString(getValueOfBool(rv.isMultilink()))));
@@ -140,9 +140,9 @@ public class MapXMLSaver {
 		ELMrouterVertex.appendChild(ELMrPosition);
 		double posX = 0;
 		double posY = 0;
-		if (rvertexPositions.keySet().contains(rv)) {
-		    posX = rvertexPositions.get(rv).getX();
-		    posY = rvertexPositions.get(rv).getY();
+		if (vertexPositions.keySet().contains(rv)) {
+		    posX = vertexPositions.get(rv).getX();
+		    posY = vertexPositions.get(rv).getY();
 		}
 		Element ELMposX = doc.createElement("position-x");
 		ELMposX.appendChild(doc.createTextNode(Double.toString(posX)));
@@ -160,10 +160,10 @@ public class MapXMLSaver {
 		ELMlId.appendChild(doc.createTextNode(le.getLinkIDv4()));
 		ELMlinkEdge.appendChild(ELMlId);
 		Element ELMlRvId1 = doc.createElement("l-r1-id");
-		ELMlRvId1.appendChild(doc.createTextNode(rvertexIdentificators.get(le.getRVertex1())));
+		ELMlRvId1.appendChild(doc.createTextNode(vertexIdentificators.get(le.getVertex1())));
 		ELMlinkEdge.appendChild(ELMlRvId1);
 		Element ELMlRvId2 = doc.createElement("l-r2-id");
-		ELMlRvId2.appendChild(doc.createTextNode(rvertexIdentificators.get(le.getRVertex2())));
+		ELMlRvId2.appendChild(doc.createTextNode(vertexIdentificators.get(le.getVertex2())));
 		ELMlinkEdge.appendChild(ELMlRvId2);
 		Element ELMlRvcost1 = doc.createElement("l-r1-cost");
 		ELMlRvcost1.appendChild(doc.createTextNode(Integer.toString(le.getCost1v4())));

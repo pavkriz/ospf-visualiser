@@ -3,8 +3,10 @@ package org.hkfree.ospf.model.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hkfree.ospf.model.AbstractMapModel;
 import org.hkfree.ospf.model.Constants;
+import org.hkfree.ospf.model.IMapModel;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfLinkData;
 import org.hkfree.ospf.tools.NeighbourCostAndLink;
 import org.hkfree.ospf.tools.geo.GPSPoint;
@@ -15,10 +17,10 @@ import org.hkfree.ospf.tools.geo.GPSPoint;
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
-public class MapModel implements AbstractMapModel {
+public class MapModel implements IMapModel {
 
-    private List<LinkEdge> linkEdges = new ArrayList<LinkEdge>();
-    private List<RouterVertex> routerVertices = new ArrayList<RouterVertex>();
+    private List<IEdge> edges = new ArrayList<IEdge>();
+    private List<IVertex> vertices = new ArrayList<IVertex>();
 
 
     /**
@@ -40,36 +42,36 @@ public class MapModel implements AbstractMapModel {
      * @param linkIDv4
      * @param ospfLinksData
      */
-    public void addLinkEdge(String id1, String id2, String name1, String name2, int cost1, int cost2, int cost1IPv6, int cost2IPv6, GPSPoint gpsP1,
+    public void addLinkEdge(String id1, String id2, String name1, String name2, int cost1, int cost2, int cost1IPv6,
+	    int cost2IPv6, GPSPoint gpsP1,
 	    GPSPoint gpsP2, String linkIDv4, String linkIDv6, List<OspfLinkData> ospfLinksData) {
 	RouterVertex rv1 = getRouterVertexById(id1);
 	RouterVertex rv2 = getRouterVertexById(id2);
 	if (rv1 == null) {
-	    routerVertices.add(new RouterVertex(id1, name1, gpsP1));
-	    rv1 = routerVertices.get(routerVertices.size() - 1);
+	    rv1 = new RouterVertex(id1, name1, gpsP1);
+	    vertices.add(rv1);
 	    if (id1.contains(Constants.MULTILINK)) {
-		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
+		rv1.setMultilink(true);
 	    }
 	}
 	if (rv2 == null) {
-	    routerVertices.add(new RouterVertex(id2, name2, gpsP2));
-	    rv2 = routerVertices.get(routerVertices.size() - 1);
+	    rv2 = new RouterVertex(id2, name2, gpsP2);
+	    vertices.add(rv2);
 	    if (id2.contains(Constants.MULTILINK)) {
-		routerVertices.get(routerVertices.size() - 1).setMultilink(true);
+		rv2.setMultilink(true);
 	    }
 	}
 	LinkEdge le = new LinkEdge();
-	le.setRouterVertex1(rv1);
-	le.setRouterVertex2(rv2);
+	le.setVertex1(rv1);
+	le.setVertex2(rv2);
 	le.setCost1v4(cost1);
 	le.setCost2v4(cost2);
 	le.setCost1v6(cost1IPv6);
 	le.setCost2v6(cost2IPv6);
 	le.setLinkIDv4(linkIDv4);
 	le.setLinkIDv6(linkIDv6);
-	linkEdges.add(le);
+	edges.add(le);
     }
-
 
 
     /**
@@ -84,98 +86,70 @@ public class MapModel implements AbstractMapModel {
     public LinkEdge addLinkEdge(RouterVertex rv1, RouterVertex rv2, int cost1, int cost2, String linkID) {
 	LinkEdge le = new LinkEdge();
 	le.setLinkIDv4(linkID);
-	
-	//TODO add link edge dodelat
-/*	if (rv1.isMultilink()) {
-	    linkEdges.add(new LinkEdge(rv2, cost2, rv1, 0, linkID));
-	} else {
-	    if (rv2.isMultilink()) {
-		linkEdges.add(new LinkEdge(rv1, cost1, rv2, 0, linkID));
-	    } else
-		linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
-	}
-*/	
-	return linkEdges.get(linkEdges.size() - 1);
+	// FIXME dodelat to!!!
+	// add link edge dodelat
+	/*
+	 * if (rv1.isMultilink()) {
+	 * linkEdges.add(new LinkEdge(rv2, cost2, rv1, 0, linkID));
+	 * } else {
+	 * if (rv2.isMultilink()) {
+	 * linkEdges.add(new LinkEdge(rv1, cost1, rv2, 0, linkID));
+	 * } else
+	 * linkEdges.add(new LinkEdge(rv1, cost1, rv2, cost2, linkID));
+	 * }
+	 */
+	return (LinkEdge) edges.get(edges.size() - 1);
     }
-    
-    
+
+
     /**
      * Nalezne routerVertex dle id a vrati ho
      * @param id
      * @return pokud nenalezne, vraci null
      */
     private RouterVertex getRouterVertexById(String id) {
-	for (RouterVertex rv : routerVertices) {
-	    if (rv.getDescription().equals(id)) {
-		return rv;
+	for (IVertex rv : vertices) {
+	    if (rv instanceof RouterVertex) {
+		if (((RouterVertex) rv).getInfo().equals(id)) {
+		    return (RouterVertex) rv;
+		}
 	    }
 	}
 	return null;
     }
 
 
-
-
-    /**
-     * Metoda vytvoření vrcholu v seznamu vrcholů
-     * @return rv
-     */
-    public RouterVertex addFirstRouterVertex(String ip, String name) {
-	routerVertices.add(new RouterVertex(ip, name));
-	return routerVertices.get(routerVertices.size() - 1);
+    @Override
+    public List<IEdge> getEdges() {
+	return this.edges;
     }
 
 
-    /**
-     * Vytvoří nový routerVertex modelu
-     */
-    public void addRouterVertex() {
-	routerVertices.add(new RouterVertex());
+    @Override
+    public List<IVertex> getVertices() {
+	return this.vertices;
     }
 
 
-    /**
-     * Metoda, která vrátí počet vrcholů MapaModelu
-     * @return count
-     */
-    public int routerVertexCount() {
-	return routerVertices.size();
-    }
-
-
-    /**
-     * Metoda, která vrátí počet hran MapaModelu
-     * @return count
-     */
-    public int linkCount() {
-	return linkEdges.size();
-    }
-
-
-    /**
-     * Metoda, která vrátí všechny linkEdges MapaModelu
-     * @return linkEdge
-     */
     public List<LinkEdge> getLinkEdges() {
-	return linkEdges;
+	List<LinkEdge> les = new ArrayList<LinkEdge>();
+	for (IEdge e : this.edges) {
+	    if (e instanceof LinkEdge) {
+		les.add((LinkEdge) e);
+	    }
+	}
+	return les;
     }
 
 
-    /**
-     * Metoda, která vrátí všechny routerVertexes MapaModelu
-     * @return rvs
-     */
     public List<RouterVertex> getRouterVertices() {
-	return routerVertices;
-    }
-
-
-    /**
-     * Metoda, která vrátí index zadaného vrcholu v Listu vrcholů
-     * @return index
-     */
-    public int getIndexOfRouterVertex(RouterVertex v) {
-	return routerVertices.indexOf(v);
+	List<RouterVertex> rvs = new ArrayList<RouterVertex>();
+	for (IVertex v : this.vertices) {
+	    if (v instanceof RouterVertex) {
+		rvs.add((RouterVertex) v);
+	    }
+	}
+	return rvs;
     }
 
 
@@ -185,9 +159,10 @@ public class MapModel implements AbstractMapModel {
      */
     public List<LinkEdge> getIncidentEdges(RouterVertex v) {
 	List<LinkEdge> incidentEdges = new ArrayList<LinkEdge>();
-	for (LinkEdge le : linkEdges) {
-	    if (le.getRVertex1().equals(v) || le.getRVertex2().equals(v))
+	for (LinkEdge le : getLinkEdges()) {
+	    if (le.getVertex1().equals(v) || le.getVertex2().equals(v)) {
 		incidentEdges.add(le);
+	    }
 	}
 	return incidentEdges;
     }
@@ -198,10 +173,11 @@ public class MapModel implements AbstractMapModel {
      * @return double
      */
     public double getMaximumLatitude() {
-	double max = 0;
-	for (RouterVertex r : routerVertices) {
-	    if (r.getGpsLatitude() > max)
-		max = r.getGpsLatitude();
+	double max = 0.0d;
+	for (RouterVertex rv : getRouterVertices()) {
+	    if (rv.getGpsLatitude() > max) {
+		max = rv.getGpsLatitude();
+	    }
 	}
 	return max;
     }
@@ -212,10 +188,11 @@ public class MapModel implements AbstractMapModel {
      * @return double
      */
     public double getMinimumLatitude() {
-	double min = 0;
-	for (RouterVertex r : routerVertices) {
-	    if ((r.getGpsLatitude() < min && r.getGpsLatitude() != 0) || min == 0)
-		min = r.getGpsLatitude();
+	double min = 0.0d;
+	for (RouterVertex rv : getRouterVertices()) {
+	    if ((rv.getGpsLatitude() < min && rv.getGpsLatitude() != 0) || min == 0) {
+		min = rv.getGpsLatitude();
+	    }
 	}
 	return min;
     }
@@ -226,10 +203,11 @@ public class MapModel implements AbstractMapModel {
      * @return double
      */
     public double getMaximumLongtitude() {
-	double max = 0;
-	for (RouterVertex r : routerVertices) {
-	    if (r.getGpsLongtitude() > max)
-		max = r.getGpsLongtitude();
+	double max = 0.0d;
+	for (RouterVertex rv : getRouterVertices()) {
+	    if (rv.getGpsLongtitude() > max) {
+		max = rv.getGpsLongtitude();
+	    }
 	}
 	return max;
     }
@@ -240,10 +218,11 @@ public class MapModel implements AbstractMapModel {
      * @return double
      */
     public double getMinimumLongtitude() {
-	double min = 0;
-	for (RouterVertex r : routerVertices) {
-	    if ((r.getGpsLongtitude() < min && r.getGpsLongtitude() != 0) || min == 0)
-		min = r.getGpsLongtitude();
+	double min = 0.0d;
+	for (RouterVertex rv : getRouterVertices()) {
+	    if ((rv.getGpsLongtitude() < min && rv.getGpsLongtitude() != 0) || min == 0) {
+		min = rv.getGpsLongtitude();
+	    }
 	}
 	return min;
     }
@@ -254,36 +233,37 @@ public class MapModel implements AbstractMapModel {
      * @return boolean
      */
     public boolean hasMoreRouterWithGPSPositions() {
-	int cnt = 0;
-	for (RouterVertex r : routerVertices) {
-	    if (r.getGpsLatitude() != 0 && r.getGpsLongtitude() != 0) {
-		cnt++;
+	boolean twoAndMore = false;
+	for (RouterVertex rv : getRouterVertices()) {
+	    if (rv.getGpsLatitude() != 0 && rv.getGpsLongtitude() != 0) {
+		if (twoAndMore) {
+		    return true;
+		} else {
+		    twoAndMore = true;
+		}
 	    }
 	}
-	return (cnt > 1);
+	return false;
     }
 
 
-    /**
-     * Vrací seznam sousedních routerů s cenami daného routeru
-     * @param routerVertex
-     * @return NeighbourCostAndLink
-     */
+    @Override
     public List<NeighbourCostAndLink> getNeighboursWithCosts(RouterVertex routerVertex) {
 	List<NeighbourCostAndLink> neighbours = new ArrayList<NeighbourCostAndLink>();
-	for (LinkEdge le : this.getLinkEdges()) {
-	    if ((le.getRVertex1().equals(routerVertex) || le.getRVertex2().equals(routerVertex)) && le.isEnabled()) {
-		if (!le.isEdgeOfMultilink()) {
-		    if (le.getRVertex1().equals(routerVertex)) {
-			neighbours.add(new NeighbourCostAndLink(le.getRVertex2(), le.getCost1v4(), le));
+	for (LinkEdge le : getLinkEdges()) {
+	    if ((le.getVertex1().equals(routerVertex) || le.getVertex2().equals(routerVertex))
+		    && le.isEnabled()) {
+		if (!((LinkEdge) le).isEdgeOfMultilink()) {
+		    if (le.getVertex1().equals(routerVertex)) {
+			neighbours.add(new NeighbourCostAndLink((RouterVertex) le.getVertex2(), le.getCost1v4(), le));
 		    } else {
-			neighbours.add(new NeighbourCostAndLink(le.getRVertex1(), le.getCost2v4(), le));
+			neighbours.add(new NeighbourCostAndLink((RouterVertex) le.getVertex1(), le.getCost2v4(), le));
 		    }
 		} else {
 		    int mcost = le.getCost1v4();
-		    for (LinkEdge mle : getIncidentEdges(le.getRVertex2())) {
-			if (!mle.getRVertex1().equals(routerVertex) && mle.isEnabled())
-			    neighbours.add(new NeighbourCostAndLink(mle.getRVertex1(), mcost, le));
+		    for (LinkEdge mle : getIncidentEdges((RouterVertex) le.getVertex2())) {
+			if (!mle.getVertex1().equals(routerVertex) && mle.isEnabled())
+			    neighbours.add(new NeighbourCostAndLink((RouterVertex) mle.getVertex1(), mcost, le));
 		    }
 		}
 	    }
@@ -292,16 +272,11 @@ public class MapModel implements AbstractMapModel {
     }
 
 
-    /**
-     * Vrací hranu multispoje mezi danými vrcholy
-     * @param router
-     * @param multilinkvertex
-     * @return le
-     */
+    @Override
     public LinkEdge getMultilinkEdge(RouterVertex router, RouterVertex multilinkvertex) {
 	for (LinkEdge le : getLinkEdges()) {
-	    if (le.getRVertex1().equals(router) && le.getRVertex2().equals(multilinkvertex)) {
-		return le;
+	    if (le.getVertex1().equals(router) && le.getVertex2().equals(multilinkvertex)) {
+		return (LinkEdge) le;
 	    }
 	}
 	return null;

@@ -156,18 +156,18 @@ public class NetStatesWinActionListener implements ActionListener {
 	    }
 	};
 	actionZoom.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("mode." + MODE.ZOOM + ".title"));
-	actionLayoutStartFR = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_FR_START), new ImageIcon(getClass()
-		.getResource(Constants.URL_IMG_GUI + "layout_fr_start.png"))) {
+	actionLayoutStartFR = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_FR), new ImageIcon(getClass()
+		.getResource(Constants.URL_IMG_GUI + "layout_fr.png"))) {
 
 	    private static final long serialVersionUID = 1L;
 
 
 	    public void actionPerformed(ActionEvent e) {
-		netStatesWinManager.getGraphComponent().layouting(LAYOUT.LAYOUT_FR_START);
+		netStatesWinManager.getGraphComponent().layouting(LAYOUT.LAYOUT_FR);
 	    }
 	};
 	actionLayoutStartFR.putValue(AbstractAction.SHORT_DESCRIPTION,
-		rb.getString("layout." + LAYOUT.LAYOUT_FR_START + ".title"));
+		rb.getString("layout." + LAYOUT.LAYOUT_FR + ".title"));
 	actionLayoutStartSpring = new AbstractAction(rb.getString("layout." + LAYOUT.LAYOUT_SPRING_START), new ImageIcon(
 		getClass()
 			.getResource(Constants.URL_IMG_GUI + "layout_spring_start.png"))) {

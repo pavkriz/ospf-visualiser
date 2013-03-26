@@ -77,7 +77,8 @@ public class ReverseDNS {
 	    while (attrvals.hasMore()) {
 		hostname = hostname + (String) attrvals.next() + " ";
 	    }
-	} catch (Exception e) {
+	} catch (Exception ex) {
+	    ex.printStackTrace();
 	    return null;
 	}
 	return hostname;

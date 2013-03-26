@@ -1,7 +1,7 @@
 package org.hkfree.ospf.tools;
 
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 
 /**
  * Třída představující sousední router s cenou a spojem, kterým je možné se do něho dostat

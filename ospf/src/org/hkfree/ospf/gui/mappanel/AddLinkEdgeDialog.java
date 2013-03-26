@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.tools.Factory;
 
 /**
@@ -65,7 +65,7 @@ public class AddLinkEdgeDialog extends JDialog {
 	JLabel lnkIdlbl = new JLabel(rb.getString("aled.0") + ":");
 	JLabel costslbl = new JLabel(rb.getString("aled.1") + ":");
 	costslbl.setFont(new Font("Arial", Font.ITALIC, 11));
-	JLabel cost1lbl = new JLabel(routerV1.getName() + " (" + routerV1.getDescription() + ")");
+	JLabel cost1lbl = new JLabel(routerV1.getName() + " (" + routerV1.getInfo() + ")");
 	cost1lbl.setFont(new Font("Arial", Font.BOLD, 11));
 	JButton btnOk = new JButton(rb.getString("ok"));
 	btnOk.addActionListener(new ActionListener() {
@@ -115,7 +115,7 @@ public class AddLinkEdgeDialog extends JDialog {
 	panelCosts.add(cost1lbl);
 	panelCosts.add(txtCost1);
 	if (!routerV2.isMultilink()) {
-	    JLabel cost1lb2 = new JLabel(routerV2.getName() + " (" + routerV2.getDescription() + ")");
+	    JLabel cost1lb2 = new JLabel(routerV2.getName() + " (" + routerV2.getInfo() + ")");
 	    cost1lb2.setFont(new Font("Arial", 1, 11));
 	    panelCosts.add(cost1lb2);
 	    panelCosts.add(txtCost2);

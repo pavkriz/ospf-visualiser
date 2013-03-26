@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.tools.Factory;
 
 /**
@@ -53,7 +53,7 @@ public class AddRouterVertexDialog extends JDialog {
 	    public void actionPerformed(ActionEvent e) {
 		successfulyConfirmed = true;
 		for (RouterVertex rv : routerVertexes) {
-		    if (rv.getName().equals(txtRVName.getText()) || rv.getDescription().equals(txtRVName.getText())) {
+		    if (rv.getName().equals(txtRVName.getText()) || rv.getInfo().equals(txtRVName.getText())) {
 			JOptionPane.showMessageDialog(thisDialog, "\n" + rb.getString("arvd.1") + " \n\n",
 				rb.getString("warning"), JOptionPane.WARNING_MESSAGE);
 			successfulyConfirmed = false;
@@ -87,8 +87,8 @@ public class AddRouterVertexDialog extends JDialog {
 			.addComponent(txtRVName))
 		.addGroup(layout.createSequentialGroup()
 			.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-			.addComponent(btnOk, 100,100,100)
-			.addComponent(btnStorno, 100,100,100)));
+			.addComponent(btnOk, 100, 100, 100)
+			.addComponent(btnStorno, 100, 100, 100)));
 	layout.setVerticalGroup(layout.createSequentialGroup()
 		.addGroup(layout.createParallelGroup()
 			.addComponent(lnkIdlbl)

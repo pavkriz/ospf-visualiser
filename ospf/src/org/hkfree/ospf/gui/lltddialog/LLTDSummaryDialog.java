@@ -73,14 +73,14 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	layout.setAutoCreateContainerGaps(true);
 	layout.setAutoCreateGaps(true);
 	layout.setHorizontalGroup(layout.createSequentialGroup()
-	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-	                .addComponent(scrollPane)
-	                .addGroup(layout.createSequentialGroup()
-	                        .addComponent(btnLoadData))));
+		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+			.addComponent(scrollPane)
+			.addGroup(layout.createSequentialGroup()
+				.addComponent(btnLoadData))));
 	layout.setVerticalGroup(layout.createSequentialGroup()
-	        .addComponent(scrollPane)
-	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-	                .addComponent(btnLoadData)));
+		.addComponent(scrollPane)
+		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			.addComponent(btnLoadData)));
     }
 
 
@@ -108,8 +108,8 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	    {
 		JTable table = (JTable) e.getSource();
 		int modelRow = Integer.valueOf(e.getActionCommand());
-		LLTDDialog dialog = new LLTDDialog(
-		        getModelByPublicIP((String) ((DefaultTableModel) table.getModel()).getValueAt(modelRow, 0)));
+		LLTDMapDialog dialog = new LLTDMapDialog(
+			getModelByPublicIP((String) ((DefaultTableModel) table.getModel()).getValueAt(modelRow, 0)));
 		dialog.setVisible(true);
 	    }
 	};

@@ -2,17 +2,13 @@ package org.hkfree.ospf.model.ospf;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.hkfree.ospf.model.Constants;
-import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.map.MapModel;
 import org.hkfree.ospf.tools.Factory;
 import org.hkfree.ospf.tools.geo.GPSPoint;
-import org.hkfree.ospf.tools.ip.IpCalculator;
 import org.hkfree.ospf.tools.ip.IpComparator;
 
 /**
@@ -357,32 +353,4 @@ public class OspfModel {
 	}
 	return mapModel;
     }
-
-
-    /**
-     * Zařazení LLTD modelů k jednotlivým routerům,
-     * dle toho jestli dany router propaguje danou sit
-     * @param models
-     */
-    public void addLLTD(Set<LLTDModel> models) {
-	for (Router r : routers) {
-	    // prochazeni routeru
-	    Set<LLTDModel> modelsAdd = new HashSet<LLTDModel>();
-	    for (LLTDModel m : models) {
-		// prochazeni lltd modelu
-		for (String ip : m.getTraceroute()) {
-		    // prochazeni ip adres z traceroutu
-		    if (IpCalculator.containsRouterSubnet(r, ip)) {
-			// pokud ip z traceroutu je propagovana routerem, lltd model se prida
-			modelsAdd.add(m);
-			break;
-		    }
-		}
-		r.setLltdModels(modelsAdd);
-	    }
-	}
-    }
-
-
-    
 }

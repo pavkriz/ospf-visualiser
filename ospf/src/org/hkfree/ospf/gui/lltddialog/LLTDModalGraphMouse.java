@@ -29,10 +29,10 @@ public class LLTDModalGraphMouse<V, E> extends AbstractModalGraphMouse implement
         Serializable {
 
     private static final long serialVersionUID = 1L;
-    private LLTDDialog lltdDialog = null;
+    private LLTDMapDialog lltdDialog = null;
 
 
-    public LLTDModalGraphMouse(LLTDDialog lltdDialog) {
+    public LLTDModalGraphMouse(LLTDMapDialog lltdDialog) {
 	this(1.1f, 1 / 1.1f);
 	this.lltdDialog = lltdDialog;
     }

@@ -157,7 +157,9 @@ public class IpCalculator {
 		if (!isBetweenInclude(Integer.valueOf(nas[i]), Integer.valueOf(bas[i]), Integer.valueOf(sas[i]))) {
 		    return false;
 		}
-	    } catch (NumberFormatException ex) {}
+	    } catch (NumberFormatException ex) {
+		ex.printStackTrace();
+	    }
 	}
 	return true;
     }

@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.hkfree.ospf.gui.mappanel.MapGraphComponent;
-import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.Link;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
@@ -90,16 +90,16 @@ public class Exporter {
 	for (LinkEdge le : edges) {
 	    if (le.isIPv4()) {
         	    out.write("<line class=\"link\" " +
-        	    	    "x1=\"" + routers.get(le.getRVertex1()).getX() + "\" " +
-        		    "y1=\"" + routers.get(le.getRVertex1()).getY() + "\" " +
-        		    "x2=\"" + routers.get(le.getRVertex2()).getX() + "\" " +
-        		    "y2=\"" + routers.get(le.getRVertex2()).getY() + "\" " +
-        		    "stroke=\"#" + Integer.toHexString(((Color) le.getLineColor(1)).getRGB()).substring(2) + "\" " +
+        	    	    "x1=\"" + routers.get(le.getVertex1()).getX() + "\" " +
+        		    "y1=\"" + routers.get(le.getVertex1()).getY() + "\" " +
+        		    "x2=\"" + routers.get(le.getVertex2()).getX() + "\" " +
+        		    "y2=\"" + routers.get(le.getVertex2()).getY() + "\" " +
+        		    "stroke=\"#" + Integer.toHexString(((Color) le.getLineColor()).getRGB()).substring(2) + "\" " +
         		    "/>\n");
         	    // linkEdge text
         	    out.write("<text class=\"linkLabel\" " +
-        		    "x=\"" + (routers.get(le.getRVertex1()).getX() + routers.get(le.getRVertex2()).getX()) / 2 + "\" " +
-        		    "y=\"" + +(routers.get(le.getRVertex1()).getY() + routers.get(le.getRVertex2()).getY()) / 2 + "\" " +
+        		    "x=\"" + (routers.get(le.getVertex1()).getX() + routers.get(le.getVertex2()).getX()) / 2 + "\" " +
+        		    "y=\"" + +(routers.get(le.getVertex1()).getY() + routers.get(le.getVertex2()).getY()) / 2 + "\" " +
         		    ">" + le.getCost1v4() + "-" + le.getCost2v4() + "</text>\n");
 	    }
 	}

@@ -9,7 +9,7 @@ import java.awt.Dimension;
 public abstract class Constants {
 
     /** verze aplikace */
-    public static final String APP_VERSION = "3.0.3";
+    public static final String APP_VERSION = "3.0.4";
     /** url k obrázkům */
     public static final String URL_IMG_GUI = "/images/";
     /** url k webovym strankam s tipy aplikace */
@@ -63,7 +63,7 @@ public abstract class Constants {
      */
     public enum LANGUAGE {
 	en_EN,
-	    cs_CZ;
+	cs_CZ;
     }
 
     /**
@@ -71,28 +71,29 @@ public abstract class Constants {
      */
     public enum MODE {
 	SHOW_NEIGHBORS,
-	    COST_CHANGING,
-	    SHORTEST_PATH,
-	    GPS,
-	    GPS_ALL,
-	    ZOOM,
-	    LOCK_ALL,
-	    LOCK_VERTEX,
-	    PICKING,
-	    TRANSFORMING,
-	    ADD_VERTEXES,
-	    ADD_EDGES,
-	    ASYMETRIC_LINKS,
-	    SHORTEST_PATH_TWO_ROUTERS,
-	    IPV6,
-	    NONE,
+	COST_CHANGING,
+	SHORTEST_PATH,
+	GPS,
+	GPS_ALL,
+	ZOOM,
+	LOCK_ALL,
+	LOCK_VERTEX,
+	PICKING,
+	TRANSFORMING,
+	ADD_VERTEXES,
+	ADD_EDGES,
+	ASYMETRIC_LINKS,
+	SHORTEST_PATH_TWO_ROUTERS,
+	IPV6,
+	NONE,
     }
 
     public enum LAYOUT {
-	LAYOUT_FR_START,
-	    LAYOUT_SPRING_START,
-	    LAYOUT_SPRING_STOP,
-	    LAYOUT_JS_START,
+	LAYOUT_FR,
+	LAYOUT_FR_LLTD,
+	LAYOUT_SPRING_START,
+	LAYOUT_SPRING_STOP,
+	LAYOUT_JS_START,
     }
 
     /**
@@ -100,8 +101,8 @@ public abstract class Constants {
      */
     public enum EDGE_SHAPER {
 	QUAD_CURVE,
-	    LINE,
-	    BENT_LINE,
-	    CUBIC_CURVE
+	LINE,
+	BENT_LINE,
+	CUBIC_CURVE
     }
 }

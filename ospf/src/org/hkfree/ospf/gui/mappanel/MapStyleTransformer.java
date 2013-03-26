@@ -3,14 +3,10 @@ package org.hkfree.ospf.gui.mappanel;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ResourceBundle;
 
 import org.apache.commons.collections15.Transformer;
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
-import org.hkfree.ospf.tools.Factory;
+import org.hkfree.ospf.model.map.IEdge;
+import org.hkfree.ospf.model.map.IVertex;
 
 /**
  * Třída představující objekt transformeru, který určuje podobu vrcholů a hran grafu
@@ -19,18 +15,16 @@ import org.hkfree.ospf.tools.Factory;
  */
 public class MapStyleTransformer {
 
-    private ResourceBundle rb = Factory.getRb();
-    private Transformer<RouterVertex, Paint> vertexFillPainter = null;
-    private Transformer<RouterVertex, Paint> vertexBorderPainter = null;
-    private Transformer<RouterVertex, Stroke> vertexBorderStroker = null;
-    private Transformer<RouterVertex, String> vertexLabeler = null;
-    private Transformer<RouterVertex, String> vertexToolTiper = null;
-    private Transformer<RouterVertex, Shape> vertexShaper = null;
-    private Transformer<LinkEdge, String> edgeLabeler = null;
-    private Transformer<LinkEdge, String> edgeToolTiper = null;
-    private Transformer<LinkEdge, Paint> edgeLinePainter = null;
-    private Transformer<LinkEdge, Stroke> edgeLineStroker = null;
-    private MapGraphComponent mdwGraphComponent = null;
+    private Transformer<IVertex, Paint> vertexFillPainter = null;
+    private Transformer<IVertex, Paint> vertexBorderPainter = null;
+    private Transformer<IVertex, Stroke> vertexBorderStroker = null;
+    private Transformer<IVertex, String> vertexLabeler = null;
+    private Transformer<IVertex, String> vertexToolTiper = null;
+    private Transformer<IVertex, Shape> vertexShaper = null;
+    private Transformer<IEdge, String> edgeLabeler = null;
+    private Transformer<IEdge, String> edgeToolTiper = null;
+    private Transformer<IEdge, Paint> edgeLinePainter = null;
+    private Transformer<IEdge, Stroke> edgeLineStroker = null;
 
 
     /**
@@ -38,86 +32,64 @@ public class MapStyleTransformer {
      * @param mapGraphComponent
      */
     public MapStyleTransformer(MapGraphComponent mapGraphComponent) {
-	this.mdwGraphComponent = mapGraphComponent;
-	vertexFillPainter = new Transformer<RouterVertex, Paint>() {
+	vertexFillPainter = new Transformer<IVertex, Paint>() {
 
-	    public Paint transform(RouterVertex r) {
-		return r.getColorFill();
+	    public Paint transform(IVertex v) {
+		return v.getColorFill();
 	    }
 	};
-	vertexBorderPainter = new Transformer<RouterVertex, Paint>() {
+	vertexBorderPainter = new Transformer<IVertex, Paint>() {
 
-	    public Paint transform(RouterVertex rv) {
-		return rv.getColorStroke();
+	    public Paint transform(IVertex v) {
+		return v.getColorStroke();
 	    }
 	};
-	vertexBorderStroker = new Transformer<RouterVertex, Stroke>() {
+	vertexBorderStroker = new Transformer<IVertex, Stroke>() {
 
-	    public Stroke transform(RouterVertex rv) {
-		return rv.getStroker();
+	    public Stroke transform(IVertex v) {
+		return v.getStroker();
 	    }
 	};
-	vertexLabeler = new Transformer<RouterVertex, String>() {
+	vertexLabeler = new Transformer<IVertex, String>() {
 
-	    public String transform(RouterVertex r) {
-		if (!r.isMultilink())
-		    return r.getName();
-		else
-		    return "";
+	    public String transform(IVertex v) {
+		return v.getLabel();
 	    }
 	};
-	vertexToolTiper = new Transformer<RouterVertex, String>() {
+	vertexToolTiper = new Transformer<IVertex, String>() {
 
-	    public String transform(RouterVertex r) {
-		if (!r.isMultilink()) {
-		    String tt = "<html>" + r.getName() + "<br><b>" + r.getDescription() + "</b><br><br>";
-		    if (r.isPermanentlyDisplayed()) {
-			tt += rb.getString("mst.0") + "<br>";
-		    } else {
-			tt += rb.getString("mst.1") + "<br>";
-		    }
-		    if (r.isFullExpanded()) {
-			tt += rb.getString("mst.2") + "<br>";
-		    } else {
-			tt += rb.getString("mst.3") + "<br>";
-		    }
-		    tt += "</html>";
-		    return tt;
-		} else
-		    return r.getName();
+	    public String transform(IVertex v) {
+		return v.getDescription();
 	    }
 	};
-	vertexShaper = new Transformer<RouterVertex, Shape>() {
+	vertexShaper = new Transformer<IVertex, Shape>() {
 
-	    public Shape transform(RouterVertex r) {
-		if (!r.isMultilink())
-		    return new Ellipse2D.Float(-10, -10, 20, 20);
-		else
-		    return new Rectangle2D.Float(-6, -6, 12, 12);
+	    public Shape transform(IVertex v) {
+		return v.getShaper();
 	    }
 	};
-	edgeLabeler = new Transformer<LinkEdge, String>() {
+	edgeLabeler = new Transformer<IEdge, String>() {
 
-	    public String transform(LinkEdge e) {
+	    public String transform(IEdge e) {
 		return e.getLabel();
 	    }
 	};
-	edgeToolTiper = new Transformer<LinkEdge, String>() {
+	edgeToolTiper = new Transformer<IEdge, String>() {
 
-	    public String transform(LinkEdge e) {
-		return e.getLinkDescription();
+	    public String transform(IEdge e) {
+		return e.getDescription();
 	    }
 	};
-	edgeLinePainter = new Transformer<LinkEdge, Paint>() {
+	edgeLinePainter = new Transformer<IEdge, Paint>() {
 
-	    public Paint transform(LinkEdge le) {
-		return le.getLineColor(mdwGraphComponent.getMapGraphComponentMode());
+	    public Paint transform(IEdge e) {
+		return e.getLineColor();
 	    }
 	};
-	edgeLineStroker = new Transformer<LinkEdge, Stroke>() {
+	edgeLineStroker = new Transformer<IEdge, Stroke>() {
 
-	    public Stroke transform(LinkEdge le) {
-		return le.getStroker();
+	    public Stroke transform(IEdge e) {
+		return e.getStroker();
 	    }
 	};
     }
@@ -127,7 +99,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Paint> getVertexFillPainter() {
+    public Transformer<IVertex, Paint> getVertexFillPainter() {
 	return vertexFillPainter;
     }
 
@@ -136,7 +108,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Paint> getVertexBorderPainter() {
+    public Transformer<IVertex, Paint> getVertexBorderPainter() {
 	return vertexBorderPainter;
     }
 
@@ -145,7 +117,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Stroke> getVertexBorderStroker() {
+    public Transformer<IVertex, Stroke> getVertexBorderStroker() {
 	return vertexBorderStroker;
     }
 
@@ -154,7 +126,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, String> getVertexLabeler() {
+    public Transformer<IVertex, String> getVertexLabeler() {
 	return vertexLabeler;
     }
 
@@ -163,7 +135,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, String> getVertexToolTiper() {
+    public Transformer<IVertex, String> getVertexToolTiper() {
 	return vertexToolTiper;
     }
 
@@ -172,7 +144,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<RouterVertex, Shape> getVertexShaper() {
+    public Transformer<IVertex, Shape> getVertexShaper() {
 	return vertexShaper;
     }
 
@@ -181,7 +153,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, String> getEdgeLabeler() {
+    public Transformer<IEdge, String> getEdgeLabeler() {
 	return edgeLabeler;
     }
 
@@ -190,7 +162,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, String> getEdgeTooltiper() {
+    public Transformer<IEdge, String> getEdgeTooltiper() {
 	return edgeToolTiper;
     }
 
@@ -199,7 +171,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, Paint> getEdgeLinePainter() {
+    public Transformer<IEdge, Paint> getEdgeLinePainter() {
 	return edgeLinePainter;
     }
 
@@ -208,8 +180,7 @@ public class MapStyleTransformer {
      * Vrací transformer
      * @return transformer
      */
-    public Transformer<LinkEdge, Stroke> getEdgeLineStroker() {
+    public Transformer<IEdge, Stroke> getEdgeLineStroker() {
 	return edgeLineStroker;
     }
-
 }

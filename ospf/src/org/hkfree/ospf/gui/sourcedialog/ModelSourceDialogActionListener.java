@@ -50,10 +50,10 @@ public class ModelSourceDialogActionListener implements ActionListener {
 		try {
 		    ((ModelSourceDialog) owner).applySettings();
 		    ((ModelSourceDialog) owner).setVisible(false);
-		} catch (Exception e1) {
-		    // osetrenim vyjimky je to, ze zustane zobrazen dialog pro vyber zdroje
+		} catch (Exception ex) {
+		    // v pripade vyjimky zustane zobrazen dialog pro vyber zdroje
+		    ex.printStackTrace();
 		}
-		
 	    }
 	};
 	actionOk.putValue(AbstractAction.SHORT_DESCRIPTION, rb.getString("ssdal.0.title"));

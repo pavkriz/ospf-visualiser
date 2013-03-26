@@ -19,8 +19,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.ExternalLSA;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
@@ -100,12 +100,12 @@ public class PropertiesPanel extends JPanel {
 	}
 	DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
 	for (int i = 0; i < tree.getModel().getChildCount(root); i++) {
-	    if (((DefaultMutableTreeNode) tree.getModel().getChild(root, i)).toString().startsWith(rv.getDescription())) {
+	    if (((DefaultMutableTreeNode) tree.getModel().getChild(root, i)).toString().startsWith(rv.getInfo())) {
 		tree.setSelectionRow(i + 1);
 		tree.scrollRowToVisible(i + 1);
 	    }
 	}
-	actualizeValues(model.getRouterByIp(rv.getDescription()));
+	actualizeValues(model.getRouterByIp(rv.getInfo()));
     }
 
 
@@ -221,8 +221,8 @@ public class PropertiesPanel extends JPanel {
 	    return;
 	}
 	pInfo.removeAll();
-	Router r = model.getRouterByIp(le.getRVertex1().getDescription());
-	Router r2 = model.getRouterByIp(le.getRVertex2().getDescription());
+	Router r = model.getRouterByIp(le.getVertex1().getInfo());
+	Router r2 = model.getRouterByIp(le.getVertex2().getInfo());
 	pInfo.setLayout(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;

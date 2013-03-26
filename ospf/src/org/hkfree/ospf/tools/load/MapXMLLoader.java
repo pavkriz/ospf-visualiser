@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.hkfree.ospf.model.map.LinkEdge;
 import org.hkfree.ospf.model.map.MapModel;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -79,14 +79,14 @@ public class MapXMLLoader {
 	    NodeList routerVertexesNL = ((Element) nodes.item(0)).getElementsByTagName("router-vertices");
 	    NodeList routerVertexNL = ((Element) routerVertexesNL.item(0)).getElementsByTagName("router-vertex");
 	    for (int i = 0; i < routerVertexNL.getLength(); i++) {
-		mapModel.addRouterVertex();
-		RouterVertex routerVertex = mapModel.getRouterVertices().get(mapModel.getRouterVertices().size() - 1);
+		RouterVertex routerVertex = new RouterVertex();
+		mapModel.getVertices().add(routerVertex);
 		NodeList id = ((Element) routerVertexNL.item(i)).getElementsByTagName("id");
 		rvertexIdentificators.put(getTagStringData((Element) id.item(0)), routerVertex);
 		NodeList name = ((Element) routerVertexNL.item(i)).getElementsByTagName("r-name");
 		routerVertex.setName(getTagStringData((Element) name.item(0)));
 		NodeList description = ((Element) routerVertexNL.item(i)).getElementsByTagName("r-description");
-		routerVertex.setDescription(getTagStringData((Element) description.item(0)));
+		routerVertex.setInfo(getTagStringData((Element) description.item(0)));
 		NodeList isMultilink = ((Element) routerVertexNL.item(i)).getElementsByTagName("r-is-multilink");
 		routerVertex.setMultilink(getBoolValue(Integer.valueOf(getTagIntData((Element) isMultilink.item(0)))));
 		NodeList isEnabled = ((Element) routerVertexNL.item(i)).getElementsByTagName("r-is-enabled");
@@ -115,14 +115,14 @@ public class MapXMLLoader {
 	    NodeList linkEdgesNL = ((Element) nodes.item(0)).getElementsByTagName("link-edges");
 	    NodeList linkEdgeNL = ((Element) linkEdgesNL.item(0)).getElementsByTagName("link-edge");
 	    for (int i = 0; i < linkEdgeNL.getLength(); i++) {
-		mapModel.getLinkEdges().add(new LinkEdge());
-		LinkEdge linkEdge = mapModel.getLinkEdges().get(mapModel.getLinkEdges().size() - 1);
+		LinkEdge linkEdge = new LinkEdge();
+		mapModel.getEdges().add(linkEdge);
 		NodeList id = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-id");
 		linkEdge.setLinkIDv4(getTagStringData((Element) id.item(0)));
 		NodeList rv1 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r1-id");
-		linkEdge.setRouterVertex1(rvertexIdentificators.get(getTagStringData((Element) rv1.item(0))));
+		linkEdge.setVertex1(rvertexIdentificators.get(getTagStringData((Element) rv1.item(0))));
 		NodeList rv2 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r2-id");
-		linkEdge.setRouterVertex2(rvertexIdentificators.get(getTagStringData((Element) rv2.item(0))));
+		linkEdge.setVertex2(rvertexIdentificators.get(getTagStringData((Element) rv2.item(0))));
 		NodeList cost1 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r1-cost");
 		linkEdge.setCost1v4(Integer.valueOf(getTagIntData((Element) cost1.item(0))));
 		NodeList cost2 = ((Element) linkEdgeNL.item(i)).getElementsByTagName("l-r2-cost");

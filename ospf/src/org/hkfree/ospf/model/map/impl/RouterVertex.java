@@ -1,41 +1,37 @@
-package org.hkfree.ospf.model.map;
+package org.hkfree.ospf.model.map.impl;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Stroke;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.hkfree.ospf.tools.geo.GPSPoint;
-
-import edu.uci.ics.jung.visualization.RenderContext;
 
 /**
  * Třída představující vrchol MapModelu
  * @author Jakub Menzel
  * @author Jan Schovánek
  */
-public class RouterVertex implements Serializable {
+public class RouterVertex extends AVertex implements Serializable {
 
     private static final long serialVersionUID = 7625919799208623090L;
-    private String description = "";
-    private String name = "";
-    private boolean isMultilink = false;
-    private boolean isEnabled = true;
-    private boolean isLocked = false;
-    private boolean isCenterOfShortestPathTree = false;
-    private boolean isFullExpanded = false;
-    private boolean isPermanentlyDisplayed = false;
-    private double gpsLatitude = 0;
-    private double gpsLongtitude = 0;
-    private boolean isActuallyLive = false;
-    private boolean isActuallyDead = false;
-    private boolean isExtraAddedVertex = false;
-    private boolean isPartOfNewAddedEdge = false;
-    private boolean isFirstRVOfTwoRVShortestPath = false;
-    private boolean isSecondRVOfTwoRVShortestPath = false;
-    private boolean isFounded = false;
-    private boolean isVisible = true;
-    private boolean isLltd = false;
+    private String name;
+    private String info;
+    private boolean multilink = false;
+    private boolean locked = false;
+    private boolean centerOfShortestPathTree = false;
+    private boolean fullExpanded = false;
+    private boolean permanentlyDisplayed = false;
+    private double gpsLatitude = 0.0d;
+    private double gpsLongtitude = 0.0d;
+    private boolean actuallyLive = false;
+    private boolean actuallyDead = false;
+    private boolean extraAddedVertex = false;
+    private boolean partOfNewAddedEdge = false;
+    private boolean firstRVOfTwoRVShortestPath = false;
+    private boolean secondRVOfTwoRVShortestPath = false;
+    private boolean founded = false;
 
 
     /**
@@ -49,8 +45,8 @@ public class RouterVertex implements Serializable {
      * @param description
      * @param name
      */
-    public RouterVertex(String description, String name) {
-	this.description = description;
+    public RouterVertex(String info, String name) {
+	this.info = info;
 	this.name = name;
     }
 
@@ -61,8 +57,8 @@ public class RouterVertex implements Serializable {
      * @param name
      * @param gpsPosition
      */
-    public RouterVertex(String description, String name, GPSPoint gpsPosition) {
-	this.description = description;
+    public RouterVertex(String info, String name, GPSPoint gpsPosition) {
+	this.info = info;
 	this.name = name;
 	if (gpsPosition != null) {
 	    this.gpsLatitude = gpsPosition.getLatitude();
@@ -78,10 +74,10 @@ public class RouterVertex implements Serializable {
      * @param gpsPosition
      * @param isMultilinkCenter
      */
-    public RouterVertex(String description, String name, GPSPoint gpsPosition, boolean isMultilinkCenter) {
-	this.description = description;
+    public RouterVertex(String info, String name, GPSPoint gpsPosition, boolean multilinkCenter) {
+	this.info = info;
 	this.name = name;
-	this.isMultilink = isMultilinkCenter;
+	this.multilink = multilinkCenter;
 	if (gpsPosition != null) {
 	    this.gpsLatitude = gpsPosition.getLatitude();
 	    this.gpsLongtitude = gpsPosition.getLongtitude();
@@ -89,139 +85,104 @@ public class RouterVertex implements Serializable {
     }
 
 
-    /**
-     * Vrací barvu vrcholu
-     * @return barva výplně
-     */
+    @Override
     public Color getColorFill() {
-	if (!isVisible) {
+	if (!isVisible()) {
 	    return null;
 	}
-	if (isLltd) {
-	    return Color.MAGENTA;
-	}
-	if (isEnabled()) {
-	    if (isPartOfNewAddedEdge()) {
-		return Color.BLACK;
-	    }
-	    if (!isMultilink()) {
-		if (isFounded()) {
-		    return Color.GREEN;
-		}
-		if (isCenterOfShortestPathTree()) {
-		    return Color.RED;
-		}
-		if (isFirstRVOfTwoRVShortestPath()) {
-		    return new Color(0, 187, 227);
-		}
-		if (isSecondRVOfTwoRVShortestPath()) {
-		    return new Color(255, 80, 80);
-		}
-		if (isFullExpanded()) {
-		    return Color.ORANGE;
-		} else {
-		    return new Color(255, 244, 178);
-		}
-	    } else
-		return Color.WHITE;
-	} else {
+	if (!isEnabled()) {
 	    return Color.WHITE;
 	}
+	if (isPartOfNewAddedEdge()) {
+	    return Color.BLACK;
+	}
+	if (isMultilink()) {
+	    return Color.WHITE;
+	}
+	if (isFounded()) {
+	    return Color.GREEN;
+	}
+	if (isCenterOfShortestPathTree()) {
+	    return Color.RED;
+	}
+	if (isFirstRVOfTwoRVShortestPath()) {
+	    return new Color(0, 187, 227);
+	}
+	if (isSecondRVOfTwoRVShortestPath()) {
+	    return new Color(255, 80, 80);
+	}
+	if (isFullExpanded()) {
+	    return Color.ORANGE;
+	}
+	return new Color(255, 244, 178);
     }
 
 
-    /**
-     * Vrací barvu ohraničení vrcholu - routeru
-     * @return barva
-     */
+    @Override
     public Color getColorStroke() {
-	if (!isVisible) {
+	if (!isVisible()) {
 	    return null;
 	}
-	return isEnabled && isPermanentlyDisplayed() ? Color.DARK_GRAY : Color.LIGHT_GRAY;
+	return isEnabled() && isPermanentlyDisplayed() ? Color.DARK_GRAY : Color.LIGHT_GRAY;
     }
 
 
-    /**
-     * Vrací štětec, jeho sílu popřípadě zda je čárkovaný
-     * @return štětec
-     */
-    public Stroke getStroker() {
-	if (!isVisible) {
-	    return null;
+    @Override
+    public Shape getShaper() {
+	if (isMultilink()) {
+	    return new Rectangle2D.Float(-6, -6, 12, 12);
 	}
-	return isEnabled ? new BasicStroke(1) : RenderContext.DASHED;
+	return new Ellipse2D.Float(-10, -10, 20, 20);
     }
 
 
-    /**
-     * Metoda, která vrátí popis vrcholu (IP adresu)
-     * @return s
-     */
+    @Override
+    public String getLabel() {
+	if (!isVisible()) {
+	    return null;
+	}
+	if (isMultilink()) {
+	    return null;
+	}
+	return getName();
+    }
+
+
+    @Override
     public String getDescription() {
-	return description;
+	if (isMultilink()) {
+	    return getInfo();
+	}
+	String result = "<html><body>";
+	result += rb.getString("dv.1") + ": <b>" + getName() + "</b>";
+	result += "<br>ID: " + getInfo() + "<br>";
+	result += "<br>";
+	if (isPermanentlyDisplayed()) {
+	    result += rb.getString("mst.0") + "<br>";
+	} else {
+	    result += rb.getString("mst.1") + "<br>";
+	}
+	if (isFullExpanded()) {
+	    result += rb.getString("mst.2") + "<br>";
+	} else {
+	    result += rb.getString("mst.3") + "<br>";
+	}
+	result += "</body></html>";
+	return result;
     }
 
 
     /**
-     * Metoda, vrtátí true pokud se jedná o bod multispoje
-     * @return boolean
-     */
-    public boolean isMultilink() {
-	return isMultilink;
-    }
-
-
-    /**
-     * Metoda, vrtátí true pokud je router zapnutý
-     * @return boolean
-     */
-    public boolean isEnabled() {
-	return isEnabled;
-    }
-
-
-    /**
-     * Nastavuje, že se jedná o vypnutý router
-     * @param value
-     */
-    public void setEnabled(boolean value) {
-	isEnabled = value;
-    }
-
-
-    /**
-     * Metoda, která nastaví vlastnost,že se jedná o multispoj
-     * @param isMultilink
-     */
-    public void setMultilink(boolean isMultilink) {
-	this.isMultilink = isMultilink;
-    }
-
-
-    /**
-     * Metoda, která nastaví vrcholu popis
-     * @param description
-     */
-    public void setDescription(String description) {
-	this.description = description;
-    }
-
-
-    /**
-     * Metoda, která vrtátí název vrcholu
+     * Vrací název vrcholu
      * @return name
      */
     public String getName() {
-	if (isVisible) {
-	    return name;
-	}
-	return "";
+	return name;
     }
 
 
     /**
-     * Metoda, která nastaví vrcholu název
+     * Nastaví název vrcholu
      * @param name
      */
     public void setName(String name) {
@@ -230,11 +191,47 @@ public class RouterVertex implements Serializable {
 
 
     /**
+     * Metoda, která vrátí popis vrcholu (IP adresu)
+     * @return s
+     */
+    public String getInfo() {
+	return info;
+    }
+
+
+    /**
+     * Metoda, která nastaví vrcholu popis
+     * @param description
+     */
+    public void setInfo(String info) {
+	this.info = info;
+    }
+
+
+    /**
+     * Metoda, vrtátí true pokud se jedná o bod multispoje
+     * @return boolean
+     */
+    public boolean isMultilink() {
+	return multilink;
+    }
+
+
+    /**
+     * Metoda, která nastaví vlastnost,že se jedná o multispoj
+     * @param isMultilink
+     */
+    public void setMultilink(boolean isMultilink) {
+	this.multilink = isMultilink;
+    }
+
+
+    /**
      * Metoda, která vrací příznak, zda je vrchol zamknutý
      * @return boolean
      */
     public boolean isLocked() {
-	return isLocked;
+	return locked;
     }
 
 
@@ -243,7 +240,7 @@ public class RouterVertex implements Serializable {
      * @param value
      */
     public void setLocked(boolean value) {
-	isLocked = value;
+	locked = value;
     }
 
 
@@ -252,7 +249,7 @@ public class RouterVertex implements Serializable {
      * @return boolean
      */
     public boolean isFullExpanded() {
-	return isFullExpanded;
+	return fullExpanded;
     }
 
 
@@ -261,7 +258,7 @@ public class RouterVertex implements Serializable {
      * @param isFullExpanded
      */
     public void setFullExpanded(boolean isFullExpanded) {
-	this.isFullExpanded = isFullExpanded;
+	this.fullExpanded = isFullExpanded;
     }
 
 
@@ -270,7 +267,7 @@ public class RouterVertex implements Serializable {
      * @return boolean
      */
     public boolean isPermanentlyDisplayed() {
-	return isPermanentlyDisplayed;
+	return permanentlyDisplayed;
     }
 
 
@@ -279,7 +276,7 @@ public class RouterVertex implements Serializable {
      * @param isPermanentlyDisplayed
      */
     public void setPermanentlyDisplayed(boolean isPermanentlyDisplayed) {
-	this.isPermanentlyDisplayed = isPermanentlyDisplayed;
+	this.permanentlyDisplayed = isPermanentlyDisplayed;
     }
 
 
@@ -344,7 +341,7 @@ public class RouterVertex implements Serializable {
      * @return boolean
      */
     public boolean isActuallyLive() {
-	return isActuallyLive;
+	return actuallyLive;
     }
 
 
@@ -353,7 +350,7 @@ public class RouterVertex implements Serializable {
      * @param isActuallyLive
      */
     public void setActuallyLive(boolean isActuallyLive) {
-	this.isActuallyLive = isActuallyLive;
+	this.actuallyLive = isActuallyLive;
     }
 
 
@@ -362,7 +359,7 @@ public class RouterVertex implements Serializable {
      * @return boolean
      */
     public boolean isActuallyDead() {
-	return isActuallyDead;
+	return actuallyDead;
     }
 
 
@@ -371,7 +368,7 @@ public class RouterVertex implements Serializable {
      * @param isActuallyDead
      */
     public void setActuallyDead(boolean isActuallyDead) {
-	this.isActuallyDead = isActuallyDead;
+	this.actuallyDead = isActuallyDead;
     }
 
 
@@ -380,7 +377,7 @@ public class RouterVertex implements Serializable {
      * @return boolean
      */
     public boolean isExtraAddedVertex() {
-	return isExtraAddedVertex;
+	return extraAddedVertex;
     }
 
 
@@ -389,7 +386,7 @@ public class RouterVertex implements Serializable {
      * @param isExtraAddedVertex
      */
     public void setExtraAddedVertex(boolean isExtraAddedVertex) {
-	this.isExtraAddedVertex = isExtraAddedVertex;
+	this.extraAddedVertex = isExtraAddedVertex;
     }
 
 
@@ -398,7 +395,7 @@ public class RouterVertex implements Serializable {
      * @return boolean
      */
     public boolean isCenterOfShortestPathTree() {
-	return isCenterOfShortestPathTree;
+	return centerOfShortestPathTree;
     }
 
 
@@ -407,7 +404,7 @@ public class RouterVertex implements Serializable {
      * @param isCenterOfShortestPathTree
      */
     public void setCenterOfShortestPathTree(boolean isCenterOfShortestPathTree) {
-	this.isCenterOfShortestPathTree = isCenterOfShortestPathTree;
+	this.centerOfShortestPathTree = isCenterOfShortestPathTree;
     }
 
 
@@ -416,7 +413,7 @@ public class RouterVertex implements Serializable {
      * @return boolean
      */
     public boolean isPartOfNewAddedEdge() {
-	return isPartOfNewAddedEdge;
+	return partOfNewAddedEdge;
     }
 
 
@@ -425,7 +422,7 @@ public class RouterVertex implements Serializable {
      * @param isPartOfNewAddedEdge
      */
     public void setPartOfNewAddedEdge(boolean isPartOfNewAddedEdge) {
-	this.isPartOfNewAddedEdge = isPartOfNewAddedEdge;
+	this.partOfNewAddedEdge = isPartOfNewAddedEdge;
     }
 
 
@@ -434,7 +431,7 @@ public class RouterVertex implements Serializable {
      * @return the isFirstRVOfTwoRVShortestPath
      */
     public boolean isFirstRVOfTwoRVShortestPath() {
-	return isFirstRVOfTwoRVShortestPath;
+	return firstRVOfTwoRVShortestPath;
     }
 
 
@@ -443,7 +440,7 @@ public class RouterVertex implements Serializable {
      * @param isFirstRVOfTwoRVShortestPath the isFirstRVOfTwoRVShortestPath to set
      */
     public void setFirstRVOfTwoRVShortestPath(boolean isFirstRVOfTwoRVShortestPath) {
-	this.isFirstRVOfTwoRVShortestPath = isFirstRVOfTwoRVShortestPath;
+	this.firstRVOfTwoRVShortestPath = isFirstRVOfTwoRVShortestPath;
     }
 
 
@@ -452,7 +449,7 @@ public class RouterVertex implements Serializable {
      * @return the isSecondRVOfTwoRVShortestPath
      */
     public boolean isSecondRVOfTwoRVShortestPath() {
-	return isSecondRVOfTwoRVShortestPath;
+	return secondRVOfTwoRVShortestPath;
     }
 
 
@@ -461,31 +458,16 @@ public class RouterVertex implements Serializable {
      * @param isSecondRVOfTwoRVShortestPath the isSecondRVOfTwoRVShortestPath to set
      */
     public void setSecondRVOfTwoRVShortestPath(boolean isSecondRVOfTwoRVShortestPath) {
-	this.isSecondRVOfTwoRVShortestPath = isSecondRVOfTwoRVShortestPath;
+	this.secondRVOfTwoRVShortestPath = isSecondRVOfTwoRVShortestPath;
     }
 
 
     public boolean isFounded() {
-	return isFounded;
+	return founded;
     }
 
 
     public void setFounded(boolean isFounded) {
-	this.isFounded = isFounded;
-    }
-
-
-    public void setVisible(boolean visible) {
-	this.isVisible = visible;
-    }
-
-
-    public void setLltd(boolean isLltd) {
-	this.isLltd = isLltd;
-    }
-
-
-    public boolean isLltd() {
-	return isLltd;
+	this.founded = isFounded;
     }
 }

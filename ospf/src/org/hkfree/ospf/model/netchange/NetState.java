@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hkfree.ospf.model.map.LinkEdge;
-import org.hkfree.ospf.model.map.RouterVertex;
+import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RouterVertex;
 
 /**
  * Třída představující stav sítě v čase
@@ -54,7 +54,7 @@ public class NetState {
 	}
 	if (!activeLinks.contains(linkEdge)) {
 	    // kontrola vytváření NetStateLinkEdge, aby nebyly prohozený ceny - v LinkEdge můžou být RouterVertexy prohozeny
-	    if (linkEdge.getRVertex1().equals(routerVertex1))
+	    if (linkEdge.getVertex1().equals(routerVertex1))
 		activeLinks.add(new NetStateLinkEdge(linkEdge, actualLinkID, cost1, cost2));
 	    else
 		activeLinks.add(new NetStateLinkEdge(linkEdge, actualLinkID, cost2, cost1));
@@ -172,7 +172,7 @@ public class NetState {
     public int getRoutersCostOfLinkEdge(RouterVertex rv, LinkEdge le) {
 	for (NetStateLinkEdge nsl : activeLinks) {
 	    if (nsl.getLinkEdge().equals(le)) {
-		if (nsl.getLinkEdge().getRVertex1().equals(rv)) {
+		if (nsl.getLinkEdge().getVertex1().equals(rv)) {
 		    return nsl.getCost1();
 		} else {
 		    return nsl.getCost2();
