@@ -1,3 +1,6 @@
+*27.3.2013*
+  * opravy zobrazeni LLTD modelu v grafu
+
 *23-26.3.2013*
   * vytvoreni rozhrani pro vrchol a hranu, abstraktnich predku
   * vytvoreni modelu pro lltd
