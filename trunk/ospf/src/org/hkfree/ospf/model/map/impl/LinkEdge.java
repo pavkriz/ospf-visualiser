@@ -85,9 +85,8 @@ public class LinkEdge extends AEdge implements Serializable {
 	String result = "<html><body>";
 	if (!linkEdgeIDv4.isEmpty()) {
 	    // popisek pro IPv4
-	    result += "<b>IPv4</b> ";
-	    result += "<br>" + rb.getString("cdtm.col1") + " <b>" + linkEdgeIDv4 + "</b>";
-	    result += "<br>";
+	    result += "<b>IPv4 " + rb.getString("le.1") + "</b> ";
+	    result += "<br>ID: <b>" + linkEdgeIDv4 + "</b>";
 	    result += "<br>" + rb.getString("le.0") + ":";
 	    result += "<br>" + vertex1.getLabel() + " (" + vertex1.getInfo() + "): " + Integer.toString(cost1) + "";
 	    if (!vertex2.isMultilink()) {
@@ -99,10 +98,9 @@ public class LinkEdge extends AEdge implements Serializable {
 	}
 	if (!linkEdgeIDv6.isEmpty()) {
 	    // popisek pro IPv6
-	    result += "<b>IPv6</b> ";
-	    result += "<br>" + rb.getString("cdtm.col1") + " <b>" + linkEdgeIDv6 + "</b>";
+	    result += "<b>IPv6 " + rb.getString("le.1") + "</b> ";
+	    result += "<br>ID: <b>" + linkEdgeIDv6 + "</b>";
 	    result += "<br>" + rb.getString("le.0") + ":";
-	    result += "<br>";
 	    result += "<br>" + vertex1.getLabel() + " (" + vertex1.getInfo() + "): " + Integer.toString(cost1IPv6) + "";
 	    if (!vertex2.isMultilink()) {
 		result += "<br>" + vertex2.getLabel() + " (" + vertex2.getInfo() + "): " + Integer.toString(cost2IPv6) + "";

@@ -235,25 +235,19 @@ public class MapGraphComponent extends JComponent {
      * @param rvPositions
      */
     public void createGraphByPositions(Map<RouterVertex, Point2D> rvPositions) {
-	for (IVertex v : mapModel.getVertices()) {
-	    if (v instanceof RouterVertex) {
-		RouterVertex rv = (RouterVertex) v;
-		if (rvPositions.containsKey(rv)) {
-		    graph.addVertex(rv);
-		    layout.setLocation(rv, rvPositions.get(rv));
-		    if (rv.isLocked()) {
-			lockVertexPosition(rv);
-		    }
+	for (RouterVertex rv : mapModel.getRouterVertices()) {
+	    if (rvPositions.containsKey(rv)) {
+		graph.addVertex(rv);
+		layout.setLocation(rv, rvPositions.get(rv));
+		if (rv.isLocked()) {
+		    lockVertexPosition(rv);
 		}
 	    }
 	}
-	for (IEdge e : mapModel.getEdges()) {
-	    if (e instanceof LinkEdge) {
-		LinkEdge le = (LinkEdge) e;
-		if (graph.containsVertex(le.getVertex1()) && graph.containsVertex(le.getVertex2())) {
-		    le.setGraphComponent(this);
-		    graph.addEdge(le, le.getVertex1(), le.getVertex2());
-		}
+	for (LinkEdge le : mapModel.getLinkEdges()) {
+	    if (graph.containsVertex(le.getVertex1()) && graph.containsVertex(le.getVertex2())) {
+		le.setGraphComponent(this);
+		graph.addEdge(le, le.getVertex1(), le.getVertex2());
 	    }
 	}
 	for (IVertex v : graph.getVertices()) {
@@ -951,16 +945,10 @@ public class MapGraphComponent extends JComponent {
      */
     public void removeExtraAddedRVertex(RouterVertex routerVertex) {
 	if (routerVertex.isExtraAddedVertex()) {
-	    List<LinkEdge> removeEdges = new ArrayList<LinkEdge>();
 	    for (LinkEdge le : mapModel.getIncidentEdges(routerVertex)) {
-		graph.removeEdge(le);
-		removeEdges.add(le);
+		removeEdge(le);
 	    }
-	    for (LinkEdge le : removeEdges) {
-		mapModel.getEdges().remove(le);
-	    }
-	    graph.removeVertex(routerVertex);
-	    mapModel.getVertices().remove(routerVertex);
+	    removeVertex(routerVertex);
 	}
     }
 
@@ -971,9 +959,48 @@ public class MapGraphComponent extends JComponent {
      */
     public void removeExtraAddedLEdge(LinkEdge linkEdge) {
 	if (linkEdge.isExtraAddedEdge()) {
-	    graph.removeEdge(linkEdge);
-	    mapModel.getEdges().remove(linkEdge);
+	    removeEdge(linkEdge);
 	}
+    }
+
+
+    /**
+     * Prida vrchol do grafu a MapModelu
+     * @param vertex
+     */
+    public void addVertex(IVertex vertex) {
+	graph.addVertex(vertex);
+	mapModel.getVertices().add(vertex);
+    }
+
+
+    /**
+     * Prida hranu do grafu a MapModelu
+     * @param edge
+     */
+    public void addEdge(IEdge edge) {
+	graph.addEdge(edge, edge.getVertex1(), edge.getVertex2());
+	mapModel.getEdges().add(edge);
+    }
+
+
+    /**
+     * Odebere vrchol z grafu a MapModelu
+     * @param vertex
+     */
+    public void removeVertex(IVertex vertex) {
+	graph.removeVertex(vertex);
+	mapModel.getVertices().remove(vertex);
+    }
+
+
+    /**
+     * Odebere hranu z grafu a MapModelu
+     * @param edge
+     */
+    public void removeEdge(IEdge edge) {
+	graph.removeEdge(edge);
+	mapModel.getEdges().remove(edge);
     }
 
 
@@ -1197,8 +1224,9 @@ public class MapGraphComponent extends JComponent {
      * @param model
      */
     public void showOrHideLltdModel(Router router, LLTDModel model) {
-	// najit model u routeru a nastavit jeho prvkum viditelnost
+	// nastaveni viditelnosti/neviditelnosti lltd modelu
 	model.setShow(!model.isShow());
+	// nastaveni viditelnosti/neviditelnosti u prvku modelu
 	for (Device d : model.getDevices()) {
 	    DeviceVertex dv = findLltdVertex(d.getSource());
 	    if (dv != null) {
@@ -1214,6 +1242,11 @@ public class MapGraphComponent extends JComponent {
     }
 
 
+    /**
+     * Vraci vrchol LLTD zarizeni v grafu dle mac adresy (v model znaceno "source")
+     * @param mac
+     * @return
+     */
     public DeviceVertex findLltdVertex(String mac) {
 	for (IVertex v : graph.getVertices()) {
 	    if (v instanceof DeviceVertex) {
@@ -1226,6 +1259,11 @@ public class MapGraphComponent extends JComponent {
     }
 
 
+    /**
+     * Vraci vrcholu Router v grafu dle jeho id
+     * @param idRouter
+     * @return
+     */
     public RouterVertex findRouterVertex(String idRouter) {
 	for (IVertex v : graph.getVertices()) {
 	    if (v instanceof RouterVertex) {
@@ -1245,15 +1283,5 @@ public class MapGraphComponent extends JComponent {
      */
     public Set<LLTDModel> getLLTDmodels(String routerName) {
 	return owner.getMapDesignWinManager().getOspfModel().getRouterByName(routerName).getLltdModels();
-    }
-
-
-    public void addVertex(IVertex dv) {
-	graph.addVertex(dv);
-    }
-
-
-    public void addEdge(IEdge e) {
-	graph.addEdge(e, e.getVertex1(), e.getVertex2());
     }
 }

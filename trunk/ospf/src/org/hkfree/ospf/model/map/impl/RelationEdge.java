@@ -23,6 +23,24 @@ public class RelationEdge extends AEdge implements Serializable {
 
 
     @Override
+    public String getDescription() {
+	if (!vertex1.isVisible() || !vertex2.isVisible()) {
+	    return null;
+	}
+	String result = "<html><body>";
+	result += "<b>" + rb.getString("re.1") + "</b>";
+	result += "<br>" + rb.getString("re.0") + ": ";
+	if (getMedium() == null) {
+	    result += "<b>-</b>";
+	} else {
+	    result += "<b>" + rb.getString("lltd.medium." + getMedium()) + "</b>";
+	}
+	result += "</body></html>";
+	return result;
+    }
+
+
+    @Override
     public Paint getLineColor() {
 	if (!vertex1.isVisible() || !vertex2.isVisible()) {
 	    return null;

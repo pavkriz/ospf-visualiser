@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -789,6 +790,7 @@ public class OspfWinManager {
 	for (OspfModel ospf : ospfModels) {
 	    // prochazeni vsech routeru daneho ospf modelu
 	    for (Router r : ospf.getRouters()) {
+		r.setLltdModels(new HashSet<LLTDModel>());
 		// prochazeni vsech nactenych lltd modelu
 		for (LLTDModel m : this.lltdModels) {
 		    // prochazeni ip adres z traceroutu
@@ -801,13 +803,9 @@ public class OspfWinManager {
 		}
 	    }
 	}
-	bla();
-    }
-
-
-    public void bla() {
+	// aktualizace lltd modelu v grafu
 	for (MapManager mm : getAllMDManager()) {
-	    mm.actualizeLltdVericies();
+	    mm.actualizeLltdVerticies();
 	}
     }
 }

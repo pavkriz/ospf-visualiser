@@ -245,7 +245,14 @@ public class MapManager {
     }
 
 
-    public void actualizeLltdVericies() {
+    public void actualizeLltdVerticies() {
+	// vymazani poslednich lltd prvku v grafu
+	for (DeviceVertex dv : mapModel.getDeviceVertices()) {
+	    graphComponent.removeVertex(dv);
+	}
+	for (RelationEdge re : mapModel.getRelationEdges()) {
+	    graphComponent.removeEdge(re);
+	}
 	// prochazeni vsech routeru ospf modelu
 	for (Router router : ospfModel.getRouters()) {
 	    // nalezeni zakladniho vrcholu routeru, ktery propaguje lltd model
@@ -316,5 +323,6 @@ public class MapManager {
 		graphComponent.addEdge(reBetween);
 	    }
 	}
+	graphComponent.getVisualizationComponent().repaint();
     }
 }
