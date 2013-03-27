@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.IMapModel;
+import org.hkfree.ospf.model.map.impl.DeviceVertex;
 import org.hkfree.ospf.model.map.impl.LinkEdge;
+import org.hkfree.ospf.model.map.impl.RelationEdge;
 import org.hkfree.ospf.model.map.impl.RouterVertex;
 import org.hkfree.ospf.model.ospf.OspfLinkData;
 import org.hkfree.ospf.tools.NeighbourCostAndLink;
@@ -131,6 +133,10 @@ public class MapModel implements IMapModel {
     }
 
 
+    /**
+     * Vraci vsechny hrany typu LinkEdge
+     * @return
+     */
     public List<LinkEdge> getLinkEdges() {
 	List<LinkEdge> les = new ArrayList<LinkEdge>();
 	for (IEdge e : this.edges) {
@@ -142,6 +148,10 @@ public class MapModel implements IMapModel {
     }
 
 
+    /**
+     * Vraci vsechny vrcholy typu RouterVertex
+     * @return
+     */
     public List<RouterVertex> getRouterVertices() {
 	List<RouterVertex> rvs = new ArrayList<RouterVertex>();
 	for (IVertex v : this.vertices) {
@@ -150,6 +160,36 @@ public class MapModel implements IMapModel {
 	    }
 	}
 	return rvs;
+    }
+
+
+    /**
+     * Vraci vsechny hrany typu RelationEdge
+     * @return
+     */
+    public List<RelationEdge> getRelationEdges() {
+	List<RelationEdge> res = new ArrayList<RelationEdge>();
+	for (IEdge e : this.edges) {
+	    if (e instanceof RelationEdge) {
+		res.add((RelationEdge) e);
+	    }
+	}
+	return res;
+    }
+
+
+    /**
+     * Vraci vsechny vrcholy typu DeviceVertex
+     * @return
+     */
+    public List<DeviceVertex> getDeviceVertices() {
+	List<DeviceVertex> dvs = new ArrayList<DeviceVertex>();
+	for (IVertex v : this.vertices) {
+	    if (v instanceof DeviceVertex) {
+		dvs.add((DeviceVertex) v);
+	    }
+	}
+	return dvs;
     }
 
 
