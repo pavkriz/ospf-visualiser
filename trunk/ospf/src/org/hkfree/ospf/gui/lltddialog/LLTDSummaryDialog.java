@@ -21,6 +21,7 @@ import javax.swing.table.TableModel;
 
 import org.hkfree.ospf.gui.ospfwin.OspfWin;
 import org.hkfree.ospf.gui.ospfwin.OspfWinManager;
+import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.tools.Factory;
 
@@ -45,6 +46,7 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	this.lltdModels = lltdModels;
 	createGUI();
 	actualizeTable();
+	this.setIconImage(this.getToolkit().getImage(getClass().getResource(Constants.URL_IMG_GUI + "ico.gif")));
 	this.setTitle(rb.getString("lltdsd.title"));
 	this.pack();
 	this.setModal(false);

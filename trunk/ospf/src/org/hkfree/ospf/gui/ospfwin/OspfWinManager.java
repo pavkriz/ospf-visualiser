@@ -84,8 +84,9 @@ public class OspfWinManager {
 	    // načte nastavení aplikace a nastavení načítání dat
 	    settingsManager.loadSettings();
 	    // jazyk/země
-	    Locale locale = new Locale(settings.language.toString().substring(0, 2), settings.language.toString().substring(
-		    3, 5));
+	    String language = settings.language.toString().substring(0, 2);
+	    String country = settings.language.toString().substring(3, 5);
+	    Locale locale = new Locale(language, country);
 	    rb = ResourceBundle.getBundle("org.hkfree.ospf.lng.ospf", locale);
 	} catch (Exception e) {
 	    owner.showErrorMessage(rb == null ? "Error" : rb.getString("error"), e.getMessage());
@@ -151,7 +152,6 @@ public class OspfWinManager {
 	ospfWin.getOspfWinActListener().getActionShortestPath().setEnabled(modelExist);
 	ospfWin.getOspfWinActListener().getActionCostChangingMode().setEnabled(modelExist);
 	ospfWin.getOspfWinActListener().getActionShowNeighboursMode().setEnabled(modelExist);
-	// if (modelExist && getActualMDManager().getOspfModel() != null) {
 	if (modelExist && getActualMDManager() != null && getActualMDManager().getOspfModel() != null) {
 	    // GPS - kontrola zda jsou souřadnice pro daný model načteny
 	    // IPv6 - kontrola zda jsou data načtena

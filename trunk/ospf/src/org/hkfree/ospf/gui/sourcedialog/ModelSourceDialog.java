@@ -86,8 +86,7 @@ public class ModelSourceDialog extends JDialog {
     private boolean loadDialogConfirmed = false;
     private int countDays = 0;
     private AppSettings settings = null;
-    
-    private static final Dimension MAX_SIZE_SCROLL = new Dimension(400,300);
+    private static final Dimension MAX_SIZE_SCROLL = new Dimension(400, 300);
 
 
     /**
@@ -99,6 +98,10 @@ public class ModelSourceDialog extends JDialog {
 	actListener = new ModelSourceDialogActionListener(this);
 	createComponents();
 	sourceTypeTabs.setSelectedIndex(settings.loadDataTypIndex);
+	this.setTitle(rb.getString("ssd.title"));
+	this.pack();
+	this.setIconImage(this.getToolkit().getImage(getClass().getResource(Constants.URL_IMG_GUI + "ico.gif")));
+	this.setLocationRelativeTo(null);
     }
 
 
@@ -182,9 +185,6 @@ public class ModelSourceDialog extends JDialog {
 		.addGroup(layout.createParallelGroup()
 			.addComponent(btnOk)
 			.addComponent(btnStorno)));
-	this.setTitle(rb.getString("ssd.title"));
-	this.pack();
-	this.setLocationRelativeTo(null);
     }
 
 

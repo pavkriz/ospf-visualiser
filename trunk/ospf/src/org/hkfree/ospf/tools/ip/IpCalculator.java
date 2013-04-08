@@ -217,6 +217,9 @@ public class IpCalculator {
     public static boolean containsRouterSubnet(Router r, String ip) {
 	ip = ip.toUpperCase();
 	for (StubLink sl : r.getStubs()) {
+	    if (sl.getMask() == 32) {
+		continue;
+	    }
 	    if (sl.getLinkID().toUpperCase().contains(ip) ||
 		    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), ip)) {
 		return true;
@@ -224,6 +227,9 @@ public class IpCalculator {
 	}
 	// vyhledavani v external lsa
 	for (ExternalLSA el : r.getExternalLsa()) {
+	    if (el.getMask() == 32) {
+		continue;
+	    }
 	    if (el.getNetwork().toUpperCase().contains(ip) ||
 		    IpCalculator.networkContains(el.getNetwork(), el.getMask(), ip)) {
 		return true;

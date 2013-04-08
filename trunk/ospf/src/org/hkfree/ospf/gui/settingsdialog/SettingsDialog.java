@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -87,21 +88,6 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	// labely
 	JLabel l1 = new JLabel(rb.getString("sd.1"));
 	JLabel l2 = new JLabel(rb.getString("sd.2"));
-	// JPanel pLayout = new JPanel();
-	// JRadioButton rbSpring = new JRadioButton();
-	// JRadioButton rbFr = new JRadioButton();
-	// rbSpring.setActionCommand(LAYOUT.SPRING.toString());
-	// rbFr.setActionCommand(LAYOUT.FR.toString());
-	// rbFr.setText(rb.getString("sd.1"));
-	// rbSpring.setText(rb.getString("sd.2"));
-	// rbSpring.setSelected(settings.layout == LAYOUT.SPRING);
-	// rbFr.setSelected(settings.layout == LAYOUT.FR);
-	// gLayout.add(rbSpring);
-	// gLayout.add(rbFr);
-	// pLayout.setBorder(BorderFactory.createTitledBorder(rb.getString("sd.layout")));
-	// pLayout.setLayout(new FlowLayout(FlowLayout.CENTER));
-	// pLayout.add(rbFr);
-	// pLayout.add(rbSpring);
 	btnSave.setText(rb.getString("save"));
 	btnSave.addActionListener(this);
 	btnStorno.setText(rb.getString("storno"));
@@ -124,15 +110,15 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	                        .addComponent(btnSave, 100, 100, 100)
 	                        .addComponent(btnStorno, 100, 100, 100))));
 	layout.setVerticalGroup(layout.createSequentialGroup()
-	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 	                .addComponent(l1)
 	                .addComponent(cbLangs))
-	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 	                .addComponent(l2)
 	                .addComponent(cbEdgeShaper))
 	        .addComponent(chbCloseLogDialog)
 	        .addGap(20)
-	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 	                .addComponent(btnStorno)
 	                .addComponent(btnSave)));
     }

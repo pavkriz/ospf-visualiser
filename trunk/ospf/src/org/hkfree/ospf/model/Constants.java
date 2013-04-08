@@ -35,9 +35,9 @@ public abstract class Constants {
     /** FR LAYOUT - maximalni pocet iteraci pro FR layout */
     public static int LAYOUT_FR_MAX_ITERATIONS = 1500;
     /** FR LAYOUT - vzdalenosti vrcholu od sebe */
-    public static double LAYOUT_ATTRACTION = 0.60; // 0.55, vzdalenosti vrcholu od sebe 45
+    public static double LAYOUT_ATTRACTION = 0.55; // vzdalenosti vrcholu od sebe  60  45  55
     /** FR LAYOUT - vzdalenosti vrcholu na spoji od sebe */
-    public static double LAYOUT_REPULSION = 0.28; // 0.18, vzdalenosti vrcholu na spoji od sobe 15
+    public static double LAYOUT_REPULSION = 0.18; // vzdalenosti vrcholu na spoji od sobe   28  15  18
     /** SPRING LAYOUT - */
     public static double LAYOUT_STRETCH = 0.7;
     /** SPRING LAYOUT - */

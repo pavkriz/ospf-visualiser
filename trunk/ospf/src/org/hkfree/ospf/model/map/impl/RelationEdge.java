@@ -18,7 +18,11 @@ public class RelationEdge extends AEdge implements Serializable {
 	if (getMedium() == null) {
 	    return "-";
 	}
-	return rb.getString("lltd.medium." + getMedium());
+	if (getMedium().equals("00")
+		|| getMedium().equals("02")) {
+	    return rb.getString("lltd.medium." + getMedium());
+	}
+	return getMedium();
     }
 
 
@@ -32,8 +36,10 @@ public class RelationEdge extends AEdge implements Serializable {
 	result += "<br>" + rb.getString("re.0") + ": ";
 	if (getMedium() == null) {
 	    result += "<b>-</b>";
-	} else {
+	} else if (getMedium().equals("00") || getMedium().equals("02")) {
 	    result += "<b>" + rb.getString("lltd.medium." + getMedium()) + "</b>";
+	} else {
+	    result += "<b>" + getMedium() + "</b>";
 	}
 	result += "</body></html>";
 	return result;
