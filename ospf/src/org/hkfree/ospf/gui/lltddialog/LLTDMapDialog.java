@@ -50,6 +50,7 @@ public class LLTDMapDialog extends JDialog {
 	createGUI();
 	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	this.setTitle(rb.getString("lltdd.title") + "   " + lltd.getPublicIP() + "   " + df.format(lltd.getDate()));
+	this.setIconImage(this.getToolkit().getImage(getClass().getResource(Constants.URL_IMG_GUI + "ico.gif")));
 	this.setMinimumSize(new Dimension(600, 400));
 	this.pack();
     }

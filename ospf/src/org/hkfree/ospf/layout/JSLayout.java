@@ -23,7 +23,6 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeContext {
 
-    // private double forceConstant;
     private double temperature;
     private int currentIteration;
     private int maxIterations = 700;
@@ -34,15 +33,10 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		    return new JSVertexData();
 		}
 	    });
-    // private double attraction_multiplier = 0.75;
-    // private double attraction_constant;
-    // private double repulsion_multiplier = 0.75;
-    // private double repulsion_constant;
-    // private double max_dimension;
     private Rectangle2D innerBounds = new Rectangle2D.Double();
-    private boolean checked = false;
 
 
+    // private boolean checked = false;
     public JSLayout(Graph<V, E> g) {
 	super(g);
     }
@@ -51,7 +45,6 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     public JSLayout(Graph<V, E> g, Dimension d) {
 	super(g, new RandomLocationTransformer<V>(d), d);
 	initialize();
-	// max_dimension = Math.max(d.height, d.width);
     }
 
 
@@ -62,23 +55,16 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	super.setSize(size);
 	double t = size.width / 50.0;
 	innerBounds.setFrameFromDiagonal(t, t, size.width - t, size.height - t);
-	// max_dimension = Math.max(size.height, size.width);
     }
 
 
-    // public void setAttractionMultiplier(double attraction) {
-    // this.attraction_multiplier = attraction;
-    // }
-    //
-    //
-    // public void setRepulsionMultiplier(double repulsion) {
-    // this.repulsion_multiplier = repulsion;
-    // }
+    @Override
     public void reset() {
 	doInit();
     }
 
 
+    @Override
     public void initialize() {
 	doInit();
     }
@@ -90,13 +76,11 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	if (graph != null && d != null) {
 	    currentIteration = 0;
 	    temperature = d.getWidth() / 10;
-	    // forceConstant = Math.sqrt(d.getHeight() * d.getWidth() / graph.getVertexCount());
-	    // attraction_constant = attraction_multiplier * forceConstant;
-	    // repulsion_constant = repulsion_multiplier * forceConstant;
 	}
     }
 
 
+    @Override
     public synchronized void step() {
 	currentIteration++;
 	// vypocet odporu
@@ -135,14 +119,14 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     protected synchronized void calcPositions(V v) {
 	double velocity_maximum = 0.05; // rychlost
 	double friction = 0.0005; // treni
-	double konst = 10;
+	double konst = 10.0; // 10
 	velocity_maximum *= konst;
 	friction *= konst;
 	JSVertexData fvd = jsVertexData.get(v);
 	if (fvd == null)
 	    return;
-	fvd.forceVelocityX += (fvd.forceCoulombX + fvd.forceHarmonicX) * 0.1;
-	fvd.forceVelocityY += (fvd.forceCoulombY + fvd.forceHarmonicY) * 0.1;
+	fvd.forceVelocityX += (fvd.forceCoulombX + fvd.forceHarmonicX) / konst; // *0.1
+	fvd.forceVelocityY += (fvd.forceCoulombY + fvd.forceHarmonicY) / konst;
 	// velocity
 	if (fvd.forceVelocityX > velocity_maximum) {
 	    fvd.forceVelocityX = velocity_maximum;
@@ -172,6 +156,11 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	Point2D p = transform(v);
 	double newX = p.getX() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityX * konst));
 	double newY = p.getY() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityY * konst));
+	//fvd.forceVelocityX = fvd.forceVelocityX * konst;
+	//fvd.forceVelocityY = fvd.forceVelocityY * konst;
+	// double newX = p.getX() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityX * konst));
+	// double newY = p.getY() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityY * konst));
+	// System.out.println(fvd.forceVelocityX);
 	// zajisti ze vrchol nebude mimo platno layoutu
 	newX = Math.max(innerBounds.getMinX(), Math.min(newX, innerBounds.getMaxX()));
 	newY = Math.max(innerBounds.getMinY(), Math.min(newY, innerBounds.getMaxY()));
@@ -254,24 +243,15 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     }
 
 
-    public void setMaxIterations(int maxIterations) {
-	this.maxIterations = maxIterations;
-    }
-
-
-    public boolean isIncremental() {
-	return true;
-    }
-
-
+    @Override
     public boolean done() {
 	if (currentIteration > maxIterations) {// || temperature < 1.0 / max_dimension) {
-	    if (!checked)
-	    {
-		// System.out.println("current iteration: " + currentIteration);
-		// System.out.println("temperature: " + temperature);
-		checked = true;
-	    }
+	// if (!checked)
+	// {
+	// // System.out.println("current iteration: " + currentIteration);
+	// // System.out.println("temperature: " + temperature);
+	// checked = true;
+	// }
 	    return true;
 	}
 	return false;

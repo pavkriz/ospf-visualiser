@@ -10,7 +10,7 @@ import org.hkfree.ospf.model.map.IEdge;
 import org.hkfree.ospf.model.map.IVertex;
 import org.hkfree.ospf.tools.Factory;
 
-public class AEdge implements IEdge {
+abstract public class AEdge implements IEdge {
 
     protected ResourceBundle rb = Factory.getRb();
     protected boolean enabled = true;

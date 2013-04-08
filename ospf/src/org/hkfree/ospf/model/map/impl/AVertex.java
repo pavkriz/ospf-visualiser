@@ -12,7 +12,7 @@ import org.hkfree.ospf.tools.Factory;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 
-public class AVertex implements IVertex {
+abstract public class AVertex implements IVertex {
 
     protected ResourceBundle rb = Factory.getRb();
     private boolean enabled = true;

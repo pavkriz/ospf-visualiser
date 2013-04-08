@@ -6,7 +6,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1011,48 +1010,44 @@ public class MapGraphComponent extends JComponent {
      */
     public void findByNameOrIP(String text) {
 	boolean b;
-	Set<IVertex> rvs = new HashSet<IVertex>(graph.getVertices());
 	Router r = null;
 	String[] foundedNames = text.split("\\|");
-	for (IVertex v : rvs) {
-	    if (v instanceof RouterVertex) {
-		RouterVertex rv = (RouterVertex) v;
-		// multilink se preskakuje, v nem se nehleda
-		if (rv.isMultilink()) {
+	for (RouterVertex rv : mapModel.getRouterVertices()) {
+	    // multilink se preskakuje, v nem se nehleda
+	    if (rv.isMultilink()) {
+		continue;
+	    }
+	    b = false;
+	    // prochazeni a hledani kazdeho retezce ktere byly oddeleny '|'
+	    for (String name : foundedNames) {
+		if (name.isEmpty()) {
 		    continue;
 		}
-		b = false;
-		// prochazeni a hledani kazdeho retezce ktere byly oddeleny '|'
-		for (String name : foundedNames) {
-		    if (name.isEmpty()) {
-			continue;
-		    }
-		    if (rv.getName().toUpperCase().contains(name.toUpperCase())
-			    || rv.getInfo().toUpperCase().contains(name.toUpperCase())) {
-			b = true;
-		    }
-		    // pokud je model null, hledat pouze v mapModelu
-		    if (owner.getMapDesignWinManager().getOspfModel() != null) {
-			r = owner.getMapDesignWinManager().getOspfModel().getRouterByIp(rv.getInfo());
-			// vyhledavani ve stubs
-			for (StubLink sl : r.getStubs()) {
-			    if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
-				    IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
-				b = true;
-			    }
+		if (rv.getName().toUpperCase().contains(name.toUpperCase())
+			|| rv.getInfo().toUpperCase().contains(name.toUpperCase())) {
+		    b = true;
+		}
+		// pokud je model null, hledat pouze v mapModelu
+		if (owner.getMapDesignWinManager().getOspfModel() != null) {
+		    r = owner.getMapDesignWinManager().getOspfModel().getRouterByIp(rv.getInfo());
+		    // vyhledavani ve stubs
+		    for (StubLink sl : r.getStubs()) {
+			if (sl.getLinkID().toUpperCase().contains(name.toUpperCase()) ||
+				IpCalculator.networkContains(sl.getLinkID(), sl.getMask(), name)) {
+			    b = true;
 			}
-			// vyhledavani v external lsa
-			for (ExternalLSA el : r.getExternalLsa()) {
-			    if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
-				    IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
-				b = true;
-			    }
+		    }
+		    // vyhledavani v external lsa
+		    for (ExternalLSA el : r.getExternalLsa()) {
+			if (el.getNetwork().toUpperCase().contains(name.toUpperCase()) ||
+				IpCalculator.networkContains(el.getNetwork(), el.getMask(), name)) {
+			    b = true;
 			}
 		    }
 		}
-		rv.setFounded(b);
-		vv.getPickedVertexState().pick(rv, b);
 	    }
+	    rv.setFounded(b);
+	    vv.getPickedVertexState().pick(rv, b);
 	}
     }
 
