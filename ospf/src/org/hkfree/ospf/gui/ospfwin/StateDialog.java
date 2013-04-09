@@ -120,7 +120,7 @@ public class StateDialog extends JDialog {
     /**
      * Uzavře logovací dialog pokud je v nastavení definováno automatické zavírání
      */
-    public void closeIfCloseable() {
+    public void closeIfCan() {
 	if (owner.getManager().getSettings().closeLogDialog) {
 	    this.setVisible(false);
 	}

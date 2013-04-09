@@ -147,7 +147,7 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	    manager.addLLTDtoOspfModels();
 	    manager.getOwner().getStateDialog().operationSucceeded();
 	    // zavreni dialogu s vypisem logu o nacteni dat
-	    ((OspfWin) getOwner()).getStateDialog().closeIfCloseable();
+	    ((OspfWin) getOwner()).getStateDialog().closeIfCan();
 	    // aktualizace tabulky s vypisem nactenych lltd modelu
 	    actualizeTable();
 	}

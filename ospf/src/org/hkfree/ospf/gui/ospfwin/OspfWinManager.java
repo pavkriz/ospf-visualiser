@@ -273,7 +273,7 @@ public class OspfWinManager {
 	    getOwner().getStateDialog().operationSucceeded();
 	}
 	// zavreni dialogu s vypisem logu o nacteni dat
-	getOwner().getStateDialog().closeIfCloseable();
+	getOwner().getStateDialog().closeIfCan();
     }
 
 
@@ -769,14 +769,14 @@ public class OspfWinManager {
 	try {
 	    LLTDLoader.loadLLTDData(lltdModels);
 	} catch (IOException e) {
-	    e.printStackTrace();
 	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
+	    e.printStackTrace();
 	} catch (ParserConfigurationException e) {
-	    e.printStackTrace();
 	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
+	    e.printStackTrace();
 	} catch (SAXException e) {
-	    e.printStackTrace();
 	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
+	    e.printStackTrace();
 	}
     }
 
@@ -786,19 +786,32 @@ public class OspfWinManager {
      * zda dany routeru propaguje IP adresu
      */
     public void addLLTDtoOspfModels() {
-	// prochazeni vsech OSPF modelu
+	// vymazani soucasnych lltd modelu
 	for (OspfModel ospf : ospfModels) {
-	    // prochazeni vsech routeru daneho ospf modelu
 	    for (Router r : ospf.getRouters()) {
 		r.setLltdModels(new HashSet<LLTDModel>());
-		// prochazeni vsech nactenych lltd modelu
-		for (LLTDModel m : this.lltdModels) {
-		    // prochazeni ip adres z traceroutu
-		    for (String ip : m.getTraceroute()) {
+	    }
+	}
+	boolean zarazeno = false;
+	// prochazeni vsech OSPF modelu
+	for (OspfModel ospf : ospfModels) {
+	    // prochazeni vsech nactenych lltd modelu
+	    for (LLTDModel m : this.lltdModels) {
+		zarazeno = false;
+		// prochazeni ip adres z traceroutu
+		for (String ip : m.getTraceroute()) {
+		    // prochazeni vsech routeru daneho ospf modelu
+		    for (Router r : ospf.getRouters()) {
 			// pokud ip z traceroutu je propagovana routerem, lltd model se prida
 			if (IpCalculator.containsRouterSubnet(r, ip)) {
 			    r.getLltdModels().add(m);
+			    zarazeno = true;
+			    // System.out.println("zarazeno " + ip + " " + r.getName() + " " + m.getPublicIP());
+			    break;
 			}
+		    }
+		    if (zarazeno) {
+			break;
 		    }
 		}
 	    }

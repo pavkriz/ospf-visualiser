@@ -34,6 +34,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		}
 	    });
     private Rectangle2D innerBounds = new Rectangle2D.Double();
+    private static double KONSTANTA = 10d;
 
 
     // private boolean checked = false;
@@ -117,16 +118,13 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 
 
     protected synchronized void calcPositions(V v) {
-	double velocity_maximum = 0.05; // rychlost
-	double friction = 0.0005; // treni
-	double konst = 10.0; // 10
-	velocity_maximum *= konst;
-	friction *= konst;
+	double velocity_maximum = 0.05 * KONSTANTA; // rychlost
+	double friction = 0.0005 * KONSTANTA; // treni
 	JSVertexData fvd = jsVertexData.get(v);
 	if (fvd == null)
 	    return;
-	fvd.forceVelocityX += (fvd.forceCoulombX + fvd.forceHarmonicX) / konst; // *0.1
-	fvd.forceVelocityY += (fvd.forceCoulombY + fvd.forceHarmonicY) / konst;
+	fvd.forceVelocityX += getVelocity(fvd.forceCoulombX, fvd.forceHarmonicX);
+	fvd.forceVelocityY += getVelocity(fvd.forceCoulombY, fvd.forceHarmonicY);
 	// velocity
 	if (fvd.forceVelocityX > velocity_maximum) {
 	    fvd.forceVelocityX = velocity_maximum;
@@ -154,13 +152,8 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	    fvd.forceVelocityY += friction;
 	}
 	Point2D p = transform(v);
-	double newX = p.getX() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityX * konst));
-	double newY = p.getY() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityY * konst));
-	//fvd.forceVelocityX = fvd.forceVelocityX * konst;
-	//fvd.forceVelocityY = fvd.forceVelocityY * konst;
-	// double newX = p.getX() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityX * konst));
-	// double newY = p.getY() + Math.max(-100 * konst, Math.min(100 * konst, fvd.forceVelocityY * konst));
-	// System.out.println(fvd.forceVelocityX);
+	double newX = getCoord(p.getX(), fvd.forceVelocityX);
+	double newY = getCoord(p.getY(), fvd.forceVelocityY);
 	// zajisti ze vrchol nebude mimo platno layoutu
 	newX = Math.max(innerBounds.getMinX(), Math.min(newX, innerBounds.getMaxX()));
 	newY = Math.max(innerBounds.getMinY(), Math.min(newY, innerBounds.getMaxY()));
@@ -188,13 +181,11 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		double yDelta = p1.getY() - p2.getY();
 		double radius = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
 		if (radius != 0) {
-		    double vec_x = -(xDelta / radius);
-		    double vec_y = -(yDelta / radius);
-		    fvd1.forceHarmonicX += (vec_x * radius * radius / 100);
-		    fvd1.forceHarmonicY += (vec_y * radius * radius / 100);
+		    fvd1.forceHarmonicX += getForceHarmonic(xDelta, radius);
+		    fvd1.forceHarmonicY += getForceHarmonic(yDelta, radius);
 		} else {
-		    fvd1.forceHarmonicX += (Math.random() - 0.5);
-		    fvd1.forceHarmonicY += (Math.random() - 0.5);
+		    fvd1.forceHarmonicX += getRandom();
+		    fvd1.forceHarmonicY += getRandom();
 		}
 	    }
 	}
@@ -222,19 +213,44 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		    double yDelta = p1.getY() - p2.getY();
 		    double radius = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
 		    if (radius != 0) {
-			double vec_x = xDelta / radius;
-			double vec_y = yDelta / radius;
-			fvd1.forceCoulombX += (0.01 * vec_x / radius);
-			fvd1.forceCoulombY += (0.01 * vec_y / radius);
+			fvd1.forceCoulombX += getForceCoulomb(xDelta, radius);
+			fvd1.forceCoulombY += getForceCoulomb(yDelta, radius);
 		    } else {
-			fvd1.forceCoulombX += (Math.random() - 0.5);
-			fvd1.forceCoulombY += (Math.random() - 0.5);
+			fvd1.forceCoulombX += getRandom();
+			fvd1.forceCoulombY += getRandom();
 		    }
 		}
 	    }
 	} catch (ConcurrentModificationException cme) {
 	    calcRepulsion(v1);
 	}
+    }
+
+
+    private double getCoord(double coord, double fv) {
+	return coord + Math.max(-100 * KONSTANTA, Math.min(100 * KONSTANTA, fv * KONSTANTA));
+    }
+
+
+    private double getVelocity(double fc, double fh) {
+	return fc + fh / KONSTANTA;
+    }
+
+
+    private double getForceHarmonic(double delta, double radius) {
+	double vec = -delta / radius;
+	return vec * radius * radius / 100;
+    }
+
+
+    private double getForceCoulomb(double delta, double radius) {
+	double vec = delta / radius;
+	return vec / radius / 100;
+    }
+
+
+    private double getRandom() {
+	return Math.random() - 0.5;
     }
 
 
@@ -246,12 +262,12 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     @Override
     public boolean done() {
 	if (currentIteration > maxIterations) {// || temperature < 1.0 / max_dimension) {
-	// if (!checked)
-	// {
-	// // System.out.println("current iteration: " + currentIteration);
-	// // System.out.println("temperature: " + temperature);
-	// checked = true;
-	// }
+	    // if (!checked)
+	    // {
+	    // // System.out.println("current iteration: " + currentIteration);
+	    // // System.out.println("temperature: " + temperature);
+	    // checked = true;
+	    // }
 	    return true;
 	}
 	return false;
