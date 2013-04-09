@@ -1,4 +1,8 @@
 *27.3.2013*
+  * opravy ikonek
+  * oprava zarazeni lltd modelu k routerum
+
+*27.3.2013*
   * opravy zobrazeni LLTD modelu v grafu
   * upravy tooltipu v mape
 
