@@ -44,7 +44,7 @@ public abstract class Constants {
     public static int LAYOUT_REPULSION_RANGE = 120;
     /** SPRING LAYOUT - */
     public static double LAYOUT_FORCE_MULTIPLIER = 0.85;
-    /** velikost layoutu */
+    /** velikost layoutu 2000x2000 */
     public static Dimension LAYOUT_SIZE = new Dimension(2000, 2000);
     // konstanty pro vyber zdroje pro nacteni dat
     public static final int FROM_DATE_TO_DATE = 0;
