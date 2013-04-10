@@ -503,7 +503,7 @@ public class OspfDataLoadInitiator {
 	    winManager.getOwner().getStateDialog().operationSucceeded();
 	    // nacteni nazvu routeru
 	    winManager.getOwner().getStateDialog().addText(rb.getString("stated.3"));
-	    loadNames(model);
+//	    loadNames(model);
 	    winManager.getOwner().getStateDialog().operationSucceeded();
 	    // nalezeni a prirazeni suffixu z nazvu routeru
 	    winManager.getOwner().getStateDialog().addText(rb.getString("stated.9"));
@@ -537,9 +537,6 @@ public class OspfDataLoadInitiator {
 	switch (settings.getDataSourceType()) {
 	    case Constants.TELNET:
 		rdns = new ReverseDNS(settings.telnetRDNSServer);
-		break;
-	    case Constants.CGI:
-		rdns = new ReverseDNS(settings.cgiRDNSServer);
 		break;
 	}
 	IPEnumeration ipe = new IPEnumeration(ips);

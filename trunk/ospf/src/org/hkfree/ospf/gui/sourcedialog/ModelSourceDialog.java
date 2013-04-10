@@ -75,7 +75,6 @@ public class ModelSourceDialog extends JDialog {
     private JPanel remoteDateToDatePanel = null;
     private JPanel cgiSourcePanel = null;
     private JTextField tfCgiUrl = new JTextField();
-    private JTextField tfCgiRDNS = new JTextField();
     private JTextField tfTelnetUrl = new JTextField();
     private JTextField tfTelnetPortIPv4 = new JTextField();
     private JTextField tfTelnetPortIPv6 = new JTextField();
@@ -123,7 +122,6 @@ public class ModelSourceDialog extends JDialog {
 	this.tfZIPRemoteAddressFieldPath.setText(settings.modelZipRemotePathBetween);
 	this.tfTime.setText(settings.modelTimeBetween);
 	this.tfCgiUrl.setText(settings.cgiUrl);
-	this.tfCgiRDNS.setText(settings.cgiRDNSServer);
 	this.countDays = settings.countDaysBack;
     }
 
@@ -192,8 +190,6 @@ public class ModelSourceDialog extends JDialog {
 	cgiSourcePanel = new JPanel();
 	JLabel lbl = new JLabel(rb.getString("ssd.1") + ":");
 	tfCgiUrl.setMaximumSize(new Dimension(500, 25));
-	JLabel lbl2 = new JLabel(rb.getString("ssd.15") + ":");
-	tfCgiRDNS.setMaximumSize(new Dimension(300, 25));
 	GroupLayout l = new GroupLayout(cgiSourcePanel);
 	cgiSourcePanel.setLayout(l);
 	l.setAutoCreateContainerGaps(true);
@@ -201,14 +197,10 @@ public class ModelSourceDialog extends JDialog {
 	l.setHorizontalGroup(l.createSequentialGroup()
 		.addGroup(l.createParallelGroup()
 			.addComponent(lbl)
-			.addComponent(tfCgiUrl)
-			.addComponent(lbl2)
-			.addComponent(tfCgiRDNS)));
+			.addComponent(tfCgiUrl)));
 	l.setVerticalGroup(l.createSequentialGroup()
 		.addComponent(lbl)
-		.addComponent(tfCgiUrl)
-		.addComponent(lbl2)
-		.addComponent(tfCgiRDNS));
+		.addComponent(tfCgiUrl));
     }
 
 
@@ -750,7 +742,6 @@ public class ModelSourceDialog extends JDialog {
 	settings.clearFilePaths();
 	settings.addFilePath("ospf_data_network");
 	settings.cgiUrl = tfCgiUrl.getText();
-	settings.cgiRDNSServer = tfCgiRDNS.getText();
 	settings.setDataSourceType(Constants.CGI);
 	loadDialogConfirmed = true;
     }
