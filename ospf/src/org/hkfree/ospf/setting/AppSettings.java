@@ -44,8 +44,7 @@ public class AppSettings {
     public int countDaysBack; // =7
     public String fromDateToDateLoadTo; // =MAP_PANEL
     public boolean closeLogDialog; // =true
-    public String cgiUrl; // =
-    public String cgiRDNSServer; // =lab.hkfree.org
+    public String cgiUrl; // =http://lide.hkfree.org/~pavkriz/hkfree/ospf/ospf_database_hive.php
     public EDGE_SHAPER edgeShaper; // =0
 
 

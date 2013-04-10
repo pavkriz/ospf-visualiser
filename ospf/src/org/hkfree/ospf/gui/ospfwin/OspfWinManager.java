@@ -226,7 +226,7 @@ public class OspfWinManager {
 	}
 	getOwner().getStateDialog().addText(rb.getString("stated.5"));
 	// pridani novych modelu do zalozek
-	if (settings.fromDateToDateLoadTo.equals(AppSettings.MAP_PANEL)) {
+	if (settings.loadDataTypIndex != 0 || settings.fromDateToDateLoadTo.equals(AppSettings.MAP_PANEL)) {
 	    for (OspfModel om : newModels) {
 		ospfWin.addAndFillModelTabbedPane(om.getModelName(), om);
 	    }
@@ -235,7 +235,7 @@ public class OspfWinManager {
 	    actualizeModesAndStatusBarAndBySettings();
 	}
 	// otevreni okna stavu site s nactenymi modely
-	else if (settings.fromDateToDateLoadTo.equals(AppSettings.NET_STATE_WINDOW)) {
+	else if (settings.loadDataTypIndex == 0 && settings.fromDateToDateLoadTo.equals(AppSettings.NET_STATE_WINDOW)) {
 	    if (newModels.size() > 1) {
 		if (newModels.size() > 1) {
 		    OspfChangeModel ospfChangeModel = new OspfChangeModel();

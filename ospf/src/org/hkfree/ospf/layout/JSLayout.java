@@ -227,8 +227,10 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     }
 
 
+    private static int K2 = 100;
+    private static int K3 = 100;
     private double getCoord(double coord, double fv) {
-	return coord + Math.max(-100 * KONSTANTA, Math.min(100 * KONSTANTA, fv * KONSTANTA));
+	return coord + Math.max(-K2 * KONSTANTA, Math.min(K2 * KONSTANTA, fv * KONSTANTA));
     }
 
 
@@ -239,13 +241,13 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 
     private double getForceHarmonic(double delta, double radius) {
 	double vec = -delta / radius;
-	return vec * radius * radius / 100;
+	return vec * radius * radius / K3;
     }
 
 
     private double getForceCoulomb(double delta, double radius) {
 	double vec = delta / radius;
-	return vec / radius / 100;
+	return vec / radius / K3;
     }
 
 
