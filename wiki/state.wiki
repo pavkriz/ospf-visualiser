@@ -1,3 +1,6 @@
+*10.4.2013*
+  * odstraneni rDNS z CGI, nacitani name a geo z obsahu stazenych dat
+
 *9.4.2013*
   * opravy ikonek
   * oprava zarazeni lltd modelu k routerum
