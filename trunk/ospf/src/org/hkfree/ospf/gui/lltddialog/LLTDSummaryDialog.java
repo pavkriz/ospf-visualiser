@@ -14,8 +14,10 @@ import javax.swing.Action;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -38,6 +40,7 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
     private JButton btnLoadData = new JButton();
     private List<LLTDModel> lltdModels = null;
     private JTable table = null;
+    private JTextField tfUrl = null;
 
 
     public LLTDSummaryDialog(Frame frame, OspfWinManager ospfWinManager, List<LLTDModel> lltdModels) {
@@ -68,6 +71,8 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	table.setFillsViewportHeight(true);
 	table.setAutoCreateRowSorter(true);
 	JScrollPane scrollPane = new JScrollPane(table);
+	tfUrl = new JTextField(manager.getSettings().lltdUrl);
+	JLabel l = new JLabel(rb.getString("lltdsd.5"));
 	// pridani komponent do dialogu
 	Container c = this.getContentPane();
 	GroupLayout layout = new GroupLayout(c);
@@ -76,13 +81,17 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
 	layout.setAutoCreateGaps(true);
 	layout.setHorizontalGroup(layout.createSequentialGroup()
 		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-			.addComponent(scrollPane)
 			.addGroup(layout.createSequentialGroup()
-				.addComponent(btnLoadData))));
-	layout.setVerticalGroup(layout.createSequentialGroup()
-		.addComponent(scrollPane)
-		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(l)
+				.addComponent(tfUrl))
+			.addComponent(scrollPane)
 			.addComponent(btnLoadData)));
+	layout.setVerticalGroup(layout.createSequentialGroup()
+		.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			.addComponent(l)
+			.addComponent(tfUrl))
+		.addComponent(scrollPane)
+		.addComponent(btnLoadData));
     }
 
 
@@ -137,6 +146,7 @@ public class LLTDSummaryDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 	if (e.getSource() == btnLoadData) {
+	    manager.getSettings().lltdUrl = tfUrl.getText();
 	    // stazeni dat
 	    manager.getOwner().getStateDialog().init();
 	    manager.getOwner().getStateDialog().addText(rb.getString("stated.11"));

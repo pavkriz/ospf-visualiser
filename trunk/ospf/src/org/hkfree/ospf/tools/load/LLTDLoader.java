@@ -16,7 +16,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.hkfree.ospf.model.Constants;
 import org.hkfree.ospf.model.lltd.Device;
 import org.hkfree.ospf.model.lltd.LLTDModel;
 import org.hkfree.ospf.model.lltd.Relation;
@@ -37,16 +36,17 @@ public class LLTDLoader {
     /**
      * Stažení a načteni LLTD dat
      * @param lltdModels
-     * @param lltdModels
+     * @param urlLltdData
      * @throws IOException
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public static void loadLLTDData(List<LLTDModel> lltdModels) throws IOException, ParserConfigurationException,
+    public static void loadLLTDData(List<LLTDModel> lltdModels, String urlLltdData) throws IOException,
+	    ParserConfigurationException,
 	    SAXException {
 	List<LLTDModel> result = new ArrayList<LLTDModel>();
 	// stazeni dat
-	URL url = new URL(Constants.URL_LLTD_DATA);
+	URL url = new URL(urlLltdData);
 	URLConnection conn = url.openConnection();
 	BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	String line;

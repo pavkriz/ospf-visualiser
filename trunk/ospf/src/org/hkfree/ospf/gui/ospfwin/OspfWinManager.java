@@ -767,7 +767,8 @@ public class OspfWinManager {
      */
     public void loadLLTDData() {
 	try {
-	    LLTDLoader.loadLLTDData(lltdModels);
+	    LLTDLoader.loadLLTDData(lltdModels, settings.lltdUrl);
+	    settingsManager.saveSettings();
 	} catch (IOException e) {
 	    ospfWin.showErrorMessage(rb.getString("error"), e.getMessage());
 	    e.printStackTrace();

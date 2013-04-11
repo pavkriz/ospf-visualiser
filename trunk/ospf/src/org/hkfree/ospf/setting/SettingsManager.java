@@ -125,6 +125,9 @@ public class SettingsManager {
 	if (propUser.getProperty("cgiUrl") == null) {
 	    propUser.setProperty("cgiUrl", propDef.getProperty("cgiUrl"));
 	}
+	if (propUser.getProperty("lltdUrl") == null) {
+	    propUser.setProperty("lltdUrl", propDef.getProperty("lltdUrl"));
+	}
 	if (propUser.getProperty("cgiRDNSServer") == null) {
 	    propUser.setProperty("cgiRDNSServer", propDef.getProperty("cgiRDNSServer"));
 	}
@@ -192,6 +195,7 @@ public class SettingsManager {
 	settings.fromDateToDateLoadTo = prop.getProperty("fromDateToDateLoadTo");
 	settings.closeLogDialog = Boolean.parseBoolean(prop.getProperty("closeLogDialog"));
 	settings.cgiUrl = prop.getProperty("cgiUrl");
+	settings.lltdUrl = prop.getProperty("lltdUrl");
 	settings.edgeShaper = Constants.EDGE_SHAPER.valueOf(prop.getProperty("edgeShaper"));
     }
 
@@ -225,6 +229,7 @@ public class SettingsManager {
 	prop.setProperty("fromDateToDateLoadTo", settings.fromDateToDateLoadTo);
 	prop.setProperty("closeLogDialog", String.valueOf(settings.closeLogDialog));
 	prop.setProperty("cgiUrl", settings.cgiUrl);
+	prop.setProperty("lltdUrl", settings.lltdUrl);
 	prop.setProperty("edgeShaper", settings.edgeShaper.toString());
 	prop.setProperty("appVersion", Constants.APP_VERSION);
 	prop.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
