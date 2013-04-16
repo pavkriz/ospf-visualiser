@@ -36,7 +36,7 @@ public class TipsDialog extends JDialog implements ActionListener {
 	this.lng = lng;
 	createGUI(okno);
 	this.setTitle(rb.getString("tips.title"));
-	this.setSize(new Dimension(500, 600));
+	this.setSize(new Dimension(500, 660));
 	this.setLocationRelativeTo(null);
     }
 
