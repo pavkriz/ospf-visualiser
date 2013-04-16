@@ -35,6 +35,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
     private JComboBox cbLangs = null;
     private JComboBox cbEdgeShaper = null;
     private JCheckBox chbCloseLogDialog = null;
+    private JCheckBox chbShowAddedModel = null;
     private JButton btnSave = new JButton();
     private JButton btnStorno = new JButton();
 
@@ -85,6 +86,9 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	// zavreni logovaciho dialogu po odkonceni operace
 	chbCloseLogDialog = new JCheckBox(rb.getString("sd.closeLogDialog"));
 	chbCloseLogDialog.setSelected(settings.closeLogDialog);
+	// aktivovani nove pridaneho modelu (po nacteni se v roletce vybere a zobrazi)
+	chbShowAddedModel = new JCheckBox(rb.getString("sd.3"));
+	chbShowAddedModel.setSelected(settings.showAddedModel);
 	// labely
 	JLabel l1 = new JLabel(rb.getString("sd.1"));
 	JLabel l2 = new JLabel(rb.getString("sd.2"));
@@ -105,7 +109,8 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	                .addGroup(layout.createSequentialGroup()
 	                        .addComponent(l2)
 	                        .addComponent(cbEdgeShaper))
-	                .addComponent(chbCloseLogDialog)
+	                .addComponent(chbCloseLogDialog, Alignment.LEADING)
+	                .addComponent(chbShowAddedModel, Alignment.LEADING)
 	                .addGroup(layout.createSequentialGroup()
 	                        .addComponent(btnSave, 100, 100, 100)
 	                        .addComponent(btnStorno, 100, 100, 100))));
@@ -117,6 +122,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	                .addComponent(l2)
 	                .addComponent(cbEdgeShaper))
 	        .addComponent(chbCloseLogDialog)
+	        .addComponent(chbShowAddedModel)
 	        .addGap(20)
 	        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 	                .addComponent(btnStorno)
@@ -150,6 +156,7 @@ public class SettingsDialog extends JDialog implements ActionListener {
 	    settings.language = (LANGUAGE.values()[cbLangs.getSelectedIndex()]);
 	    settings.edgeShaper = (EDGE_SHAPER.values()[cbEdgeShaper.getSelectedIndex()]);
 	    settings.closeLogDialog = chbCloseLogDialog.isSelected();
+	    settings.showAddedModel = chbShowAddedModel.isSelected();
 	    manager.saveSettings();
 	    manager.actualizeBySettings();
 	    this.setVisible(false);

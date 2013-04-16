@@ -224,6 +224,10 @@ public class OspfWin extends JFrame {
 	    cbModels.setSelectedIndex(0);
 	    cbModels.setVisible(true);
 	}
+	// zobrazi se nove pridany model, pokud je tak nastaveno
+	if (manager.getSettings().showAddedModel) {
+	    cbModels.setSelectedIndex(cbModels.getItemCount()-1);
+	}
     }
 
 
