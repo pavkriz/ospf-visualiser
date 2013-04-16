@@ -1,3 +1,7 @@
+*16.4.2013*
+  * oprava tip dialogu
+  * pridana moznost zobrazit nove pridany model v nastaveni
+
 *11.4.2013*
   * oprava tlacitka pro odebirani zaznamu v nacteni dat pres rozmezi datumu
   * zruseni konstantky lltd_url, adresa lltd dat nyni ve vstupnim poli
