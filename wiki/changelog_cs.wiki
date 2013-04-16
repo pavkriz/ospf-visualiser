@@ -9,6 +9,22 @@ Postup:
 
 = Verze =
 
+== ospf3.0.4 (16.4.2013) ==
+  * SVG export připůsoben tak, aby jej bylo možné měnit přes CSS
+  * úpravy popisků v mapě, tooltipů
+  * přidána možnost zobrazit posledně přidaný model ihned po jeho načtení
+  * načítání dle časového rozmezí
+    * oprava mazání, nyní maže všechny označené záznamy
+  * načítání CGI
+    * zrušena adresa rDNS serveru
+    * načítání názvů a geo souřadnic
+  * LLTD
+    * aplikace umožňuje zobrazit data získaná v koncové síti pomocí LLTD protokolu,
+tyto data dokáže přiřadit k routeru, který podsíť propaguje
+    * v mapě lze po kliknutí na routeru zobrazit podsítě, které propaguje
+    * adresu LLTD dat lze zadat
+
+
 == ospf3.0.3 (5.1.2013) ==
 <font color="red"><b>AKTUALIZACE:</b> Pokud při prvním spuštění nastane chyba, pomůže smazání složky ".ospf-visualiser" z domovského adresáře</font>
   * přidání tlačítek zoom +/- do okna na status bar
