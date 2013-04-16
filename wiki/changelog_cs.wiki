@@ -17,11 +17,10 @@ Postup:
     * oprava mazání, nyní maže všechny označené záznamy
   * načítání CGI
     * zrušena adresa rDNS serveru
-    * načítání názvů a geo souřadnic
+    * načítání názvů a geo souřadnic přímo z CGI vstupu
   * LLTD
     * aplikace umožňuje zobrazit data získaná v koncové síti pomocí LLTD protokolu, tyto data dokáže přiřadit k routeru, který podsíť propaguje
     * v mapě lze po kliknutí na routeru zobrazit podsítě, které propaguje
-    * adresu LLTD dat lze zadat
 
 
 == ospf3.0.3 (5.1.2013) ==
