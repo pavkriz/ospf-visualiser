@@ -19,8 +19,7 @@ Postup:
     * zrušena adresa rDNS serveru
     * načítání názvů a geo souřadnic
   * LLTD
-    * aplikace umožňuje zobrazit data získaná v koncové síti pomocí LLTD protokolu,
-tyto data dokáže přiřadit k routeru, který podsíť propaguje
+    * aplikace umožňuje zobrazit data získaná v koncové síti pomocí LLTD protokolu, tyto data dokáže přiřadit k routeru, který podsíť propaguje
     * v mapě lze po kliknutí na routeru zobrazit podsítě, které propaguje
     * adresu LLTD dat lze zadat
 
