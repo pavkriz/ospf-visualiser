@@ -9,6 +9,18 @@ How to:
 = Version =
 
 == ospf3.0.4 (16.4.2013) ==
+  * SVG export with CSS
+  * modify labels and tooltips in map
+  * display last added model after loading (in settings)
+  * load data by date interval
+    * fixes delete, it deletes all marked now
+  * loading via CGI
+    * remove address of rDNS server
+    * loading names and geo coordinates from CGI
+  * LLTD
+    * application can display data from subnet via LLTD protocol
+    * LLTD models added into router which propagets subnet
+    * you can display LLTD model after click on routers in map
 
 == ospf3.0.3 (5.1.2013) ==
 
