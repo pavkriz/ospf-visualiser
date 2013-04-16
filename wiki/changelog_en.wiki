@@ -23,6 +23,7 @@ How to:
     * you can display LLTD model after click on routers in map
 
 == ospf3.0.3 (5.1.2013) ==
+<font color="red"><b>ATTENTION:</b> If an error ocurcurs when you first start new version, delete folder ".ospf-visualiser" from your home dir.</font>
 
 == ospf3.0.2 (20.9.2012) ==
   * completely changed GUI - one window plus net state window
