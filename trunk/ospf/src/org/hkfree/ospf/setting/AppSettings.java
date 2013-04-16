@@ -47,6 +47,7 @@ public class AppSettings {
     public String cgiUrl; // =http://lide.hkfree.org/~pavkriz/hkfree/ospf/ospf_database_hive.php
     public EDGE_SHAPER edgeShaper; // =0
     public String lltdUrl; // =http://ospf-visualiser.wz.cz/
+    public boolean showAddedModel; // =false
 
 
     /**

@@ -134,6 +134,9 @@ public class SettingsManager {
 	if (propUser.getProperty("edgeShaper") == null) {
 	    propUser.setProperty("edgeShaper", propDef.getProperty("edgeShaper"));
 	}
+	if (propUser.getProperty("showAddedModel") == null) {
+	    propUser.setProperty("showAddedModel", propDef.getProperty("showAddedModel"));
+	}
 	propUser.setProperty("appVersion", Constants.APP_VERSION);
 	propUser.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }
@@ -197,6 +200,7 @@ public class SettingsManager {
 	settings.cgiUrl = prop.getProperty("cgiUrl");
 	settings.lltdUrl = prop.getProperty("lltdUrl");
 	settings.edgeShaper = Constants.EDGE_SHAPER.valueOf(prop.getProperty("edgeShaper"));
+	settings.showAddedModel = Boolean.parseBoolean(prop.getProperty("showAddedModel"));
     }
 
 
@@ -231,6 +235,7 @@ public class SettingsManager {
 	prop.setProperty("cgiUrl", settings.cgiUrl);
 	prop.setProperty("lltdUrl", settings.lltdUrl);
 	prop.setProperty("edgeShaper", settings.edgeShaper.toString());
+	prop.setProperty("showAddedModel", String.valueOf(settings.showAddedModel));
 	prop.setProperty("appVersion", Constants.APP_VERSION);
 	prop.store(new FileOutputStream(pathFile), Constants.SETTINGS_COMMENT);
     }
