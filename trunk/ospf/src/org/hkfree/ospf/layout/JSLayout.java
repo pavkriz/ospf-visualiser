@@ -23,7 +23,6 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeContext {
 
-    private double temperature;
     private int currentIteration;
     private int maxIterations = 700;
     private Map<V, JSVertexData> jsVertexData =
@@ -34,7 +33,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		}
 	    });
     private Rectangle2D innerBounds = new Rectangle2D.Double();
-    private static double KONSTANTA = 10d;
+    private static double MULT_CONST = 10d;
 
 
     // private boolean checked = false;
@@ -76,7 +75,6 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	Dimension d = getSize();
 	if (graph != null && d != null) {
 	    currentIteration = 0;
-	    temperature = d.getWidth() / 10;
 	}
     }
 
@@ -108,18 +106,17 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		for (V v : getGraph().getVertices()) {
 		    if (isLocked(v))
 			continue;
-		    calcPositions(v);
+		    calcPosition(v);
 		}
 		break;
 	    } catch (ConcurrentModificationException cme) {}
 	}
-	cool();
     }
 
 
-    protected synchronized void calcPositions(V v) {
-	double velocity_maximum = 0.05 * KONSTANTA; // rychlost
-	double friction = 0.0005 * KONSTANTA; // treni
+    protected synchronized void calcPosition(V v) {
+	double velocity_maximum = 0.05 * MULT_CONST; // rychlost
+	double friction = 0.0005 * MULT_CONST; // treni
 	JSVertexData fvd = jsVertexData.get(v);
 	if (fvd == null)
 	    return;
@@ -230,12 +227,12 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     private static int K2 = 100;
     private static int K3 = 100;
     private double getCoord(double coord, double fv) {
-	return coord + Math.max(-K2 * KONSTANTA, Math.min(K2 * KONSTANTA, fv * KONSTANTA));
+	return coord + Math.max(-K2 * MULT_CONST, Math.min(K2 * MULT_CONST, fv * MULT_CONST));
     }
 
 
     private double getVelocity(double fc, double fh) {
-	return fc + fh / KONSTANTA;
+	return fc + fh / MULT_CONST;
     }
 
 
@@ -253,11 +250,6 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 
     private double getRandom() {
 	return Math.random() - 0.5;
-    }
-
-
-    private void cool() {
-	temperature *= (1.0 - currentIteration / (double) maxIterations);
     }
 
 
