@@ -1,3 +1,9 @@
+*27.5.2013*
+  * pridani ikony JS layout na toolbar
+  * pri zmene rozvrhovani nejprve zastaveni aktualniho 
+  * uprava JS layoutu
+  * cisteni bordel v kodech
+
 *25.5.2013*
   * shortkey ctrl L - nacist ospf model
   * BUG - rozmistovani po zobrazeni mapy od centralniho routeru
