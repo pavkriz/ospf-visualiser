@@ -183,14 +183,18 @@ public class MapGraphComponent extends JComponent {
 	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
 		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
+	
 	layout.initialize();
-	// vv.getModel().getRelaxer().setSleepTime(500);
 	vv.getModel().getRelaxer().relax();
+
+	//pro testovani JS layout
+//	layouting(LAYOUT.LAYOUT_JS_START);
     }
 
 
     /**
      * Zobrazí graf pouze zadané části sítě
+     * prakticky pouze odebere rotuery krome centralniho
      * @param centerVertex
      * @param depth
      */
@@ -198,10 +202,7 @@ public class MapGraphComponent extends JComponent {
 	for (IVertex v : mapModel.getVertices()) {
 	    graph.removeVertex(v);
 	}
-	graph.addVertex(centerVertex);
-	((FRLayout<IVertex, IEdge>) layout).setLocation(centerVertex, vv.getWidth() / 2, vv.getHeight() / 2);
-	layout.lock(centerVertex, true);
-	((RouterVertex) centerVertex).setPermanentlyDisplayed(true);
+	
 	List<IVertex> previousStepVertexes = new ArrayList<IVertex>();
 	List<IVertex> newAddedVertexes = new ArrayList<IVertex>();
 	previousStepVertexes.add(centerVertex);
@@ -218,14 +219,7 @@ public class MapGraphComponent extends JComponent {
 		}
 	    }
 	}
-	vv.repaint();
-	scaler.scale(vv, zoomValue, vv.getCenter());
-	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
-	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
-		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
-	layout.initialize();
-	vv.getModel().getRelaxer().setSleepTime(50);
-	vv.getModel().getRelaxer().relax();
+	graph.addVertex(centerVertex);
     }
 
 
@@ -1064,6 +1058,8 @@ public class MapGraphComponent extends JComponent {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void layouting(LAYOUT mode) {
+	//nejprve se zastavi aktualni rozmistovani
+	vv.getModel().getRelaxer().stop();
 	try {
 	    Object[] constructorArgs = { graph };
 	    Class<? extends Layout<IVertex, IEdge>> layoutNew = null;
@@ -1071,7 +1067,6 @@ public class MapGraphComponent extends JComponent {
 	    Object o = null;
 	    Layout<IVertex, IEdge> l = null;
 	    LayoutTransition<IVertex, IEdge> lt = null;
-	    Animator animator = null;
 	    switch (mode) {
 		case LAYOUT_FR:
 		    layoutNew = (Class<? extends Layout<IVertex, IEdge>>) FRLayout.class;
@@ -1084,8 +1079,7 @@ public class MapGraphComponent extends JComponent {
 		    ((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
 		    layout.setSize(Constants.LAYOUT_SIZE);
 		    lt = new LayoutTransition<IVertex, IEdge>(vv, vv.getGraphLayout(), layout);
-		    animator = new Animator(lt);
-		    animator.start();
+		    new Animator(lt).start();
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		    vv.repaint();
 		    break;
@@ -1103,8 +1097,7 @@ public class MapGraphComponent extends JComponent {
 			((SpringLayout) l).setForceMultiplier(Constants.LAYOUT_FORCE_MULTIPLIER);
 			l.setSize(Constants.LAYOUT_SIZE);
 			lt = new LayoutTransition<IVertex, IEdge>(vv, vv.getGraphLayout(), l);
-			animator = new Animator(lt);
-			animator.start();
+			new Animator(lt).start();
 			vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 			vv.repaint();
 			layout = l;
@@ -1124,8 +1117,7 @@ public class MapGraphComponent extends JComponent {
 		    layout.setInitializer(vv.getGraphLayout());
 		    layout.setSize(Constants.LAYOUT_SIZE);
 		    lt = new LayoutTransition<IVertex, IEdge>(vv, vv.getGraphLayout(), layout);
-		    animator = new Animator(lt);
-		    animator.start();
+		    new Animator(lt).start();
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		    vv.repaint();
 		    break;

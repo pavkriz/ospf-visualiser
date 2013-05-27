@@ -27,7 +27,6 @@ public class MapManager {
     private MapModel mapModel;
     private OspfModel ospfModel = null;
     private MapGraphComponent graphComponent = null;
-    private boolean processWholeModel = true;
     private Router centerRouter = null;
     private int neighboursDepth = 0;
     private Map<RouterVertex, Point2D> routerVertexPositions = null;
@@ -101,8 +100,7 @@ public class MapManager {
      * @param centerRouter
      * @param neighboursDepth
      */
-    public void setLoadSettings(boolean processWholeModel, Router centerRouter, int neighboursDepth) {
-	this.processWholeModel = processWholeModel;
+    public void setLoadSettings(Router centerRouter, int neighboursDepth) {
 	this.centerRouter = centerRouter;
 	this.neighboursDepth = neighboursDepth;
     }
@@ -115,20 +113,16 @@ public class MapManager {
 	if (mapModel == null) {
 	    mapModel = ospfModel.getConvertedWholeModelToMapaModel();
 	}
-	if (mapModel.hasMoreRouterWithGPSPositions()) {
-	    // ((MapDesignWin) owner).getMDWActionListener().getActionGPS().setEnabled(true);
-	    // ((MapDesignWin) owner).getMDWActionListener().getActionGPSAll().setEnabled(true);
-	}
 	graphComponent.setMapModel(mapModel);
-	if (!processWholeModel && centerRouter != null) {
+	if (centerRouter == null) {
+	    graphComponent.createWholeGraph();
+	} else {
 	    for (RouterVertex rv : mapModel.getRouterVertices()) {
 		if (rv.getInfo().equals(centerRouter.getId())) {
 		    graphComponent.createGraphFromCenter(rv, neighboursDepth);
 		    break;
 		}
 	    }
-	} else {
-	    graphComponent.createWholeGraph();
 	}
     }
 
@@ -137,10 +131,6 @@ public class MapManager {
      * Zpracuje a zobrazí mapModel načtený z xml
      */
     public void processMapModelFromXml() {
-	if (mapModel.hasMoreRouterWithGPSPositions()) {
-	    // ((MapDesignWin) owner).getMDWActionListener().getActionGPS().setEnabled(true);
-	    // ((MapDesignWin) owner).getMDWActionListener().getActionGPSAll().setEnabled(true);
-	}
 	graphComponent.setMapModel(mapModel);
 	graphComponent.createGraphByPositions(routerVertexPositions);
     }

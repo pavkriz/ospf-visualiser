@@ -1,12 +1,15 @@
 package org.hkfree.ospf.gui.ospfwin;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 import org.hkfree.ospf.tools.Factory;
 
@@ -58,6 +61,7 @@ public class OspfWinMenu extends JMenuBar {
 	// nabídka Data
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionOpenXMLModel()));
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLoadData()));
+	mData.getItem(1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionLoadLog()));
 	mData.addSeparator();
 	mData.add(new JMenuItem(((OspfWinActionListener) actionListener).getActionShowLLTD()));
