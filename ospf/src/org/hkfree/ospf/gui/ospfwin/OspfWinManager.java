@@ -705,9 +705,9 @@ public class OspfWinManager {
 	dialog.setVisible(true);
 	if (dialog.selectionConfirmed()) {
 	    if (dialog.wholeModelIsSelected()) {
-		getActualMDManager().getOwner().processModelsAfterStart(true, null, 0);
+		getActualMDManager().getOwner().processModelsAfterStart(null, 0);
 	    } else {
-		getActualMDManager().getOwner().processModelsAfterStart(false, dialog.getSelectedRouter(),
+		getActualMDManager().getOwner().processModelsAfterStart(dialog.getSelectedRouter(),
 			dialog.getNeighboursDepth());
 	    }
 	    ospfWin.repaint();

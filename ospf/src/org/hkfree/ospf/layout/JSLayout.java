@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.map.LazyMap;
+import org.hkfree.ospf.model.map.IEdge;
+import org.hkfree.ospf.model.map.IVertex;
 
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.util.RandomLocationTransformer;
@@ -21,10 +23,12 @@ import edu.uci.ics.jung.graph.Graph;
  * @param <V> router
  * @param <E> edge
  */
-public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeContext {
+public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout<V, E> implements IterativeContext {
 
+    private double temperature;
     private int currentIteration;
-    private int maxIterations = 700;
+    private int maxIterations = 600;
+    private Rectangle2D innerBounds = new Rectangle2D.Double();
     private Map<V, JSVertexData> jsVertexData =
 	    LazyMap.decorate(new HashMap<V, JSVertexData>(), new Factory<JSVertexData>() {
 
@@ -32,8 +36,6 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		    return new JSVertexData();
 		}
 	    });
-    private Rectangle2D innerBounds = new Rectangle2D.Double();
-    private static double MULT_CONST = 10d;
 
 
     // private boolean checked = false;
@@ -78,10 +80,13 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 	}
     }
 
+    boolean show = false;
+
 
     @Override
     public synchronized void step() {
 	currentIteration++;
+	show = true;
 	// vypocet odporu
 	while (true) {
 	    try {
@@ -107,54 +112,75 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		    if (isLocked(v))
 			continue;
 		    calcPosition(v);
+		    show = false;
 		}
 		break;
 	    } catch (ConcurrentModificationException cme) {}
 	}
+	cool();
     }
+
+    /** maximalni rychlost pohybu prvku */
+    private static final double velocity_maximum = 5;
+    /** treni (zpomaleni) prvku */
+    private static final double friction = velocity_maximum / 100;
 
 
     protected synchronized void calcPosition(V v) {
-	double velocity_maximum = 0.05 * MULT_CONST; // rychlost
-	double friction = 0.0005 * MULT_CONST; // treni
-	JSVertexData fvd = jsVertexData.get(v);
-	if (fvd == null)
+	JSVertexData jsvd = jsVertexData.get(v);
+	if (jsvd == null)
 	    return;
-	fvd.forceVelocityX += getVelocity(fvd.forceCoulombX, fvd.forceHarmonicX);
-	fvd.forceVelocityY += getVelocity(fvd.forceCoulombY, fvd.forceHarmonicY);
+	jsvd.forceVelocityX += getVelocity(jsvd.forceCoulombX, jsvd.forceHarmonicX) / 10;
+	jsvd.forceVelocityY += getVelocity(jsvd.forceCoulombY, jsvd.forceHarmonicY) / 10;
+	if (show) {
+	    // System.out.println(jsvd.forceVelocityX);
+	}
 	// velocity
-	if (fvd.forceVelocityX > velocity_maximum) {
-	    fvd.forceVelocityX = velocity_maximum;
+	if (jsvd.forceVelocityX > velocity_maximum) {
+	    jsvd.forceVelocityX = velocity_maximum;
 	}
-	if (fvd.forceVelocityY > velocity_maximum) {
-	    fvd.forceVelocityY = velocity_maximum;
+	if (jsvd.forceVelocityY > velocity_maximum) {
+	    jsvd.forceVelocityY = velocity_maximum;
 	}
-	if (fvd.forceVelocityX < (-velocity_maximum)) {
-	    fvd.forceVelocityX = -velocity_maximum;
+	if (jsvd.forceVelocityX < (-velocity_maximum)) {
+	    jsvd.forceVelocityX = -velocity_maximum;
 	}
-	if (fvd.forceVelocityY < (-velocity_maximum)) {
-	    fvd.forceVelocityY = -velocity_maximum;
+	if (jsvd.forceVelocityY < (-velocity_maximum)) {
+	    jsvd.forceVelocityY = -velocity_maximum;
 	}
 	// friction
-	if (fvd.forceVelocityX > friction) {
-	    fvd.forceVelocityX -= friction;
+	if (jsvd.forceVelocityX > friction) {
+	    jsvd.forceVelocityX -= friction;
 	}
-	if (fvd.forceVelocityX < (-friction)) {
-	    fvd.forceVelocityX += friction;
+	if (jsvd.forceVelocityX < (-friction)) {
+	    jsvd.forceVelocityX += friction;
 	}
-	if (fvd.forceVelocityY > friction) {
-	    fvd.forceVelocityY -= friction;
+	if (jsvd.forceVelocityY > friction) {
+	    jsvd.forceVelocityY -= friction;
 	}
-	if (fvd.forceVelocityY < (-friction)) {
-	    fvd.forceVelocityY += friction;
+	if (jsvd.forceVelocityY < (-friction)) {
+	    jsvd.forceVelocityY += friction;
 	}
-	Point2D p = transform(v);
-	double newX = getCoord(p.getX(), fvd.forceVelocityX);
-	double newY = getCoord(p.getY(), fvd.forceVelocityY);
-	// zajisti ze vrchol nebude mimo platno layoutu
+	Point2D xyd = transform(v);
+	double newX = getCoord(xyd.getX(), jsvd.forceVelocityX);
+	double newY = getCoord(xyd.getY(), jsvd.forceVelocityY);
+	if (show) {
+	    // System.out.println("velX="+jsvd.forceVelocityX + " oldX=" + xyd.getX() +" newX=" + newX);
+	}
+	// osetreni aby vrchol nebyl mimo platno
 	newX = Math.max(innerBounds.getMinX(), Math.min(newX, innerBounds.getMaxX()));
 	newY = Math.max(innerBounds.getMinY(), Math.min(newY, innerBounds.getMaxY()));
-	p.setLocation(newX, newY);
+	xyd.setLocation(newX, newY);
+    }
+
+
+    private double getCoord(double coord, double fv) {
+	return coord + Math.max(-1000, Math.min(1000, fv));
+    }
+
+
+    private double getVelocity(double fc, double fh) {
+	return fc + fh / 10;
     }
 
 
@@ -189,6 +215,11 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     }
 
 
+    private double getForceHarmonic(double delta, double radius) {
+	return -delta * radius;
+    }
+
+
     protected void calcRepulsion(V v1) {
 	JSVertexData fvd1 = jsVertexData.get(v1);
 	if (fvd1 == null)
@@ -202,7 +233,7 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
 		if (v1_locked && v2_locked)
 		    continue;
 		if (v1 != v2) {
-		    Point2D p1 = transform(v1);
+		    Point2D p1 = transform(v1); // transform - vraci souradnice vrcholu
 		    Point2D p2 = transform(v2);
 		    if (p1 == null || p2 == null)
 			continue;
@@ -224,32 +255,18 @@ public class JSLayout<V, E> extends AbstractLayout<V, E> implements IterativeCon
     }
 
 
-    private static int K2 = 100;
-    private static int K3 = 100;
-    private double getCoord(double coord, double fv) {
-	return coord + Math.max(-K2 * MULT_CONST, Math.min(K2 * MULT_CONST, fv * MULT_CONST));
-    }
-
-
-    private double getVelocity(double fc, double fh) {
-	return fc + fh / MULT_CONST;
-    }
-
-
-    private double getForceHarmonic(double delta, double radius) {
-	double vec = -delta / radius;
-	return vec * radius * radius / K3;
-    }
-
-
     private double getForceCoulomb(double delta, double radius) {
-	double vec = delta / radius;
-	return vec / radius / K3;
+	return delta / radius / radius;
     }
 
 
     private double getRandom() {
-	return Math.random() - 0.5;
+	return (Math.random() - 0.5) * 100;
+    }
+
+
+    private void cool() {
+	temperature *= (1.0 - currentIteration / (double) maxIterations);
     }
 
 

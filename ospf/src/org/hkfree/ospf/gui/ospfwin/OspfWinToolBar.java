@@ -81,6 +81,7 @@ public class OspfWinToolBar extends JToolBar {
 	this.add(((OspfWinActionListener) actionListener).getActionLockAll());
 	this.add(((OspfWinActionListener) actionListener).getActionGPSAll());
 	this.add(((OspfWinActionListener) actionListener).getActionLayoutStartFR());
+	this.add(((OspfWinActionListener) actionListener).getActionLayoutStartJS());
 	this.add(((OspfWinActionListener) actionListener).getActionLayoutStartSpring());
 	this.add(((OspfWinActionListener) actionListener).getActionLayoutStopSpring());
 	this.addSeparator();

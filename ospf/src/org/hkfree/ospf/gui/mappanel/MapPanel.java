@@ -91,10 +91,9 @@ public class MapPanel extends JPanel {
      * @param processWholeModel
      * @param center
      * @param depth
-     * @param layout
      */
-    public void processModelsAfterStart(boolean processWholeModel, Router center, int depth) {
-	manager.setLoadSettings(processWholeModel, center, depth);
+    public void processModelsAfterStart(Router center, int depth) {
+	manager.setLoadSettings(center, depth);
 	manager.loadMapModel();
 	manager.getGraphComponent().setShowIPv6(false);
 	this.repaint();

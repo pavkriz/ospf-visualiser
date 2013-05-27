@@ -178,7 +178,7 @@ public class OspfWin extends JFrame {
      */
     public void addAndFillModelTabbedPane(String modelName, OspfModel model) {
 	MapPanel map = new MapPanel(this, model);
-	map.processModelsAfterStart(true, null, 0);
+	map.processModelsAfterStart(null, 0);
 	addMapPanel(modelName, map);
     }
 
