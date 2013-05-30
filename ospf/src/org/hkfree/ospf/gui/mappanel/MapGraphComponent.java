@@ -1121,34 +1121,6 @@ public class MapGraphComponent extends JComponent {
 		    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		    vv.repaint();
 		    break;
-		// case LAYOUT_FR_LLTD:
-		// layoutNew = (Class<? extends Layout<IVertex, IEdge>>) FRLayout.class;
-		// constructor = layoutNew.getConstructor(new Class[] { Graph.class });
-		// o = constructor.newInstance(constructorArgs);
-		// layout = (Layout<IVertex, LinkEdge>) o;
-		// layout.setInitializer(vv.getGraphLayout());
-		// ((FRLayout) layout).setAttractionMultiplier(Constants.LAYOUT_ATTRACTION);
-		// ((FRLayout) layout).setRepulsionMultiplier(Constants.LAYOUT_REPULSION);
-		// ((FRLayout) layout).setMaxIterations(Constants.LAYOUT_FR_MAX_ITERATIONS);
-		// layout.setSize(Constants.LAYOUT_SIZE);
-		// lt = new LayoutTransition<IVertex, LinkEdge>(vv, vv.getGraphLayout(), layout);
-		// List<IVertex> rvs = new ArrayList<IVertex>();
-		// for (IVertex rv : graph.getVertices()) {
-		// if (!rv.isLltd()) {
-		// // if (!rv.isLocked()) {
-		// rvs.add(rv);
-		// lockVertexPosition(rv);
-		// // }
-		// }
-		// }
-		// animator = new Animator(lt);
-		// animator.start();
-		// vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
-		// vv.repaint();
-		// for (IVertex rv : rvs) {
-		// unlockVertexPosition(rv);
-		// }
-		// break;
 		default:
 		    break;
 	    }
