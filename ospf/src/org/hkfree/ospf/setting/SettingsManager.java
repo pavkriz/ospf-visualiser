@@ -128,9 +128,6 @@ public class SettingsManager {
 	if (propUser.getProperty("lltdUrl") == null) {
 	    propUser.setProperty("lltdUrl", propDef.getProperty("lltdUrl"));
 	}
-	if (propUser.getProperty("cgiRDNSServer") == null) {
-	    propUser.setProperty("cgiRDNSServer", propDef.getProperty("cgiRDNSServer"));
-	}
 	if (propUser.getProperty("edgeShaper") == null) {
 	    propUser.setProperty("edgeShaper", propDef.getProperty("edgeShaper"));
 	}

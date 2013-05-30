@@ -8,8 +8,8 @@ import java.awt.Dimension;
  */
 public abstract class Constants {
 
-    /** verze aplikace */
-    public static final String APP_VERSION = "3.0.4";
+    /** verze aplikace, pri zmene je nutne take zmenit verzi app v defaultnim property souboru */
+    public static final String APP_VERSION = "3.0.5";
     /** url k obrázkům */
     public static final String URL_IMG_GUI = "/images/";
     /** url k webovym strankam s tipy aplikace */
