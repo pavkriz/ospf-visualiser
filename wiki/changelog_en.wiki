@@ -8,6 +8,15 @@ How to:
 
 = Version =
 
+== ospf3.0.5 (30.5.2013) ==
+  * shorkey CTRL+L for loading models
+  * JS layout icon added on toolbar
+  * fixes BUGs
+    * layouting from central router
+    * stop first layouting after change type of layouting
+    * first time running new version NULL pointer
+
+
 == ospf3.0.4 (16.4.2013) ==
   * SVG export with CSS
   * modify labels and tooltips in map
