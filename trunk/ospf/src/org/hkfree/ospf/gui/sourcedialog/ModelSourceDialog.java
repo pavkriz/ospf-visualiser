@@ -261,7 +261,7 @@ public class ModelSourceDialog extends JDialog {
 
 
 	    public void actionPerformed(ActionEvent e) {
-		if (!list.getSelectedValuesList().isEmpty()) {
+		if (list.getSelectedValues().length >= 0) {
 		    int[] is = list.getSelectedIndices();
 		    for (int i = 0; i < is.length; i++) {
 			model.remove(is[i] - i);
