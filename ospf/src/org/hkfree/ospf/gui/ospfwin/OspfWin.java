@@ -49,7 +49,7 @@ public class OspfWin extends JFrame {
     private OspfWinToolBar toolBar;
     private StatusBar statusBar;
     private StateDialog stateDialog;
-    private JComboBox<String> cbModels = null;
+    private JComboBox cbModels = null;
     private Map<String, MapPanel> models = null;
     private JSplitPane spPanel = null;
     private Dimension propSize = null;
@@ -88,7 +88,7 @@ public class OspfWin extends JFrame {
 	// toolbar
 	toolBar = new OspfWinToolBar(actionListener);
 	c.add(toolBar, BorderLayout.NORTH);
-	cbModels = new JComboBox<String>();
+	cbModels = new JComboBox();
 	cbModels.setVisible(false);
 	cbModels.setFont(new Font("Arial", Font.PLAIN, 10));
 	cbModels.addActionListener(new ActionListener() {
