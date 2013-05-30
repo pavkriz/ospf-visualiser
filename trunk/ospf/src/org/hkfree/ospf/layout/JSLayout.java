@@ -25,9 +25,8 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout<V, E> implements IterativeContext {
 
-    private double temperature;
     private int currentIteration;
-    private int maxIterations = 600;
+    private int maxIterations = 400;
     private Rectangle2D innerBounds = new Rectangle2D.Double();
     private Map<V, JSVertexData> jsVertexData =
 	    LazyMap.decorate(new HashMap<V, JSVertexData>(), new Factory<JSVertexData>() {
@@ -117,7 +116,6 @@ public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout
 		break;
 	    } catch (ConcurrentModificationException cme) {}
 	}
-	cool();
     }
 
     /** maximalni rychlost pohybu prvku */
@@ -130,11 +128,8 @@ public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout
 	JSVertexData jsvd = jsVertexData.get(v);
 	if (jsvd == null)
 	    return;
-	jsvd.forceVelocityX += getVelocity(jsvd.forceCoulombX, jsvd.forceHarmonicX) / 10;
-	jsvd.forceVelocityY += getVelocity(jsvd.forceCoulombY, jsvd.forceHarmonicY) / 10;
-	if (show) {
-	    // System.out.println(jsvd.forceVelocityX);
-	}
+	jsvd.forceVelocityX += (jsvd.forceCoulombX + jsvd.forceHarmonicX / 10) / 10;
+	jsvd.forceVelocityY += (jsvd.forceCoulombY + jsvd.forceHarmonicY / 10) / 10;
 	// velocity
 	if (jsvd.forceVelocityX > velocity_maximum) {
 	    jsvd.forceVelocityX = velocity_maximum;
@@ -162,25 +157,12 @@ public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout
 	    jsvd.forceVelocityY += friction;
 	}
 	Point2D xyd = transform(v);
-	double newX = getCoord(xyd.getX(), jsvd.forceVelocityX);
-	double newY = getCoord(xyd.getY(), jsvd.forceVelocityY);
-	if (show) {
-	    // System.out.println("velX="+jsvd.forceVelocityX + " oldX=" + xyd.getX() +" newX=" + newX);
-	}
+	double newX = xyd.getX() + jsvd.forceVelocityX;
+	double newY = xyd.getY() + jsvd.forceVelocityY;
 	// osetreni aby vrchol nebyl mimo platno
 	newX = Math.max(innerBounds.getMinX(), Math.min(newX, innerBounds.getMaxX()));
 	newY = Math.max(innerBounds.getMinY(), Math.min(newY, innerBounds.getMaxY()));
 	xyd.setLocation(newX, newY);
-    }
-
-
-    private double getCoord(double coord, double fv) {
-	return coord + Math.max(-1000, Math.min(1000, fv));
-    }
-
-
-    private double getVelocity(double fc, double fh) {
-	return fc + fh / 10;
     }
 
 
@@ -204,19 +186,14 @@ public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout
 		double yDelta = p1.getY() - p2.getY();
 		double radius = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
 		if (radius != 0) {
-		    fvd1.forceHarmonicX += getForceHarmonic(xDelta, radius);
-		    fvd1.forceHarmonicY += getForceHarmonic(yDelta, radius);
+		    fvd1.forceHarmonicX += -xDelta * radius;
+		    fvd1.forceHarmonicY += -yDelta * radius;
 		} else {
 		    fvd1.forceHarmonicX += getRandom();
 		    fvd1.forceHarmonicY += getRandom();
 		}
 	    }
 	}
-    }
-
-
-    private double getForceHarmonic(double delta, double radius) {
-	return -delta * radius;
     }
 
 
@@ -241,8 +218,8 @@ public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout
 		    double yDelta = p1.getY() - p2.getY();
 		    double radius = Math.sqrt(xDelta * xDelta + yDelta * yDelta);
 		    if (radius != 0) {
-			fvd1.forceCoulombX += getForceCoulomb(xDelta, radius);
-			fvd1.forceCoulombY += getForceCoulomb(yDelta, radius);
+			fvd1.forceCoulombX += xDelta / radius / radius;
+			fvd1.forceCoulombY += yDelta / radius / radius;
 		    } else {
 			fvd1.forceCoulombX += getRandom();
 			fvd1.forceCoulombY += getRandom();
@@ -255,18 +232,8 @@ public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout
     }
 
 
-    private double getForceCoulomb(double delta, double radius) {
-	return delta / radius / radius;
-    }
-
-
     private double getRandom() {
 	return (Math.random() - 0.5) * 100;
-    }
-
-
-    private void cool() {
-	temperature *= (1.0 - currentIteration / (double) maxIterations);
     }
 
 
@@ -293,16 +260,5 @@ public class JSLayout<V extends IVertex, E extends IEdge> extends AbstractLayout
 	protected double forceHarmonicY = 0.0d;
 	protected double forceVelocityX = 0.0d;
 	protected double forceVelocityY = 0.0d;
-
-
-	protected void offset(double x, double y) {
-	    this.x += x;
-	    this.y += y;
-	}
-
-
-	protected double norm() {
-	    return Math.sqrt(x * x + y * y);
-	}
     }
 }
