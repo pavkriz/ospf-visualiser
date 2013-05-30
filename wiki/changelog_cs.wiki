@@ -9,6 +9,14 @@ Postup:
 
 = Verze =
 
+== ospf3.0.5 (30.5.2013) ==
+  * klávesová zkratka CTRL+L pro načítání modelů
+  * přidání ikony JS layout na toolbar
+  * odstraněny BUGy
+    * rozmísťování po zobrazení mapy od centrálního routeru
+    * při změně typu rozvrhování zastavení dřívějšího
+    * NULL pointer při prvním spuštění nové aplikace
+
 == ospf3.0.4 (16.4.2013) ==
   * SVG export připůsoben tak, aby jej bylo možné měnit přes CSS
   * úpravy popisků v mapě, tooltipů
