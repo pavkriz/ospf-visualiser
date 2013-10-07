@@ -57,4 +57,11 @@ public interface IEdge {
      * @return
      */
     public Stroke getStroker();
+
+
+    /**
+     * Vrací váhu spoje (používá se u SpringLayout pro preferovanou vzdálenost od mezi uzly)
+     * @return
+     */
+	public int getWeight();
 }

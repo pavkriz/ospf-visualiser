@@ -66,4 +66,9 @@ public class RelationEdge extends AEdge implements Serializable {
     public void setMedium(String medium) {
 	this.medium = medium;
     }
+    
+    @Override
+    public int getWeight() {
+    	return 10;
+    }
 }

@@ -375,6 +375,16 @@ public class OspfDataLoadInitiator {
 	    if (frdr != null)
 		frdr.close();
 	}
+	try {
+	    frdr = new FileReader(new File(sourcePath + Constants.FILENAME_LINK_TYPES));
+	    inBfrdRdr = new BufferedReader(frdr);
+	    OspfLoader.loadLinkTypes(model, inBfrdRdr);
+	} finally {
+	    if (inBfrdRdr != null)
+		inBfrdRdr.close();
+	    if (frdr != null)
+		frdr.close();
+	}
     }
 
 

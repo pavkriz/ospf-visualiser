@@ -96,7 +96,7 @@ public class GeoCoordinatesTransformator {
 	if (L < 0) {
 	    L = -L;
 	}
-	// System.out.println(B+"\t\t"+L);
+	//System.out.println("JTSK->WSG "+jtskY+","+jtskX+" -> "+B+","+L);
 	return new GPSPoint(B, L);
     }
 }

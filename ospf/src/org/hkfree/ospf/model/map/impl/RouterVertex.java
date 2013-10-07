@@ -1,6 +1,7 @@
 package org.hkfree.ospf.model.map.impl;
 
 import java.awt.Color;
+import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -32,6 +33,7 @@ public class RouterVertex extends AVertex implements Serializable {
     private boolean firstRVOfTwoRVShortestPath = false;
     private boolean secondRVOfTwoRVShortestPath = false;
     private boolean founded = false;
+    private Polygon hexagon;
 
 
     /**
@@ -131,6 +133,18 @@ public class RouterVertex extends AVertex implements Serializable {
     public Shape getShaper() {
 	if (isMultilink()) {
 	    return new Rectangle2D.Float(-6, -6, 12, 12);
+	} else if (isLocked()) {
+		if (hexagon == null) {
+			Polygon p = new Polygon();
+			int r = 11; // 10 vypada (a je) mensi nez kruh s r=10 pouzity normalne 
+			for (int i = 0; i < 6; i++) {
+				p.addPoint(
+					(int)(r * Math.cos(i * 2 * Math.PI / 6)),
+					(int)(r * Math.sin(i * 2 * Math.PI / 6)));
+			}
+			hexagon = p;
+		}
+		return hexagon;
 	}
 	return new Ellipse2D.Float(-10, -10, 20, 20);
     }

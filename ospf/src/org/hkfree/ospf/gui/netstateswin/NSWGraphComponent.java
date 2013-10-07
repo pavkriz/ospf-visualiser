@@ -20,6 +20,7 @@ import org.hkfree.ospf.model.netchange.NetStateLinkEdge;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
+import org.hkfree.ospf.tools.geo.GPSPointOsmTestConverter;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -96,7 +97,7 @@ public class NSWGraphComponent extends JComponent {
      */
     public void setNetChangeModel(NetChangeModel model) {
 	this.netChangeModel = model;
-	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
+	gpsPointConverter = new GPSPointOsmTestConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(netChangeModel.getMinimumLatitude(), netChangeModel.getMaximumLatitude(),
 		netChangeModel.getMinimumLongtitude(), netChangeModel.getMaximumLongtitude());
     }

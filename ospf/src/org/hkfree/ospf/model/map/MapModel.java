@@ -46,7 +46,7 @@ public class MapModel implements IMapModel {
      */
     public void addLinkEdge(String id1, String id2, String name1, String name2, int cost1, int cost2, int cost1IPv6,
 	    int cost2IPv6, GPSPoint gpsP1,
-	    GPSPoint gpsP2, String linkIDv4, String linkIDv6, List<OspfLinkData> ospfLinksData) {
+	    GPSPoint gpsP2, String linkIDv4, String linkIDv6, List<OspfLinkData> ospfLinksData, String linkType) {
 	RouterVertex rv1 = getRouterVertexById(id1);
 	RouterVertex rv2 = getRouterVertexById(id2);
 	if (rv1 == null) {
@@ -72,6 +72,7 @@ public class MapModel implements IMapModel {
 	le.setCost2v6(cost2IPv6);
 	le.setLinkIDv4(linkIDv4);
 	le.setLinkIDv6(linkIDv6);
+	le.setLinkType(linkType);
 	edges.add(le);
     }
 

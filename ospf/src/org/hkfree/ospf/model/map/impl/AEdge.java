@@ -101,4 +101,9 @@ abstract public class AEdge implements IEdge {
 	}
 	return new BasicStroke(1);
     }
+    
+    @Override
+    public int getWeight() {
+    	return 30;
+    }
 }

@@ -37,6 +37,7 @@ public class LinkEdge extends AEdge implements Serializable {
     private boolean extraAddedEdge = false;
     private boolean edgeOfFirstPath = false;
     private boolean edgeOfSecondPath = false;
+    private String linkType = "";
 
 
     /**
@@ -137,6 +138,12 @@ public class LinkEdge extends AEdge implements Serializable {
 	}
 	if (isEdgeOfSecondPath()) {
 	    return new Color(255, 80, 80);// cervena
+	}
+	if ("10g".equals(linkType)) {
+		return Color.MAGENTA;
+	}
+	if ("5g".equals(linkType)) {
+		return Color.BLUE;
 	}
 	return new Color(0x666666);
     }
@@ -487,4 +494,12 @@ public class LinkEdge extends AEdge implements Serializable {
     public boolean isIPv6() {
 	return (cost1IPv6 != -1 || cost2IPv6 != -1);
     }
+    
+    public String getLinkType() {
+		return linkType;
+	}
+    
+    public void setLinkType(String linkType) {
+		this.linkType = linkType;
+	}
 }

@@ -30,6 +30,8 @@ public abstract class Constants {
     public static final String FILENAME_TOPOLOGY = "ospf_database_network";
     /** název souboru v zip archivu určující název souboru s geo souřadnicemi */
     public static final String FILENAME_GEO_POSITIONS = "geo";
+    /** název souboru v zip archivu určující název souboru s typy spojů */
+    public static final String FILENAME_LINK_TYPES = "link_types";
     /** FR LAYOUT - maximalni pocet iteraci pro FR layout */
     public static int LAYOUT_FR_MAX_ITERATIONS = 1500;
     /** FR LAYOUT - vzdalenosti vrcholu od sebe */
@@ -55,7 +57,7 @@ public abstract class Constants {
     public static final int REMOTE_SERVER = 2;
     public static final int FOLDER = 1;
     public static final int ZIP = 2;
-
+	
     /**
      * Výčet lokalizace aplikace
      */

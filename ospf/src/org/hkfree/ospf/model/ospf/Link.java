@@ -22,6 +22,7 @@ public class Link {
     private List<OspfLinkData> routersOfLink = new ArrayList<OspfLinkData>();
     private String networkAddress = "0.0.0.0";
     private String broadcastAddress = "0.0.0.0";
+    private String linkType = "";
 
 
     /**
@@ -279,4 +280,12 @@ public class Link {
 	}
 	return true;
     }
+    
+    public String getLinkType() {
+		return linkType;
+	}
+    
+    public void setLinkType(String linkType) {
+		this.linkType = linkType;
+	}
 }

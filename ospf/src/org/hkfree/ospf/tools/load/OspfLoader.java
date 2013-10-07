@@ -16,6 +16,7 @@ import org.hkfree.ospf.model.ospf.OspfLinkData;
 import org.hkfree.ospf.model.ospf.OspfModel;
 import org.hkfree.ospf.model.ospf.Router;
 import org.hkfree.ospf.model.ospf.StubLink;
+import org.hkfree.ospf.tools.geo.GPSPoint;
 import org.hkfree.ospf.tools.geo.GeoCoordinatesTransformator;
 import org.hkfree.ospf.tools.ip.IpCalculator;
 
@@ -32,8 +33,9 @@ public class OspfLoader {
     private static String patternCost = "^.*:\\s*([0-9]{1,})";
     private static String patternName = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+(.+)$";
     private static String patternNameArpa = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.in-addr\\.arpa\\.)(\\s+.*\\s+IN\\s+PTR\\s+)(.*)$";
-    private static String patternGeo = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+([0-9]+)\\s+([0-9]+)(.*)$";
+    private static String patternGeo = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+([0-9\\.]+)\\s+([0-9\\.]+)(.*)$";
     private static String patternLog = "^([0-9]{4}/[0-9]{2}/[0-9]{2}\\s+[0-9]{2}:[0-9]{2}:[0-9]{2})\\s+.+id\\((.+)\\).+ar.+$";
+    private static String patternLinkType = "^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})\\s+(.+)$";
 
 
     /**
@@ -215,12 +217,43 @@ public class OspfLoader {
 		model.setGpsLoaded(true);
 		Router r = model.getRouterByIp(geoMatcher.group(1));
 		if (r != null) {
-		    r.setGpsPosition(geoCoorTransormator.transformJTSKToWGS(Integer.valueOf(geoMatcher.group(2)),
-			    Integer.valueOf(geoMatcher.group(3))));
+			double val1 = Double.parseDouble(geoMatcher.group(2));
+			double val2 = Double.parseDouble(geoMatcher.group(3));
+			if (val1 > 360 && val2 > 360) {
+				// heuristika - souradnice jsou zrejme v S-JTSK
+			    r.setGpsPosition(geoCoorTransormator.transformJTSKToWGS(val1,val2));
+			} else {
+				r.setGpsPosition(new GPSPoint(val1, val2));
+			}
 		}
 	    }
 	}
     }
+
+    /**
+     * Metoda, která načte ze zadaného umístění typy spojů
+     */
+	public static void loadLinkTypes(OspfModel model, BufferedReader input) throws NumberFormatException,
+    IOException {
+		BufferedReader vstup = null;
+		Pattern geoPattern = Pattern.compile(patternLinkType);
+		Matcher geoMatcher = null;
+		vstup = input;
+		GeoCoordinatesTransformator geoCoorTransormator = new GeoCoordinatesTransformator();
+		String line = "";
+		while ((line = vstup.readLine()) != null) {
+		    geoMatcher = geoPattern.matcher(line);
+		    geoMatcher.find();
+		    if (geoMatcher.matches()) {
+		    	for (Link l : model.getLinks()) {
+		    		if (l.getLinkIDv4().equals(geoMatcher.group(1))) {
+		    			l.setLinkType(geoMatcher.group(2));
+		    		}
+		    	}
+		    }
+		}
+		
+	}
 
 
     public static void getTopologyFromData(OspfModel model, BufferedReader input) throws NumberFormatException,
@@ -523,8 +556,14 @@ public class OspfLoader {
 			    model.setGpsLoaded(true);
 			    Router r = model.getRouterByIp(matcher.group(1));
 			    if (r != null) {
-				r.setGpsPosition(geoCoorTransormator.transformJTSKToWGS(Integer.valueOf(matcher.group(2)),
-					Integer.valueOf(matcher.group(3))));
+			    	double val1 = Double.parseDouble(matcher.group(2));
+					double val2 = Double.parseDouble(matcher.group(3));
+					if (val1 > 360 && val2 > 360) {
+						// heuristika - souradnice jsou zrejme v S-JTSK
+					    r.setGpsPosition(geoCoorTransormator.transformJTSKToWGS(val1,val2));
+					} else {
+						r.setGpsPosition(new GPSPoint(val1, val2));
+					}
 			    }
 			}
 			break;
@@ -571,4 +610,6 @@ public class OspfLoader {
 	    e.printStackTrace();
 	}
     }
+
+
 }

@@ -1,6 +1,9 @@
 package org.hkfree.ospf.gui.mappanel;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -10,8 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import org.apache.commons.collections15.Transformer;
 import org.hkfree.ospf.gui.pathstreedialog.ShortestPathTreeDialog;
 import org.hkfree.ospf.layout.JSLayout;
 import org.hkfree.ospf.model.Constants;
@@ -32,6 +37,7 @@ import org.hkfree.ospf.model.ospf.StubLink;
 import org.hkfree.ospf.setting.MapGraphComponentMode;
 import org.hkfree.ospf.tools.MapModelShortestPathFinder;
 import org.hkfree.ospf.tools.geo.GPSPointConverter;
+import org.hkfree.ospf.tools.geo.GPSPointOsmTestConverter;
 import org.hkfree.ospf.tools.ip.IpCalculator;
 
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
@@ -49,6 +55,7 @@ import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
+import edu.uci.ics.jung.visualization.transform.shape.ShapeTransformer;
 import edu.uci.ics.jung.visualization.util.Animator;
 
 /**
@@ -145,6 +152,41 @@ public class MapGraphComponent extends JComponent {
 	vv.setEdgeToolTipTransformer(styleTransformer.getEdgeTooltiper());
 	vv.getRenderContext().setEdgeDrawPaintTransformer(styleTransformer.getEdgeLinePainter());
 	vv.getRenderContext().setEdgeStrokeTransformer(styleTransformer.getEdgeLineStroker());
+	// kriz: bitmapove pozadi mapy
+	vv.addPreRenderPaintable(new VisualizationViewer.Paintable() {
+		
+			@Override
+			public boolean useTransform() {
+				return true;
+			}
+			
+			@Override
+			public void paint(Graphics g) {
+				ImageIcon mapIcon = null;
+                String imageLocation = "x/skola/postgradual/subprojekty/wifilokace/mapa/staticmap-5018-1574-bright.png";
+                try {
+                    mapIcon =
+                            new ImageIcon(imageLocation);
+                } catch(Exception ex)
+                {
+                    System.err.println("Cant load background map "+ex);
+                }
+                 final ImageIcon icon = mapIcon;
+
+                Graphics2D g2d = (Graphics2D)g;
+                AffineTransform oldXform = g2d.getTransform();
+                AffineTransform lat = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getTransform();
+                AffineTransform vat = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+                AffineTransform at = new AffineTransform();
+                //at.concatenate(g2d.getTransform());
+                at.concatenate(vat);
+                at.concatenate(lat);
+                g2d.setTransform(at);
+                g.drawImage(icon.getImage(), 0, 0,icon.getIconWidth(),icon.getIconHeight(),vv);
+                g2d.setTransform(oldXform);
+				
+			}
+		});
     }
 
 
@@ -180,7 +222,7 @@ public class MapGraphComponent extends JComponent {
 	}
 	vv.repaint();
 	scaler.scale(vv, zoomValue, vv.getCenter());
-	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
+	gpsPointConverter = new GPSPointOsmTestConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
 		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
 	
@@ -250,7 +292,7 @@ public class MapGraphComponent extends JComponent {
 	}
 	vv.repaint();
 	scaler.scale(vv, zoomValue, vv.getCenter());
-	gpsPointConverter = new GPSPointConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
+	gpsPointConverter = new GPSPointOsmTestConverter(layout.getSize().getWidth(), layout.getSize().getHeight());
 	gpsPointConverter.setGPSMaxsAndMins(mapModel.getMinimumLatitude(), mapModel.getMaximumLatitude(),
 		mapModel.getMinimumLongtitude(), mapModel.getMaximumLongtitude());
     }
@@ -1089,7 +1131,16 @@ public class MapGraphComponent extends JComponent {
 		    } else {
 			layoutNew = (Class<? extends Layout<IVertex, IEdge>>) SpringLayout.class;
 			constructor = layoutNew.getConstructor(new Class[] { Graph.class });
-			o = constructor.newInstance(constructorArgs);
+			constructor = layoutNew.getConstructor(new Class[] { Graph.class, Transformer.class });
+			Transformer<IEdge, Integer> weightTransformer = new Transformer<IEdge,Integer>() {
+				 public Integer transform(IEdge link) {
+					 return link.getWeight();
+					 //return 30;
+				 }
+			};
+		    //Object[] constructorArgs2 = { graph, weightTransformer };
+			o = constructor.newInstance(graph, weightTransformer);
+			//o = constructor.newInstance(constructorArgs);
 			l = (Layout<IVertex, IEdge>) o;
 			l.setInitializer(vv.getGraphLayout());
 			((SpringLayout) l).setStretch(Constants.LAYOUT_STRETCH);

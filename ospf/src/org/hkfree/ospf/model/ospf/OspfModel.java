@@ -329,11 +329,13 @@ public class OspfModel {
 		// gps souradnice
 		GPSPoint gp1 = link.getOspfLinkData().get(0).getRouter().getGpsPosition();
 		GPSPoint gp2 = link.getOspfLinkData().get(1).getRouter().getGpsPosition();
+		// typ spoje
+		String typ = link.getLinkType();
 		// pridani spoje v mapModelu
 		// System.out.println(cost1IPv6 + " " + cost2IPv6);
 		mapModel.addLinkEdge(id1, id2, descr1, descr2, cost1, cost2, cost1IPv6, cost2IPv6, gp1, gp2,
 			link.getLinkIDv4(), link.getLinkIDv6(),
-			link.getOspfLinkData());
+			link.getOspfLinkData(), typ);
 	    } else {
 		multilinkCount++;
 		descr2 = "<html><body>" + rb.getString("cdtm.col1") + ": <b>" + link.getLinkIDv4() + "</b></body></html>";
@@ -347,7 +349,7 @@ public class OspfModel {
 		    }
 		    mapModel.addLinkEdge(id1, Constants.MULTILINK + Integer.toString(multilinkCount), descr1, descr2,
 			    old.getCostIPv4(), -1, old.getCostIPv6(), -1, gp, null, link.getLinkIDv4(), link.getLinkIDv6(),
-			    link.getOspfLinkData());
+			    link.getOspfLinkData(), "");
 		}
 	    }
 	}
