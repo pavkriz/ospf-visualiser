@@ -1,2 +1,0 @@
-pro zobrazeni a praci s diagramy je zapotrebi mit nainstalovan Object AID
-viz: http://www.objectaid.com/
